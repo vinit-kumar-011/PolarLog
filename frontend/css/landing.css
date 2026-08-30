@@ -1,0 +1,1004 @@
+/* =========================================================
+   POLARLOG LANDING PAGE
+========================================================= */
+
+/* =========================================================
+   NAVBAR
+========================================================= */
+
+.polar-navbar {
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+
+  z-index: 1000;
+
+  padding: 18px 0;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(2, 11, 24, 0.95),
+    rgba(2, 11, 24, 0)
+  );
+}
+
+/* Brand */
+
+.polar-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 12px;
+
+  color: var(--text-primary);
+}
+
+.polar-brand:hover {
+  color: var(--text-primary);
+}
+
+.brand-icon {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 42px;
+  height: 42px;
+
+  font-size: 28px;
+
+  color: var(--polar-ice);
+
+  text-shadow: 0 0 20px rgba(56, 189, 248, 0.6);
+}
+
+.brand-text {
+  display: flex;
+
+  flex-direction: column;
+}
+
+.brand-text strong {
+  font-size: 20px;
+
+  letter-spacing: 0.08em;
+}
+
+.brand-text small {
+  font-size: 9px;
+
+  color: var(--text-muted);
+
+  letter-spacing: 0.02em;
+}
+
+/* Navigation */
+
+.polar-navbar .nav-link {
+  position: relative;
+
+  margin: 0 8px;
+
+  padding: 8px 4px !important;
+
+  color: var(--text-secondary) !important;
+
+  font-size: 14px;
+
+  transition: color 0.25s ease;
+}
+
+.polar-navbar .nav-link:hover {
+  color: var(--text-primary) !important;
+}
+
+.polar-navbar .nav-link.active {
+  color: var(--text-primary) !important;
+}
+
+.polar-navbar .nav-link.active::after {
+  content: "";
+
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: 0;
+
+  height: 2px;
+
+  background: var(--polar-ice);
+
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.7);
+}
+
+/* Mobile navbar */
+
+.navbar-toggler {
+  border: 1px solid var(--border);
+
+  color: var(--text-primary);
+}
+
+.navbar-toggler:focus {
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.2);
+}
+
+/* =========================================================
+   POLAR BUTTON
+========================================================= */
+
+.polar-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 10px 20px;
+
+  border: 1px solid var(--polar-blue);
+
+  border-radius: var(--radius-md);
+
+  background: linear-gradient(135deg, var(--polar-blue), #0877c8);
+
+  color: white;
+
+  font-weight: 600;
+
+  font-size: 13px;
+
+  box-shadow: 0 8px 25px rgba(14, 165, 233, 0.18);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.polar-btn:hover {
+  color: #00111d;
+
+  background: var(--polar-ice);
+
+  border-color: var(--polar-ice);
+
+  transform: translateY(-2px);
+
+  box-shadow: 0 12px 30px rgba(56, 189, 248, 0.25);
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero-section {
+  position: relative;
+
+  min-height: 820px;
+
+  padding: 140px 0 30px;
+
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 75% 35%,
+      rgba(14, 165, 233, 0.13),
+      transparent 32%
+    ),
+    linear-gradient(to bottom, #020b18 0%, #020b18 65%, #03111f 100%);
+}
+
+/* Grid */
+
+.hero-grid {
+  position: absolute;
+
+  inset: 0;
+
+  opacity: 0.18;
+
+  background-image:
+    linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+
+  background-size: 48px 48px;
+
+  mask-image: linear-gradient(to bottom, black, transparent 90%);
+}
+
+/* Large glow */
+
+.hero-glow {
+  position: absolute;
+
+  width: 650px;
+
+  height: 650px;
+
+  right: 5%;
+
+  top: 80px;
+
+  border-radius: 50%;
+
+  background: rgba(14, 165, 233, 0.07);
+
+  filter: blur(80px);
+}
+
+/* Hero content */
+
+.hero-content {
+  min-height: 520px;
+}
+
+/* =========================================================
+   HERO TEXT
+========================================================= */
+
+.hero-copy {
+  position: relative;
+
+  z-index: 2;
+}
+
+.eyebrow {
+  margin-bottom: 15px;
+
+  color: var(--polar-ice);
+
+  font-size: 11px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.18em;
+}
+
+.hero-copy h1 {
+  margin: 0;
+
+  font-size: clamp(40px, 4.3vw, 67px);
+
+  line-height: 0.98;
+
+  letter-spacing: -0.025em;
+
+  font-weight: 700;
+}
+
+.hero-copy h1 span {
+  display: block;
+
+  color: var(--text-primary);
+}
+
+.hero-line {
+  width: 70px;
+
+  height: 3px;
+
+  margin: 25px 0;
+
+  background: var(--polar-ice);
+
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.6);
+}
+
+.hero-copy p {
+  max-width: 470px;
+
+  margin-bottom: 28px;
+
+  color: var(--text-secondary);
+
+  font-size: 16px;
+
+  line-height: 1.7;
+}
+
+/* Hero buttons */
+
+.hero-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 22px;
+
+  flex-wrap: wrap;
+}
+
+.hero-btn {
+  padding: 13px 22px;
+}
+
+.hero-link {
+  color: var(--text-secondary);
+
+  font-size: 13px;
+
+  transition: color 0.2s ease;
+}
+
+.hero-link:hover {
+  color: var(--polar-ice);
+}
+
+/* =========================================================
+   OPERATIONS VISUAL
+========================================================= */
+
+.polar-visual {
+  position: relative;
+
+  min-height: 500px;
+}
+
+/* Label */
+
+.visual-label {
+  position: absolute;
+
+  top: 10px;
+
+  left: 8%;
+
+  z-index: 5;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 8px;
+
+  color: var(--text-muted);
+
+  font-size: 10px;
+
+  letter-spacing: 0.14em;
+}
+
+.status-dot {
+  width: 7px;
+
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: var(--success);
+
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+}
+
+/* Map */
+
+.antarctica-map {
+  position: relative;
+
+  width: 100%;
+
+  height: 470px;
+
+  margin-top: 20px;
+}
+
+/* Temporary map */
+
+.map-placeholder {
+  position: absolute;
+
+  top: 50%;
+
+  left: 50%;
+
+  transform: translate(-50%, -50%);
+
+  width: 300px;
+
+  height: 220px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-direction: column;
+
+  border: 1px solid rgba(56, 189, 248, 0.25);
+
+  border-radius: 50%;
+
+  background: radial-gradient(
+    ellipse,
+    rgba(56, 189, 248, 0.13),
+    rgba(7, 26, 45, 0.6)
+  );
+
+  box-shadow: 0 0 60px rgba(56, 189, 248, 0.08);
+}
+
+.map-title {
+  color: var(--text-primary);
+
+  font-size: 22px;
+
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+}
+
+.map-subtitle {
+  margin-top: 8px;
+
+  color: var(--polar-ice);
+
+  font-size: 9px;
+
+  letter-spacing: 0.18em;
+}
+
+/* =========================================================
+   STATION LABELS
+========================================================= */
+
+.station {
+  position: absolute;
+
+  z-index: 5;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 4px;
+
+  padding: 10px 13px;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-sm);
+
+  background: rgba(3, 17, 31, 0.8);
+
+  backdrop-filter: blur(8px);
+
+  box-shadow: var(--shadow-card);
+}
+
+.station strong {
+  font-size: 11px;
+
+  letter-spacing: 0.05em;
+}
+
+.station small {
+  display: flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  color: var(--text-muted);
+
+  font-size: 9px;
+}
+
+.station-bharati {
+  top: 100px;
+
+  right: 8%;
+}
+
+.station-maitri {
+  top: 230px;
+
+  right: 2%;
+}
+
+.station-himadri {
+  bottom: 60px;
+
+  right: 12%;
+}
+
+.station-status {
+  width: 6px;
+
+  height: 6px;
+
+  border-radius: 50%;
+}
+
+.station-status.online {
+  background: var(--success);
+
+  box-shadow: 0 0 8px rgba(34, 197, 94, 0.7);
+}
+
+.station-status.warning {
+  background: var(--warning);
+
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.7);
+}
+
+/* =========================================================
+   METRICS
+========================================================= */
+
+.metrics-panel {
+  position: relative;
+
+  z-index: 10;
+
+  display: grid;
+
+  grid-template-columns: repeat(5, 1fr);
+
+  overflow: hidden;
+
+  border: 1px solid rgba(56, 189, 248, 0.22);
+
+  border-radius: var(--radius-lg);
+
+  background: rgba(4, 21, 37, 0.88);
+
+  backdrop-filter: blur(18px);
+
+  box-shadow: var(--shadow-card);
+}
+
+.metric {
+  padding: 21px;
+
+  border-right: 1px solid var(--border);
+}
+
+.metric:last-child {
+  border-right: none;
+}
+
+.metric strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  font-size: 29px;
+
+  line-height: 1;
+}
+
+.metric span {
+  display: block;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  letter-spacing: 0.06em;
+}
+
+.metric small {
+  display: block;
+
+  margin-top: 7px;
+
+  color: var(--polar-ice);
+
+  font-size: 9px;
+}
+
+.metric .success {
+  color: var(--success);
+}
+
+.metric .danger {
+  color: var(--danger);
+}
+
+/* =========================================================
+   FEATURES
+========================================================= */
+
+.features-section {
+  padding: 110px 0;
+
+  background: linear-gradient(#03111f, #020b18);
+}
+
+.section-heading {
+  margin-bottom: 42px;
+}
+
+.section-heading h2 {
+  margin: 0 0 10px;
+
+  font-size: clamp(30px, 3vw, 43px);
+
+  line-height: 1.05;
+}
+
+.section-heading p {
+  margin: 0;
+
+  color: var(--text-muted);
+}
+
+/* Feature card */
+
+.feature-card {
+  position: relative;
+
+  height: 100%;
+
+  min-height: 250px;
+
+  padding: 28px 25px;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+
+  background: linear-gradient(
+    145deg,
+    rgba(7, 26, 45, 0.96),
+    rgba(3, 17, 31, 0.98)
+  );
+
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+
+  border-color: var(--border-active);
+
+  box-shadow:
+    0 15px 35px rgba(0, 0, 0, 0.35),
+    0 0 25px rgba(56, 189, 248, 0.08);
+}
+
+.feature-icon {
+  margin-bottom: 25px;
+
+  color: var(--polar-ice);
+
+  font-size: 38px;
+}
+
+.feature-card h3 {
+  margin-bottom: 10px;
+
+  font-size: 17px;
+}
+
+.feature-card p {
+  max-width: 230px;
+
+  color: var(--text-secondary);
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+.feature-card > a {
+  position: absolute;
+
+  bottom: 20px;
+
+  left: 25px;
+
+  display: grid;
+
+  place-items: center;
+
+  width: 38px;
+
+  height: 38px;
+
+  border: 1px solid var(--border-active);
+
+  border-radius: 50%;
+
+  color: var(--polar-ice);
+
+  transition: 0.2s ease;
+}
+
+.feature-card:hover > a {
+  background: var(--polar-blue);
+
+  color: white;
+}
+
+/* =========================================================
+   ABOUT
+========================================================= */
+
+.about-section {
+  padding: 110px 0;
+
+  background: var(--bg-sidebar);
+
+  border-top: 1px solid var(--border);
+}
+
+.about-section h2 {
+  margin: 0;
+
+  font-size: clamp(32px, 3vw, 45px);
+
+  line-height: 1.05;
+}
+
+.about-section h2 span {
+  color: var(--polar-ice);
+}
+
+/* About grid */
+
+.about-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, 1fr);
+
+  overflow: hidden;
+
+  border: 1px solid var(--border);
+
+  border-radius: var(--radius-lg);
+}
+
+.about-item {
+  min-height: 150px;
+
+  padding: 25px;
+
+  border: 1px solid var(--border);
+
+  background: var(--bg-surface);
+}
+
+.about-item strong {
+  font-size: 12px;
+
+  letter-spacing: 0.08em;
+}
+
+.about-item p {
+  margin: 12px 0 0;
+
+  color: var(--text-muted);
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+/* =========================================================
+   CTA
+========================================================= */
+
+.cta-section {
+  padding: 90px 0;
+
+  background: var(--bg-main);
+}
+
+.cta-card {
+  padding: 75px 30px;
+
+  text-align: center;
+
+  border: 1px solid var(--border-active);
+
+  border-radius: var(--radius-xl);
+
+  background:
+    radial-gradient(
+      circle at 50% 25%,
+      rgba(56, 189, 248, 0.11),
+      transparent 45%
+    ),
+    var(--bg-surface);
+}
+
+.cta-card h2 {
+  margin: 10px 0 30px;
+
+  font-size: clamp(28px, 3vw, 43px);
+
+  line-height: 1.05;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.polar-footer {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 25px 4%;
+
+  border-top: 1px solid var(--border);
+
+  background: #010813;
+
+  color: var(--text-muted);
+
+  font-size: 11px;
+}
+
+.footer-brand {
+  display: flex;
+
+  align-items: center;
+
+  gap: 15px;
+}
+
+.footer-brand strong {
+  color: var(--text-primary);
+}
+
+/* =========================================================
+   SCROLL REVEAL
+========================================================= */
+
+.reveal {
+  opacity: 0;
+
+  transform: translateY(25px);
+
+  transition:
+    opacity 0.7s ease,
+    transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+
+  transform: translateY(0);
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 992px) {
+  .hero-section {
+    padding-top: 120px;
+  }
+
+  .hero-copy {
+    text-align: center;
+  }
+
+  .hero-line {
+    margin-left: auto;
+
+    margin-right: auto;
+  }
+
+  .hero-copy p {
+    margin-left: auto;
+
+    margin-right: auto;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .polar-visual {
+    margin-top: 35px;
+  }
+
+  .metrics-panel {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .metric:nth-child(2n) {
+    border-right: none;
+  }
+
+  .metric {
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 576px) {
+  .polar-navbar {
+    padding: 12px 0;
+  }
+
+  .brand-text small {
+    display: none;
+  }
+
+  .hero-section {
+    padding-top: 105px;
+  }
+
+  .hero-copy h1 {
+    font-size: 39px;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+  }
+
+  .hero-btn {
+    width: 100%;
+  }
+
+  .polar-visual {
+    min-height: 390px;
+  }
+
+  .antarctica-map {
+    height: 350px;
+  }
+
+  .map-placeholder {
+    width: 240px;
+
+    height: 180px;
+  }
+
+  .station-bharati {
+    top: 65px;
+  }
+
+  .station-maitri {
+    top: 155px;
+  }
+
+  .station-himadri {
+    bottom: 25px;
+  }
+
+  .metrics-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .metric,
+  .metric:nth-child(2n) {
+    border-right: none;
+  }
+
+  .metric:last-child {
+    border-bottom: none;
+  }
+
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .polar-footer {
+    flex-direction: column;
+
+    text-align: center;
+  }
+}
