@@ -1,0 +1,11 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Secrets - never commit these
+config.py
+
+# Editor / OS
+.vscode/
+.DS_Store
