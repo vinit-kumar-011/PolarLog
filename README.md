@@ -16,7 +16,7 @@
 
 ![Frontend](https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JS-E34F26?style=for-the-badge)
 
-![Backend](https://img.shields.io/badge/Backend-Flask-000000?style=for-the-badge)
+![Backend](https://img.shields.io/badge/BACKEND-PYTHON-black)
 
 ![Database](https://img.shields.io/badge/Database-MySQL-4479A1?style=for-the-badge)
 
