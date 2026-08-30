@@ -2,907 +2,1019 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <meta
-      name="description"
-      content="PolarLog — Integrated Polar Expedition Logistics and Asset Management System"
-    />
-
-    <title>PolarLog | Polar Expedition Logistics</title>
-
-    <!-- Bootstrap -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-
-    <!-- PolarLog Design System -->
-    <link rel="stylesheet" href="css/design-system.css" />
-
-    <!-- Landing Page CSS -->
-    <link rel="stylesheet" href="css/landing.css" />
+    <title>PolarLog — Integrated Polar Expedition Logistics</title>
+    <link rel="stylesheet" href="..\css\landing.css" />
   </head>
-
   <body>
-    <!-- =========================================
-         NAVBAR
-    ========================================== -->
+    <div id="stars"></div>
 
-    <nav class="navbar navbar-expand-lg polar-navbar">
-      <div class="container-fluid px-4 px-lg-5">
-        <!-- Logo -->
-        <a class="navbar-brand polar-brand" href="#home">
-          <span class="brand-icon"> ❄ </span>
-
-          <span>
-            <strong>POLARLOG</strong>
-
-            <small> Integrated Polar Expedition Logistics </small>
-          </span>
-        </a>
-
-        <!-- Mobile menu button -->
-
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#mainNavbar"
-        >
-          ☰
-        </button>
-
-        <!-- Navigation -->
-
-        <div class="collapse navbar-collapse" id="mainNavbar">
-          <ul class="navbar-nav ms-auto align-items-lg-center">
-            <li class="nav-item">
-              <a class="nav-link active" href="#home"> Home </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="#about"> About </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="#features"> Features </a>
-            </li>
-
-            <li class="nav-item">
-              <a class="nav-link" href="#stations"> Stations </a>
-            </li>
-
-            <li class="nav-item ms-lg-3">
-              <a class="btn polar-btn" href="login.html"> Sign In </a>
-            </li>
-          </ul>
+    <header>
+      <nav class="wrap">
+        <div class="brand">
+          <span class="snow">❄</span>
+          <div class="brand-text">
+            <b>POLARLOG</b>
+            <span>Integrated Polar Expedition Logistics</span>
+          </div>
         </div>
-      </div>
-    </nav>
+        <div class="navlinks">
+          <a data-target="#home" class="active">Home</a>
+          <a data-target="#about">About</a>
+          <a data-target="#features">Features</a>
+          <a data-target="#preview">Dashboard</a>
+          <a data-target="#stations">Stations</a>
+        </div>
+        <button class="signin" id="signinBtn">Sign In</button>
+      </nav>
+    </header>
 
-    <!-- =========================================
-         HERO SECTION
-    ========================================== -->
+    <section id="home" class="hero-section">
+      <div class="hero-photo"></div>
+      <div class="hero-fade"></div>
+      <div class="wrap hero">
+        <div>
+          <h1 class="title">Integrated Polar<br />Expedition Logistics</h1>
+          <div class="eyebrow-rule"></div>
+          <p class="sub">
+            One platform for cargo, inventory, personnel, shipments and station
+            operations across India's Antarctic missions.
+          </p>
+          <button class="enter-btn" id="enterBtn">
+            ENTER POLARLOG
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </button>
+        </div>
 
-    <main id="home" class="hero-section">
-      <!-- Decorative background -->
+        <div class="map-stage" id="mapStage">
+          <svg viewBox="0 0 560 460" id="mapSvg">
+            <path
+              class="continent-path"
+              d="M235 70 C210 90 195 130 175 150 C150 175 120 190 115 230 C110 270 140 285 150 320
+        C160 355 145 390 175 405 C205 420 245 400 275 385 C300 372 320 390 350 380
+        C380 370 395 335 385 305 C378 283 400 270 405 240 C410 205 385 185 375 155
+        C365 125 335 115 320 95 C305 75 260 55 235 70 Z"
+            />
+            <line class="net-line" x1="255" y1="150" x2="200" y2="215" />
+            <line class="net-line" x1="255" y1="150" x2="300" y2="235" />
+            <line class="net-line" x1="300" y1="235" x2="200" y2="215" />
+            <line class="net-line" x1="300" y1="235" x2="330" y2="330" />
+            <line class="net-line" x1="300" y1="235" x2="400" y2="150" />
+            <line class="net-line" x1="400" y1="150" x2="470" y2="95" />
+            <line class="net-line" x1="300" y1="235" x2="450" y2="235" />
+            <line class="net-line" x1="330" y1="330" x2="430" y2="365" />
+            <circle class="net-node" cx="255" cy="150" r="4.5" />
+            <circle class="net-node" cx="200" cy="215" r="4.5" />
+            <circle class="net-node" cx="300" cy="235" r="4.5" />
+            <circle class="net-node" cx="330" cy="330" r="4.5" />
 
-      <div class="hero-grid"></div>
+            <g
+              class="station-dot"
+              data-key="bharati"
+              transform="translate(470,95)"
+            >
+              <circle class="pulse" r="5" />
+              <circle class="core" r="5" />
+            </g>
+            <g
+              class="station-dot"
+              data-key="maitri"
+              transform="translate(450,235)"
+            >
+              <circle class="pulse" r="5" />
+              <circle class="core" r="5" />
+            </g>
+            <g
+              class="station-dot amber"
+              data-key="himadri"
+              transform="translate(430,365)"
+            >
+              <circle class="pulse" r="5" />
+              <circle class="core" r="5" />
+            </g>
+          </svg>
 
-      <div class="hero-glow"></div>
-
-      <div class="container-fluid px-4 px-lg-5">
-        <div class="row align-items-center hero-content">
-          <!-- HERO TEXT -->
-
-          <div class="col-lg-5 hero-copy">
-            <div class="eyebrow">MISSION OPERATIONS SYSTEM</div>
-
-            <h1>
-              INTEGRATED POLAR
-
-              <span> EXPEDITION LOGISTICS </span>
-            </h1>
-
-            <div class="hero-line"></div>
-
-            <p>
-              One platform for cargo, inventory, personnel, shipments and
-              station operations across India's Antarctic missions.
-            </p>
-
-            <div class="hero-actions">
-              <a href="login.html" class="btn polar-btn hero-btn">
-                ENTER POLARLOG
-                <span>→</span>
-              </a>
-
-              <a href="#features" class="hero-link"> Explore capabilities ↓ </a>
+          <div
+            class="station-label"
+            style="left: 83%; top: 14%"
+            data-key="bharati"
+          >
+            <div class="name-row">
+              <span class="flagchip"
+                ><div style="background: #f4931e"></div>
+                <div style="background: #fff"></div>
+                <div style="background: #0e8a3e"></div
+              ></span>
+              BHARATI
+            </div>
+            <div class="coords">
+              <span class="dot"></span>70° 44' S, 11° 44' E
             </div>
           </div>
 
-          <!-- POLAR VISUAL -->
+          <div
+            class="station-label"
+            style="left: 79%; top: 57%"
+            data-key="maitri"
+          >
+            <div class="name-row">
+              <span class="flagchip"
+                ><div style="background: #f4931e"></div>
+                <div style="background: #fff"></div>
+                <div style="background: #0e8a3e"></div
+              ></span>
+              MAITRI
+            </div>
+            <div class="coords">
+              <span class="dot"></span>70° 45' S, 11° 44' E
+            </div>
+          </div>
 
-          <div class="col-lg-7">
-            <div class="polar-visual" id="stations">
-              <div class="visual-label">
-                <span class="status-dot"></span>
+          <div
+            class="station-label"
+            style="left: 75%; top: 89%"
+            data-key="himadri"
+          >
+            <div class="name-row">
+              <span class="flagchip"
+                ><div style="background: #f4931e"></div>
+                <div style="background: #fff"></div>
+                <div style="background: #0e8a3e"></div
+              ></span>
+              HIMADRI
+            </div>
+            <div class="coords amber">
+              <span class="dot"></span>69° 24' S, 76° 12' E
+            </div>
+          </div>
 
-                POLAR OPERATIONS NETWORK
+          <div
+            class="station-panel"
+            id="bharatiPanel"
+            style="left: 78%; top: 26%"
+          >
+            <h4>Bharati Station</h4>
+            <p>
+              Larsemann Hills, East Antarctica. Year-round research station
+              supporting geoscience and remote sensing.
+            </p>
+            <span class="status">Operational</span>
+          </div>
+          <div
+            class="station-panel"
+            id="maitriPanel"
+            style="left: 74%; top: 68%"
+          >
+            <h4>Maitri Station</h4>
+            <p>
+              Schirmacher Oasis. Primary logistics hub for cargo transfer and
+              resupply operations.
+            </p>
+            <span class="status">Operational</span>
+          </div>
+          <div
+            class="station-panel"
+            id="himadriPanel"
+            style="left: 70%; top: 97%"
+          >
+            <h4>Himadri Station</h4>
+            <p>
+              Ny-Ålesund, Arctic (Svalbard). India's Arctic research base —
+              separate resupply cycle from the Antarctic stations.
+            </p>
+            <span class="status amber">3 alerts pending</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="wrap">
+      <div class="stats-bar" id="statsBar">
+        <div class="stat">
+          <div class="icn">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path d="M3 21h18M4 21V9l8-5 8 5v12M9 21v-6h6v6" />
+            </svg>
+          </div>
+          <div>
+            <div class="num" data-count="3">0</div>
+            <div class="lbl">ACTIVE STATIONS</div>
+            <div class="sub green">All stations operational</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="icn">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+            </svg>
+          </div>
+          <div>
+            <div class="num" data-count="127">0</div>
+            <div class="lbl">ACTIVE CARGO</div>
+            <div class="sub blue">In transit &amp; pending</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="icn">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path
+                d="M3 17l2-8h14l2 8M3 17h18M6 21h.01M18 21h.01M5 9V5h4l2 4"
+              />
+            </svg>
+          </div>
+          <div>
+            <div class="num" data-count="26">0</div>
+            <div class="lbl">SHIPMENTS</div>
+            <div class="sub blue">Across all routes</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="icn">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <circle cx="8" cy="8" r="3.2" />
+              <circle cx="17" cy="9" r="2.6" />
+              <path d="M2 21v-1a6 6 0 0 1 12 0v1M15 21v-1a4 4 0 0 1 8 0v1" />
+            </svg>
+          </div>
+          <div>
+            <div class="num" data-count="142">0</div>
+            <div class="lbl">PERSONNEL</div>
+            <div class="sub blue">Deployed across stations</div>
+          </div>
+        </div>
+        <div class="stat">
+          <div class="icn">
+            <svg
+              width="30"
+              height="30"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.6"
+            >
+              <path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
+              <path d="M10 21a2 2 0 0 0 4 0" />
+            </svg>
+          </div>
+          <div>
+            <div class="num" data-count="18">0</div>
+            <div class="lbl">ALERTS</div>
+            <div class="sub red">Requires attention</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="features" id="features">
+        <div
+          class="fcard"
+          data-info="Track cargo manifests, weights, and custody handoffs from port of origin to every station store room, with duplicate-procurement flags."
+        >
+          <div class="icn">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+            </svg>
+          </div>
+          <h3>Cargo Management</h3>
+          <p>Track and manage cargo across all stations.</p>
+          <div class="arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="fcard"
+          data-info="Live stock levels for fuel, rations, and spares at Bharati, Maitri and Himadri, with low-stock and resupply-gap alerts."
+        >
+          <div class="icn">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M9 3h6v4H9zM5 7h14l1 14H4z" />
+            </svg>
+          </div>
+          <h3>Inventory Control</h3>
+          <p>Real-time inventory and stock level monitoring.</p>
+          <div class="arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="fcard"
+          data-info="Follow every shipment leg by vessel or aircraft, from departure to delivery, with live status updates for contractors and Navy/Coast Guard."
+        >
+          <div class="icn">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path
+                d="M1 15V6a1 1 0 0 1 1-1h11v10M1 15h15M1 15l2 4h13M16 5h3l3 5v5h-6zM6 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM17 19a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"
+              />
+            </svg>
+          </div>
+          <h3>Shipment Tracking</h3>
+          <p>End-to-end shipment visibility and updates.</p>
+          <div class="arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="fcard"
+          data-info="Manage rosters, roles, and rotations for every expedition member deployed across the three stations."
+        >
+          <div class="icn">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <circle cx="9" cy="7" r="3" />
+              <path d="M2 21v-1a7 7 0 0 1 14 0v1" />
+              <circle cx="17" cy="9" r="2.4" />
+              <path d="M14.5 21v-1a4.5 4.5 0 0 1 7.5-3.4" />
+            </svg>
+          </div>
+          <h3>Personnel Management</h3>
+          <p>Manage team, roles and deployment status.</p>
+          <div class="arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+        </div>
+        <div
+          class="fcard"
+          data-info="Smart, threshold-based alerts for critical events: low stock, delayed shipments, and equipment faults, routed to the right team."
+        >
+          <div class="icn">
+            <svg
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
+              <path d="M10 21a2 2 0 0 0 4 0" />
+            </svg>
+          </div>
+          <h3>Intelligent Alerts</h3>
+          <p>Smart alerts and notifications for critical events.</p>
+          <div class="arrow">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2.4"
+            >
+              <path d="M5 12h14M13 6l6 6-6 6" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <section class="preview-section" id="preview">
+        <div class="preview-head">
+          <div>
+            <h2>Inside the dashboard</h2>
+            <p>
+              One shared ledger for every station — cargo, alerts and personnel,
+              updated as it moves.
+            </p>
+          </div>
+          <div class="preview-tabs">
+            <button class="ptab active" data-view="cargo">
+              Cargo Manifest
+            </button>
+            <button class="ptab" data-view="alerts">Alerts</button>
+            <button class="ptab" data-view="personnel">Personnel</button>
+          </div>
+        </div>
+
+        <div class="browser-frame">
+          <div class="browser-bar">
+            <div class="traffic">
+              <span class="r"></span><span class="y"></span
+              ><span class="g"></span>
+            </div>
+            <div class="browser-url"><b>🔒</b> app.polarlog.in/dashboard</div>
+          </div>
+
+          <div class="dash-mock">
+            <div class="dash-side">
+              <div class="dlogo">❄ POLARLOG</div>
+              <div class="dnav" data-nav="cargo">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path d="M21 8l-9-5-9 5 9 5 9-5zM3 8v8l9 5 9-5V8M12 13v8" />
+                </svg>
+                Cargo
               </div>
+              <div class="dnav" data-nav="inventory">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path d="M9 3h6v4H9zM5 7h14l1 14H4z" />
+                </svg>
+                Inventory
+              </div>
+              <div class="dnav" data-nav="shipments">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path d="M3 17l2-8h14l2 8M3 17h18" />
+                </svg>
+                Shipments
+              </div>
+              <div class="dnav" data-nav="personnel">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <circle cx="9" cy="7" r="3" />
+                  <path d="M2 21v-1a7 7 0 0 1 14 0v1" />
+                </svg>
+                Personnel
+              </div>
+              <div class="dnav" data-nav="alerts">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                >
+                  <path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
+                </svg>
+                Alerts <span class="badge-count">18</span>
+              </div>
+            </div>
 
-              <!-- We'll build the Antarctica visual here -->
-
-              <div class="antarctica-map">
-                <div class="map-placeholder">
-                  ANTARCTICA
-
-                  <span> OPERATIONS NETWORK </span>
+            <div class="dash-main">
+              <div class="dash-topstats">
+                <div class="mini-stat">
+                  <div class="n">127</div>
+                  <div class="l">ACTIVE CARGO</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="n">26</div>
+                  <div class="l">SHIPMENTS</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="n">142</div>
+                  <div class="l">PERSONNEL</div>
+                </div>
+                <div class="mini-stat">
+                  <div class="n" style="color: var(--red)">18</div>
+                  <div class="l">ALERTS</div>
                 </div>
               </div>
-            </div>
-          </div>
-        </div>
 
-        <!-- =====================================
-                 OPERATIONAL METRICS
-            ====================================== -->
-
-        <section class="metrics-panel" aria-label="Operational metrics">
-          <div class="metric">
-            <strong>03</strong>
-
-            <span> ACTIVE STATIONS </span>
-
-            <small class="success"> All stations operational </small>
-          </div>
-
-          <div class="metric">
-            <strong>127</strong>
-
-            <span> ACTIVE CARGO </span>
-
-            <small> In transit & pending </small>
-          </div>
-
-          <div class="metric">
-            <strong>26</strong>
-
-            <span> SHIPMENTS </span>
-
-            <small> Across all routes </small>
-          </div>
-
-          <div class="metric">
-            <strong>142</strong>
-
-            <span> PERSONNEL </span>
-
-            <small> Deployed across stations </small>
-          </div>
-
-          <div class="metric">
-            <strong>18</strong>
-
-            <span> ALERTS </span>
-
-            <small class="danger"> Requires attention </small>
-          </div>
-        </section>
-      </div>
-    </main>
-
-    <!-- =========================================
-         FEATURES
-    ========================================== -->
-
-    <section id="features" class="features-section">
-      <div class="container-fluid px-4 px-lg-5">
-        <div class="section-heading">
-          <div class="eyebrow">CORE CAPABILITIES</div>
-
-          <h2>BUILT FOR POLAR OPERATIONS</h2>
-
-          <p>
-            One operational view across the systems your expedition depends on.
-          </p>
-        </div>
-
-        <div class="row g-4">
-          <!-- Cargo -->
-
-          <div class="col-md-6 col-xl">
-            <article class="feature-card">
-              <div class="feature-icon">◇</div>
-
-              <h3>Cargo Management</h3>
-
-              <p>Track and manage cargo across all stations.</p>
-
-              <a href="pages/cargo.html"> → </a>
-            </article>
-          </div>
-
-          <!-- Inventory -->
-
-          <div class="col-md-6 col-xl">
-            <article class="feature-card">
-              <div class="feature-icon">▤</div>
-
-              <h3>Inventory Control</h3>
-
-              <p>Real-time inventory and stock level monitoring.</p>
-
-              <a href="pages/inventory.html"> → </a>
-            </article>
-          </div>
-
-          <!-- Shipments -->
-
-          <div class="col-md-6 col-xl">
-            <article class="feature-card">
-              <div class="feature-icon">▱</div>
-
-              <h3>Shipment Tracking</h3>
-
-              <p>End-to-end shipment visibility and updates.</p>
-
-              <a href="pages/shipments.html"> → </a>
-            </article>
-          </div>
-
-          <!-- Personnel -->
-
-          <div class="col-md-6 col-xl">
-            <article class="feature-card">
-              <div class="feature-icon">♙</div>
-
-              <h3>Personnel Management</h3>
-
-              <p>Manage teams, roles and deployment status.</p>
-
-              <a href="pages/personnel.html"> → </a>
-            </article>
-          </div>
-
-          <!-- Alerts -->
-
-          <div class="col-md-6 col-xl">
-            <article class="feature-card">
-              <div class="feature-icon">♧</div>
-
-              <h3>Intelligent Alerts</h3>
-
-              <p>Smart alerts and notifications for critical events.</p>
-
-              <a href="pages/alerts.html"> → </a>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- =========================================
-         ABOUT
-    ========================================== -->
-
-    <section id="about" class="about-section">
-      <div class="container">
-        <div class="row align-items-center g-5">
-          <div class="col-lg-5">
-            <div class="eyebrow">WHY POLARLOG</div>
-
-            <h2>
-              ONE OPERATION.
-
-              <br />
-
-              <span> ONE VIEW. </span>
-            </h2>
-          </div>
-
-          <div class="col-lg-7">
-            <div class="about-grid">
-              <div>
-                <strong> LOW CONNECTIVITY </strong>
-
-                <p>
-                  Designed for remote environments where reliable connectivity
-                  cannot be assumed.
-                </p>
+              <div class="ledger" id="ledgerTable">
+                <div class="ledger-head">
+                  <span>ITEM</span><span>STATION</span><span>WEIGHT</span
+                  ><span>ETA</span><span>STATUS</span>
+                </div>
+                <div class="ledger-row">
+                  <div class="item">
+                    <b>Diesel fuel drums</b><span>Manifest #PL-2291</span>
+                  </div>
+                  <span>Maitri</span><span>1,200 kg</span><span>Mar 14</span
+                  ><span class="stamp transit">In Transit</span>
+                </div>
+                <div class="ledger-row">
+                  <div class="item">
+                    <b>Spectrometer unit</b><span>Manifest #PL-2288</span>
+                  </div>
+                  <span>Bharati</span><span>84 kg</span><span>—</span
+                  ><span class="stamp critical">Critical</span>
+                </div>
+                <div class="ledger-row">
+                  <div class="item">
+                    <b>Ration pallets (Q1)</b><span>Manifest #PL-2277</span>
+                  </div>
+                  <span>Himadri</span><span>3,050 kg</span><span>Feb 28</span
+                  ><span class="stamp delivered">Delivered</span>
+                </div>
+                <div class="ledger-row">
+                  <div class="item">
+                    <b>Snowcat spare parts</b><span>Manifest #PL-2299</span>
+                  </div>
+                  <span>Maitri</span><span>310 kg</span><span>Mar 20</span
+                  ><span class="stamp transit">In Transit</span>
+                </div>
+                <div class="ledger-row">
+                  <div class="item">
+                    <b>Medical resupply kit</b><span>Manifest #PL-2301</span>
+                  </div>
+                  <span>Bharati</span><span>46 kg</span><span>Mar 12</span
+                  ><span class="stamp critical">Critical</span>
+                </div>
               </div>
-
-              <div>
-                <strong> MULTI-STATION </strong>
-
-                <p>
-                  Keep expedition station operations visible from one platform.
-                </p>
-              </div>
-
-              <div>
-                <strong> OPERATIONAL VISIBILITY </strong>
-
-                <p>
-                  Bring cargo, inventory, personnel and alerts into a single
-                  operational view.
-                </p>
-              </div>
-
-              <div>
-                <strong> ROLE-BASED ACCESS </strong>
-
-                <p>
-                  Give teams information and controls relevant to their
-                  operational role.
-                </p>
+              <div class="dash-fade">
+                <button class="preview-cta" id="previewSignIn">
+                  Sign in to view live data
+                </button>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- =========================================
-         FINAL CTA
-    ========================================== -->
-
-    <section class="cta-section">
-      <div class="container">
-        <div class="cta-card">
-          <div class="eyebrow">MISSION CONTROL</div>
-
-          <h2>
-            COORDINATE THE MISSION
-            <br />
-            FROM ONE PLATFORM.
-          </h2>
-
-          <a href="login.html" class="btn polar-btn hero-btn">
-            ENTER POLARLOG →
-          </a>
+      <section class="info" id="about">
+        <h2>About PolarLog</h2>
+        <p class="lead">
+          India runs three permanent polar research stations — two in Antarctica
+          and one in the Arctic. PolarLog replaces fragmented spreadsheets and
+          manual logs across NCPOR, shipping contractors, and Navy/Coast Guard
+          with one shared operating picture.
+        </p>
+        <div class="about-grid">
+          <div class="card">
+            <b>Why it exists</b
+            ><span
+              >Resupply windows are short and weather-locked — a missed manifest
+              or lost asset can mean waiting a full season for the next
+              ship.</span
+            >
+          </div>
+          <div class="card">
+            <b>Who uses it</b
+            ><span
+              >NCPOR logistics staff, station personnel, and transport
+              contractors, each with role-based access to the same live
+              data.</span
+            >
+          </div>
+          <div class="card">
+            <b>What's next</b
+            ><span
+              >Offline-first sync over Iridium/VSAT, AI cargo-weight
+              optimization, and ML-based consumable-depletion forecasting.</span
+            >
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- =========================================
-         FOOTER
-    ========================================== -->
+      <section class="info" id="stations">
+        <h2>Stations</h2>
+        <p class="lead">
+          Three stations, one shared ledger. Click a marker on the map above to
+          see live status for each.
+        </p>
+        <div class="about-grid">
+          <div class="card">
+            <b>Bharati — 70°44'S, 11°44'E</b
+            ><span
+              >Larsemann Hills, East Antarctica. Geoscience and remote
+              sensing.</span
+            >
+          </div>
+          <div class="card">
+            <b>Maitri — 70°45'S, 11°44'E</b
+            ><span>Schirmacher Oasis. Primary cargo and resupply hub.</span>
+          </div>
+          <div class="card">
+            <b>Himadri — 69°24'S, 76°12'E</b
+            ><span
+              >Ny-Ålesund, Arctic. Separate resupply cycle, 3 alerts
+              pending.</span
+            >
+          </div>
+        </div>
+      </section>
+    </div>
 
-    <footer class="polar-footer">
-      <div>
-        <strong>❄ POLARLOG</strong>
-        <span> Integrated Polar Expedition Logistics </span>
-      </div>
-
-      <div>Prototype · Smart India Hackathon 2026</div>
+    <footer>
+      PolarLog — Integrated Polar Expedition Logistics · Prototype for SOA
+      Ideathon 2026
     </footer>
 
-    <!doctype html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-        <meta
-          name="description"
-          content="PolarLog — Integrated Polar Expedition Logistics and Asset Management System"
-        />
-
-        <title>PolarLog | Integrated Polar Expedition Logistics</title>
-
-        <!-- =====================================================
-         BOOTSTRAP 5
-    ====================================================== -->
-
-        <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-        />
-
-        <!-- =====================================================
-         POLARLOG STYLES
-    ====================================================== -->
-
-        <!-- Shared design system -->
-        <link rel="stylesheet" href="css/design-system.css" />
-
-        <!-- Landing page specific styles -->
-        <link rel="stylesheet" href="css/landing.css" />
-      </head>
-
-      <body>
-        <!-- =====================================================
-         NAVIGATION BAR
-    ====================================================== -->
-
-        <nav class="navbar navbar-expand-lg polar-navbar" id="main-navbar">
-          <div class="container-fluid px-4 px-lg-5">
-            <!-- BRAND -->
-
-            <a class="navbar-brand polar-brand" href="#home">
-              <span class="brand-icon"> ❄ </span>
-
-              <span class="brand-text">
-                <strong> POLARLOG </strong>
-
-                <small> Integrated Polar Expedition Logistics </small>
-              </span>
-            </a>
-
-            <!-- MOBILE MENU BUTTON -->
-
-            <button
-              class="navbar-toggler"
-              type="button"
-              data-bs-toggle="collapse"
-              data-bs-target="#mainNavbar"
-              aria-controls="mainNavbar"
-              aria-expanded="false"
-              aria-label="Toggle navigation"
-            >
-              ☰
-            </button>
-
-            <!-- NAVIGATION LINKS -->
-
-            <div class="collapse navbar-collapse" id="mainNavbar">
-              <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item">
-                  <a class="nav-link active" href="#home"> Home </a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#about"> About </a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#features"> Features </a>
-                </li>
-
-                <li class="nav-item">
-                  <a class="nav-link" href="#stations"> Stations </a>
-                </li>
-
-                <li class="nav-item ms-lg-3">
-                  <a href="login.html" class="btn polar-btn"> Sign In </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </nav>
-
-        <!-- =====================================================
-         HERO SECTION
-    ====================================================== -->
-
-        <main id="home" class="hero-section">
-          <!-- Decorative grid -->
-
-          <div class="hero-grid" aria-hidden="true"></div>
-
-          <!-- Background glow -->
-
-          <div class="hero-glow" aria-hidden="true"></div>
-
-          <div class="container-fluid px-4 px-lg-5">
-            <div class="row align-items-center hero-content">
-              <!-- =================================================
-                     HERO TEXT
-                ================================================== -->
-
-              <div class="col-lg-5 hero-copy">
-                <div class="eyebrow">MISSION OPERATIONS SYSTEM</div>
-
-                <h1>
-                  INTEGRATED POLAR
-
-                  <span> EXPEDITION LOGISTICS </span>
-                </h1>
-
-                <div class="hero-line" aria-hidden="true"></div>
-
-                <p>
-                  One platform for cargo, inventory, personnel, shipments and
-                  station operations across India's Antarctic missions.
-                </p>
-
-                <div class="hero-actions">
-                  <a href="login.html" class="btn polar-btn hero-btn">
-                    ENTER POLARLOG
-
-                    <span> → </span>
-                  </a>
-
-                  <a href="#features" class="hero-link">
-                    Explore capabilities ↓
-                  </a>
-                </div>
-              </div>
-
-              <!-- =================================================
-                     POLAR OPERATIONS VISUAL
-                ================================================== -->
-
-              <div class="col-lg-7" id="stations">
-                <div class="polar-visual">
-                  <!-- Visual heading -->
-
-                  <div class="visual-label">
-                    <span class="status-dot" aria-hidden="true"></span>
-
-                    POLAR OPERATIONS NETWORK
-                  </div>
-
-                  <!--
-
-                            Antarctica visualization will
-                            be implemented here.
-
-                            Later this can contain:
-
-                            • SVG Antarctica map
-                            • Station nodes
-                            • Shipment routes
-                            • Animated connections
-                            • Station status
-                            • Hover information
-
-                        -->
-
-                  <div class="antarctica-map" id="operations-map">
-                    <div class="map-placeholder">
-                      <span class="map-title"> ANTARCTICA </span>
-
-                      <span class="map-subtitle"> OPERATIONS NETWORK </span>
-                    </div>
-                  </div>
-
-                  <!-- Station information -->
-
-                  <div class="station station-bharati">
-                    <strong> 🇮🇳 BHARATI </strong>
-
-                    <small>
-                      <span class="station-status online"></span>
-
-                      Operational
-                    </small>
-                  </div>
-
-                  <div class="station station-maitri">
-                    <strong> 🇮🇳 MAITRI </strong>
-
-                    <small>
-                      <span class="station-status online"></span>
-
-                      Operational
-                    </small>
-                  </div>
-
-                  <div class="station station-himadri">
-                    <strong> 🇮🇳 HIMADRI </strong>
-
-                    <small>
-                      <span class="station-status warning"></span>
-
-                      Monitoring
-                    </small>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- =====================================================
-                 OPERATIONAL METRICS
-            ====================================================== -->
-
-            <section
-              class="metrics-panel"
-              id="operational-metrics"
-              aria-label="Current operational metrics"
-            >
-              <!-- ACTIVE STATIONS -->
-
-              <div class="metric">
-                <strong id="active-stations"> 03 </strong>
-
-                <span> ACTIVE STATIONS </span>
-
-                <small class="success"> All stations operational </small>
-              </div>
-
-              <!-- ACTIVE CARGO -->
-
-              <div class="metric">
-                <strong id="active-cargo"> 127 </strong>
-
-                <span> ACTIVE CARGO </span>
-
-                <small> In transit & pending </small>
-              </div>
-
-              <!-- SHIPMENTS -->
-
-              <div class="metric">
-                <strong id="active-shipments"> 26 </strong>
-
-                <span> SHIPMENTS </span>
-
-                <small> Across all routes </small>
-              </div>
-
-              <!-- PERSONNEL -->
-
-              <div class="metric">
-                <strong id="active-personnel"> 142 </strong>
-
-                <span> PERSONNEL </span>
-
-                <small> Deployed across stations </small>
-              </div>
-
-              <!-- ALERTS -->
-
-              <div class="metric">
-                <strong id="active-alerts"> 18 </strong>
-
-                <span> ALERTS </span>
-
-                <small class="danger"> Requires attention </small>
-              </div>
-            </section>
-          </div>
-        </main>
-
-        <!-- =====================================================
-         CORE FEATURES
-    ====================================================== -->
-
-        <section id="features" class="features-section">
-          <div class="container-fluid px-4 px-lg-5">
-            <!-- Section heading -->
-
-            <div class="section-heading">
-              <div class="eyebrow">CORE CAPABILITIES</div>
-
-              <h2>BUILT FOR POLAR OPERATIONS</h2>
-
-              <p>
-                One operational view across the systems your expedition depends
-                on.
-              </p>
-            </div>
-
-            <!-- Feature cards -->
-
-            <div class="row g-4">
-              <!-- =================================================
-                     CARGO
-                ================================================== -->
-
-              <div class="col-md-6 col-xl">
-                <article class="feature-card">
-                  <div class="feature-icon" aria-hidden="true">◇</div>
-
-                  <h3>Cargo Management</h3>
-
-                  <p>Track and manage cargo across all stations.</p>
-
-                  <a href="pages/cargo.html" aria-label="Open Cargo Management">
-                    →
-                  </a>
-                </article>
-              </div>
-
-              <!-- =================================================
-                     INVENTORY
-                ================================================== -->
-
-              <div class="col-md-6 col-xl">
-                <article class="feature-card">
-                  <div class="feature-icon" aria-hidden="true">▤</div>
-
-                  <h3>Inventory Control</h3>
-
-                  <p>Real-time inventory and stock level monitoring.</p>
-
-                  <a
-                    href="pages/inventory.html"
-                    aria-label="Open Inventory Control"
-                  >
-                    →
-                  </a>
-                </article>
-              </div>
-
-              <!-- =================================================
-                     SHIPMENTS
-                ================================================== -->
-
-              <div class="col-md-6 col-xl">
-                <article class="feature-card">
-                  <div class="feature-icon" aria-hidden="true">▱</div>
-
-                  <h3>Shipment Tracking</h3>
-
-                  <p>End-to-end shipment visibility and updates.</p>
-
-                  <a
-                    href="pages/shipments.html"
-                    aria-label="Open Shipment Tracking"
-                  >
-                    →
-                  </a>
-                </article>
-              </div>
-
-              <!-- =================================================
-                     PERSONNEL
-                ================================================== -->
-
-              <div class="col-md-6 col-xl">
-                <article class="feature-card">
-                  <div class="feature-icon" aria-hidden="true">♙</div>
-
-                  <h3>Personnel Management</h3>
-
-                  <p>Manage teams, roles and deployment status.</p>
-
-                  <a
-                    href="pages/personnel.html"
-                    aria-label="Open Personnel Management"
-                  >
-                    →
-                  </a>
-                </article>
-              </div>
-
-              <!-- =================================================
-                     ALERTS
-                ================================================== -->
-
-              <div class="col-md-6 col-xl">
-                <article class="feature-card">
-                  <div class="feature-icon" aria-hidden="true">♧</div>
-
-                  <h3>Intelligent Alerts</h3>
-
-                  <p>Smart alerts and notifications for critical events.</p>
-
-                  <a
-                    href="pages/alerts.html"
-                    aria-label="Open Intelligent Alerts"
-                  >
-                    →
-                  </a>
-                </article>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- =====================================================
-         ABOUT POLARLOG
-    ====================================================== -->
-
-        <section id="about" class="about-section">
-          <div class="container">
-            <div class="row align-items-center g-5">
-              <!-- Heading -->
-
-              <div class="col-lg-5">
-                <div class="eyebrow">WHY POLARLOG</div>
-
-                <h2>
-                  ONE OPERATION.
-
-                  <br />
-
-                  <span> ONE VIEW. </span>
-                </h2>
-              </div>
-
-              <!-- Capabilities -->
-
-              <div class="col-lg-7">
-                <div class="about-grid">
-                  <div class="about-item">
-                    <strong> LOW CONNECTIVITY </strong>
-
-                    <p>
-                      Designed for remote environments where reliable
-                      connectivity cannot be assumed.
-                    </p>
-                  </div>
-
-                  <div class="about-item">
-                    <strong> MULTI-STATION </strong>
-
-                    <p>
-                      Keep expedition station operations visible from one
-                      platform.
-                    </p>
-                  </div>
-
-                  <div class="about-item">
-                    <strong> OPERATIONAL VISIBILITY </strong>
-
-                    <p>
-                      Bring cargo, inventory, personnel and alerts into a single
-                      operational view.
-                    </p>
-                  </div>
-
-                  <div class="about-item">
-                    <strong> ROLE-BASED ACCESS </strong>
-
-                    <p>
-                      Give teams information and controls relevant to their
-                      operational role.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <!-- =====================================================
-         FINAL CALL TO ACTION
-    ====================================================== -->
-
-        <section class="cta-section">
-          <div class="container">
-            <div class="cta-card">
-              <div class="eyebrow">MISSION CONTROL</div>
-
-              <h2>
-                COORDINATE THE MISSION
-
-                <br />
-
-                FROM ONE PLATFORM.
-              </h2>
-
-              <a href="login.html" class="btn polar-btn hero-btn">
-                ENTER POLARLOG →
-              </a>
-            </div>
-          </div>
-        </section>
-
-        <!-- =====================================================
-         FOOTER
-    ====================================================== -->
-
-        <footer class="polar-footer">
-          <div class="footer-brand">
-            <strong> ❄ POLARLOG </strong>
-
-            <span> Integrated Polar Expedition Logistics </span>
-          </div>
-
-          <div class="footer-info">Prototype · Smart India Hackathon 2026</div>
-        </footer>
-
-        <!-- =====================================================
-         BOOTSTRAP JAVASCRIPT
-    ====================================================== -->
-
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-        <!-- =====================================================
-         POLARLOG JAVASCRIPT
-    ====================================================== -->
-
-        <script src="js/main.js"></script>
-
-        <script src="js/landing.js"></script>
-      </body>
-    </html>
+    <div class="modal-bg" id="modalBg">
+      <div class="modal" style="position: relative">
+        <button class="close" id="modalClose">&times;</button>
+        <h3 id="modalTitle">Sign in to PolarLog</h3>
+        <p id="modalSub">
+          Access cargo, inventory and shipment data for your station.
+        </p>
+        <input type="text" placeholder="Username" id="userField" />
+        <input type="password" placeholder="Password" />
+        <button class="go" id="modalGo">Continue</button>
+      </div>
+    </div>
+
+    <script>
+      // Nav scroll + active state
+      document.querySelectorAll(".navlinks a").forEach((link) => {
+        link.addEventListener("click", () => {
+          document
+            .querySelectorAll(".navlinks a")
+            .forEach((a) => a.classList.remove("active"));
+          link.classList.add("active");
+          const target = document.querySelector(link.dataset.target);
+          if (target)
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      });
+
+      // Station marker toggle panels
+      const panels = {
+        bharati: "bharatiPanel",
+        maitri: "maitriPanel",
+        himadri: "himadriPanel",
+      };
+      function closeAllPanels() {
+        Object.values(panels).forEach((id) =>
+          document.getElementById(id).classList.remove("show"),
+        );
+      }
+      document
+        .querySelectorAll(".station-dot, .station-label")
+        .forEach((el) => {
+          el.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const key = el.dataset.key;
+            const panelId = panels[key];
+            const panel = document.getElementById(panelId);
+            const wasOpen = panel.classList.contains("show");
+            closeAllPanels();
+            if (!wasOpen) panel.classList.add("show");
+          });
+        });
+      document.addEventListener("click", closeAllPanels);
+
+      // Stat count-up animation
+      function animateCounts() {
+        document.querySelectorAll(".num").forEach((el) => {
+          const target = parseInt(el.dataset.count, 10);
+          let cur = 0;
+          const step = Math.max(1, Math.ceil(target / 40));
+          const iv = setInterval(() => {
+            cur += step;
+            if (cur >= target) {
+              cur = target;
+              clearInterval(iv);
+            }
+            el.textContent = cur;
+          }, 25);
+        });
+      }
+      const statsObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              animateCounts();
+              statsObserver.disconnect();
+            }
+          });
+        },
+        { threshold: 0.4 },
+      );
+      statsObserver.observe(document.getElementById("statsBar"));
+
+      // Feature card click -> shows detail in modal-lite via alert-style panel
+      document.querySelectorAll(".fcard").forEach((card) => {
+        card.addEventListener("click", () => {
+          document.getElementById("modalTitle").textContent =
+            card.querySelector("h3").textContent;
+          document.getElementById("modalSub").textContent = card.dataset.info;
+          document.getElementById("userField").style.display = "none";
+          document.querySelector(".modal input[type=password]").style.display =
+            "none";
+          document.getElementById("modalGo").textContent = "Close";
+          document.getElementById("modalBg").classList.add("show");
+        });
+      });
+
+      // Enter PolarLog button -> scroll to stats bar
+      document.getElementById("enterBtn").addEventListener("click", () => {
+        document
+          .getElementById("statsBar")
+          .scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+
+      // Sign in modal
+      function openSignIn() {
+        document.getElementById("modalTitle").textContent =
+          "Sign in to PolarLog";
+        document.getElementById("modalSub").textContent =
+          "Access cargo, inventory and shipment data for your station.";
+        document.getElementById("userField").style.display = "block";
+        document.querySelector(".modal input[type=password]").style.display =
+          "block";
+        document.getElementById("modalGo").textContent = "Continue";
+        document.getElementById("modalBg").classList.add("show");
+      }
+      document
+        .getElementById("signinBtn")
+        .addEventListener("click", openSignIn);
+      document
+        .getElementById("previewSignIn")
+        .addEventListener("click", openSignIn);
+
+      // Dashboard preview: tabs + sidebar both drive the same "active view" state
+      const ledgerData = {
+        cargo: [
+          [
+            "Diesel fuel drums",
+            "Manifest #PL-2291",
+            "Maitri",
+            "1,200 kg",
+            "Mar 14",
+            "transit",
+            "In Transit",
+          ],
+          [
+            "Spectrometer unit",
+            "Manifest #PL-2288",
+            "Bharati",
+            "84 kg",
+            "—",
+            "critical",
+            "Critical",
+          ],
+          [
+            "Ration pallets (Q1)",
+            "Manifest #PL-2277",
+            "Himadri",
+            "3,050 kg",
+            "Feb 28",
+            "delivered",
+            "Delivered",
+          ],
+          [
+            "Snowcat spare parts",
+            "Manifest #PL-2299",
+            "Maitri",
+            "310 kg",
+            "Mar 20",
+            "transit",
+            "In Transit",
+          ],
+          [
+            "Medical resupply kit",
+            "Manifest #PL-2301",
+            "Bharati",
+            "46 kg",
+            "Mar 12",
+            "critical",
+            "Critical",
+          ],
+        ],
+        alerts: [
+          [
+            "Low fuel reserve",
+            "Threshold breach",
+            "Maitri",
+            "—",
+            "Now",
+            "critical",
+            "Critical",
+          ],
+          [
+            "Cargo hold sensor offline",
+            "Equipment fault",
+            "Bharati",
+            "—",
+            "2h ago",
+            "critical",
+            "Critical",
+          ],
+          [
+            "Shipment delayed 3 days",
+            "Weather hold",
+            "Himadri",
+            "—",
+            "Today",
+            "transit",
+            "In Transit",
+          ],
+          [
+            "Ration stock below 20%",
+            "Threshold breach",
+            "Maitri",
+            "—",
+            "Yesterday",
+            "transit",
+            "In Transit",
+          ],
+          [
+            "Generator maintenance due",
+            "Scheduled",
+            "Bharati",
+            "—",
+            "Resolved",
+            "delivered",
+            "Delivered",
+          ],
+        ],
+        personnel: [
+          [
+            "Dr. A. Rao — Glaciologist",
+            "On station",
+            "Bharati",
+            "—",
+            "—",
+            "delivered",
+            "Deployed",
+          ],
+          [
+            "Cdr. S. Iyer — Logistics",
+            "Rotation due",
+            "Maitri",
+            "—",
+            "Apr 02",
+            "transit",
+            "Rotating Out",
+          ],
+          [
+            "R. Thomas — Medic",
+            "On station",
+            "Himadri",
+            "—",
+            "—",
+            "delivered",
+            "Deployed",
+          ],
+          [
+            "Team Alpha (6)",
+            "Resupply crew",
+            "Maitri",
+            "—",
+            "Mar 18",
+            "transit",
+            "Incoming",
+          ],
+          [
+            "P. Nair — Comms",
+            "On station",
+            "Bharati",
+            "—",
+            "—",
+            "delivered",
+            "Deployed",
+          ],
+        ],
+      };
+      function renderLedger(key) {
+        const rows = ledgerData[key] || ledgerData.cargo;
+        const table = document.getElementById("ledgerTable");
+        const head = table.querySelector(".ledger-head");
+        table.innerHTML = "";
+        table.appendChild(head);
+        rows.forEach((r) => {
+          const row = document.createElement("div");
+          row.className = "ledger-row";
+          row.innerHTML = `<div class="item"><b>${r[0]}</b><span>${r[1]}</span></div><span>${r[2]}</span><span>${r[3]}</span><span>${r[4]}</span><span class="stamp ${r[5]}">${r[6]}</span>`;
+          table.appendChild(row);
+        });
+      }
+      function setActiveView(key) {
+        document
+          .querySelectorAll(".ptab")
+          .forEach((t) => t.classList.toggle("active", t.dataset.view === key));
+        document
+          .querySelectorAll(".dnav")
+          .forEach((n) => n.classList.toggle("active", n.dataset.nav === key));
+        renderLedger(ledgerData[key] ? key : "cargo");
+      }
+      document.querySelectorAll(".ptab").forEach((tab) => {
+        tab.addEventListener("click", () => setActiveView(tab.dataset.view));
+      });
+      document.querySelectorAll(".dnav").forEach((nav) => {
+        nav.addEventListener("click", () => {
+          const key = nav.dataset.nav;
+          setActiveView(ledgerData[key] ? key : "cargo");
+        });
+      });
+      setActiveView("cargo");
+      document
+        .getElementById("modalClose")
+        .addEventListener("click", () =>
+          document.getElementById("modalBg").classList.remove("show"),
+        );
+      document
+        .getElementById("modalGo")
+        .addEventListener("click", () =>
+          document.getElementById("modalBg").classList.remove("show"),
+        );
+      document.getElementById("modalBg").addEventListener("click", (e) => {
+        if (e.target.id === "modalBg")
+          document.getElementById("modalBg").classList.remove("show");
+      });
+    </script>
   </body>
 </html>
