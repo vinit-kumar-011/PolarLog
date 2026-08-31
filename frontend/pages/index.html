@@ -711,7 +711,8 @@
           Access cargo, inventory and shipment data for your station.
         </p>
         <input type="text" placeholder="Username" id="userField" />
-        <input type="password" placeholder="Password" />
+        <input type="password" placeholder="Password" id="passwordField" />
+        <p class="modal-error" id="modalError" role="alert"></p>
         <button class="go" id="modalGo">Continue</button>
       </div>
     </div>
@@ -816,6 +817,9 @@
         document.querySelector(".modal input[type=password]").style.display =
           "block";
         document.getElementById("modalGo").textContent = "Continue";
+        document.getElementById("modalError").textContent = "";
+        document.getElementById("userField").value = "";
+        document.getElementById("passwordField").value = "";
         document.getElementById("modalBg").classList.add("show");
       }
       document
@@ -1008,9 +1012,23 @@
         );
       document
         .getElementById("modalGo")
-        .addEventListener("click", () =>
-          document.getElementById("modalBg").classList.remove("show"),
-        );
+        .addEventListener("click", () => {
+          if (document.getElementById("modalGo").textContent === "Close") {
+            document.getElementById("modalBg").classList.remove("show");
+            return;
+          }
+          const username = document.getElementById("userField").value.trim();
+          const password = document.getElementById("passwordField").value;
+          const error = document.getElementById("modalError");
+
+          if (!username || !password) {
+            error.textContent = "Enter your username and password to continue.";
+            return;
+          }
+
+          sessionStorage.setItem("polarLogUser", username);
+          window.location.href = "dashboard.html";
+        });
       document.getElementById("modalBg").addEventListener("click", (e) => {
         if (e.target.id === "modalBg")
           document.getElementById("modalBg").classList.remove("show");
