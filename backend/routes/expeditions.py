@@ -77,3 +77,24 @@ def update_expedition(expedition_id):
     if changed == 0:
         return jsonify({"error": "Expedition not found"}), 404
     return jsonify({"message": "Expedition updated"})
+
+
+@expeditions_bp.route("/api/expeditions/<int:expedition_id>", methods=["DELETE"])
+def delete_expedition(expedition_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute(
+        "DELETE FROM expeditions WHERE expedition_id = %s",
+        (expedition_id,)
+    )
+    conn.commit()
+    changed = cursor.rowcount
+
+    cursor.close()
+    conn.close()
+
+    if changed == 0:
+        return jsonify({"error": "Expedition not found"}), 404
+
+    return jsonify({"message": "Expedition deleted"})
