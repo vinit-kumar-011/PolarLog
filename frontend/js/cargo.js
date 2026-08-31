@@ -866,41 +866,9 @@
     ),
   );
 
-  $("#systemStatusBtn").addEventListener("click", () =>
-    toast("No backend connection configured yet.", "warn"),
-  );
-
-  /* sidebar nav */
-  $$(".nav-item[data-nav]").forEach((item) => {
-    item.addEventListener("click", () => {
-      const sub = {
-        Inventory: "subInventory",
-        Personnel: "subPersonnel",
-        Stations: "subStations",
-      }[item.dataset.nav];
-      if (sub) {
-        item.classList.toggle("expanded");
-        $("#" + sub).classList.toggle("open");
-        return;
-      }
-      $$(".nav-item[data-nav]").forEach((n) => n.classList.remove("active"));
-      item.classList.add("active");
-      if (item.dataset.nav !== "Cargo")
-        toast("Opening " + item.dataset.nav + "…");
-    });
-  });
-
-  /* user menu */
-  $("#userCardBtn").addEventListener("click", (e) => {
-    e.stopPropagation();
-    $("#userMenu").classList.toggle("show");
-  });
-  document.addEventListener("click", () =>
-    $("#userMenu").classList.remove("show"),
-  );
-  $$("#userMenu button").forEach((b) =>
-    b.addEventListener("click", () => toast(b.dataset.toast)),
-  );
+  /* Sidebar nav, submenu toggles, and the profile/user menu now live in
+     the shared sidebar and are handled by pl-sidebar.js (see
+     ../js/pl-sidebar.js), so that logic no longer lives here. */
 
   /* theme toggle */
   $("#themeBtn").addEventListener("click", () => {

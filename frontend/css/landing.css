@@ -139,6 +139,8 @@ nav.wrap {
   transition:
     box-shadow 0.25s,
     transform 0.15s;
+  display: inline-block;
+  text-decoration: none;
 }
 .signin:hover {
   box-shadow: 0 0 24px rgba(46, 139, 255, 0.55);
@@ -784,6 +786,8 @@ h1.title {
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(46, 139, 255, 0.35);
   transition: transform 0.2s;
+  display: inline-block;
+  text-decoration: none;
 }
 .preview-cta:hover {
   transform: translateY(-2px);

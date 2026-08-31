@@ -94,8 +94,8 @@ function openSignIn() {
   document.getElementById("modalGo").textContent = "Continue";
   document.getElementById("modalBg").classList.add("show");
 }
-document.getElementById("signinBtn").addEventListener("click", openSignIn);
-document.getElementById("previewSignIn").addEventListener("click", openSignIn);
+// signinBtn / previewSignIn are now real links to login.html, so they no
+// longer open the in-page sign-in modal.
 
 // Dashboard preview: tabs + sidebar both drive the same "active view" state
 const ledgerData = {

@@ -160,6 +160,8 @@ async function submitPersonnelAssignment() {
 
 // Real-time Latency Pulse Generator
 setInterval(() => {
+  const latencyEl = document.getElementById("latency-val");
+  if (!latencyEl) return; // lives in the old sidebar footer, no longer on the page
   const latency = Math.floor(135 + Math.random() * 20);
-  document.getElementById("latency-val").innerText = `${latency} ms`;
+  latencyEl.innerText = `${latency} ms`;
 }, 3000);
