@@ -1,0 +1,1385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POLARLOG — Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css/dashboard.css" />
+    <link rel="stylesheet" href="../css/pl-sidebar.css" />
+  </head>
+  <body>
+    <div class="app">
+      <!-- SIDEBAR -->
+      <aside class="pl-sidebar">
+        <a href="dashboard.html" class="pl-logo-row">
+          <div class="pl-logo-mark">
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+            >
+              <path d="M12 2v20M4.5 6l15 12M19.5 6l-15 12M2 12h20" />
+            </svg>
+          </div>
+          <div class="pl-logo-text">
+            <div class="name">POLARLOG</div>
+            <div class="tag">Integrated Polar Expedition Logistics</div>
+          </div>
+        </a>
+
+        <nav class="pl-nav-scroll">
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html"
+                class="pl-nav-item"
+                data-view="view-dashboard"
+                data-page="dashboard.html"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="3" width="7" height="9" rx="1.5" />
+                    <rect x="14" y="3" width="7" height="5" rx="1.5" />
+                    <rect x="14" y="12" width="7" height="9" rx="1.5" />
+                    <rect x="3" y="16" width="7" height="5" rx="1.5" />
+                  </svg>
+                  <span>Dashboard</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="cargo.html"
+                class="pl-nav-item"
+                data-view="view-cargo"
+                data-page="cargo.html"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 8l-9-5-9 5 9 5 9-5z" />
+                    <path d="M3 8v8l9 5 9-5V8" />
+                    <path d="M12 13v8" />
+                  </svg>
+                  <span>Cargo</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html#view-shipments"
+                class="pl-nav-item"
+                data-view="view-shipments"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M3 17h13l4-6h-4V6H3v11z" />
+                    <circle cx="7" cy="19" r="1.6" />
+                    <circle cx="16" cy="19" r="1.6" />
+                  </svg>
+                  <span>Shipments</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html#view-inventory"
+                class="pl-nav-item"
+                data-view="view-inventory"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <rect x="3" y="4" width="18" height="4" rx="1" />
+                    <path d="M5 8v11a1 1 0 001 1h12a1 1 0 001-1V8" />
+                    <path d="M10 12h4" />
+                  </svg>
+                  <span>Inventory</span>
+                </span>
+              </a>
+              <button
+                class="pl-nav-chevron-btn"
+                data-toggle="pl-sub-inventory"
+                aria-label="Toggle Inventory submenu"
+                type="button"
+              >
+                <svg
+                  class="pl-nav-chevron"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                >
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+            <div class="pl-submenu" id="pl-sub-inventory">
+              <a
+                href="dashboard.html#view-inventory-lowstock"
+                class="pl-sub-item"
+                data-view="view-inventory-lowstock"
+                >Low Stock</a
+              >
+              <a
+                href="dashboard.html#view-inventory-categories"
+                class="pl-sub-item"
+                data-view="view-inventory-categories"
+                >Categories</a
+              >
+            </div>
+          </div>
+
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html#view-personnel"
+                class="pl-nav-item"
+                data-view="view-personnel"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="9" cy="8" r="3.2" />
+                    <path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" />
+                    <circle cx="17.5" cy="8.5" r="2.4" />
+                    <path d="M16 14.3c2.7.4 4.9 2.3 5 5.7" />
+                  </svg>
+                  <span>Personnel</span>
+                </span>
+              </a>
+              <button
+                class="pl-nav-chevron-btn"
+                data-toggle="pl-sub-personnel"
+                aria-label="Toggle Personnel submenu"
+                type="button"
+              >
+                <svg
+                  class="pl-nav-chevron"
+                  width="13"
+                  height="13"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.2"
+                >
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+            <div class="pl-submenu" id="pl-sub-personnel">
+              <a
+                href="dashboard.html#view-personnel-shifts"
+                class="pl-sub-item"
+                data-view="view-personnel-shifts"
+                >Shifts</a
+              >
+              <a
+                href="dashboard.html#view-personnel-assignments"
+                class="pl-sub-item"
+                data-view="view-personnel-assignments"
+                >Assignments</a
+              >
+            </div>
+          </div>
+
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="stations.html"
+                class="pl-nav-item"
+                data-view="view-stations"
+                data-page="stations.html"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M4 21V9l8-5 8 5v12" />
+                    <path d="M9 21v-6h6v6" />
+                  </svg>
+                  <span>Stations</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html#view-alerts"
+                class="pl-nav-item"
+                data-view="view-alerts"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"
+                    />
+                    <path d="M12 9.5v4.2" />
+                    <circle cx="12" cy="17" r="0.4" fill="currentColor" />
+                  </svg>
+                  <span>Alerts</span>
+                </span>
+              </a>
+            </div>
+          </div>
+
+          <div class="pl-nav-section-label">SYSTEM</div>
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html#view-reports"
+                class="pl-nav-item"
+                data-view="view-reports"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M14 3H6a1 1 0 00-1 1v16a1 1 0 001 1h12a1 1 0 001-1V8z"
+                    />
+                    <path d="M14 3v5h5" />
+                    <path d="M9 13h6M9 17h6" />
+                  </svg>
+                  <span>Reports</span>
+                </span>
+              </a>
+            </div>
+          </div>
+          <div class="pl-nav-group">
+            <div class="pl-nav-item-wrap">
+              <a
+                href="dashboard.html#view-settings"
+                class="pl-nav-item"
+                data-view="view-settings"
+              >
+                <span class="pl-nav-left">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="12" cy="12" r="3" />
+                    <path
+                      d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06A1.65 1.65 0 004.6 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06A1.65 1.65 0 009 4.6a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09c0 .68.39 1.28 1 1.51.62.25 1.33.12 1.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06c-.45.49-.58 1.2-.33 1.82.23.61.83 1 1.51 1H21a2 2 0 010 4h-.09c-.68 0-1.28.39-1.51 1z"
+                    />
+                  </svg>
+                  <span>Settings</span>
+                </span>
+              </a>
+            </div>
+          </div>
+        </nav>
+
+        <div class="pl-sidebar-profile-wrap">
+          <button class="pl-sidebar-profile" type="button">
+            <div class="pl-avatar">A</div>
+            <div class="who">
+              <div class="n">ASTRO</div>
+              <div class="r">Logistics Operator</div>
+            </div>
+            <svg
+              class="pl-chevron-updown"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="pl-profile-menu">
+            <a href="#">My Profile</a>
+            <a href="#">Preferences</a>
+            <a href="login.html" class="pl-logout">Log Out</a>
+          </div>
+        </div>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <div class="topbar">
+          <h1 id="pageTitle">Dashboard</h1>
+          <div class="topbar-right">
+            <div class="status-pill">
+              <span class="status-dot"></span><span>Status</span>
+            </div>
+            <div class="sync-text">Last synced: —</div>
+            <div class="search-box">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="11" cy="11" r="7" />
+                <path d="M21 21l-4.3-4.3" />
+              </svg>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search anything..."
+              />
+            </div>
+            <div class="bell-wrap">
+              <div class="icon-btn" id="bellBtn">
+                <svg
+                  width="15"
+                  height="15"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M18 8a6 6 0 00-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+                  <path d="M13.7 21a2 2 0 01-3.4 0" />
+                </svg>
+                <span class="badge">—</span>
+              </div>
+              <div class="notif-dropdown" id="notifDropdown">
+                <div class="t">Notifications</div>
+                <div class="e">
+                  Nothing wired up yet — this panel will list live alerts once
+                  the backend's connected.
+                </div>
+              </div>
+            </div>
+            <div class="icon-btn" id="themeBtn">
+              <svg
+                class="moon-icon"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z" />
+              </svg>
+              <svg
+                class="sun-icon"
+                width="15"
+                height="15"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <circle cx="12" cy="12" r="4.2" />
+                <path
+                  d="M12 2v2.2M12 19.8V22M4.9 4.9l1.6 1.6M17.5 17.5l1.6 1.6M2 12h2.2M19.8 12H22M4.9 19.1l1.6-1.6M17.5 6.5l1.6-1.6"
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- ========== DASHBOARD VIEW ========== -->
+        <section class="view active" id="view-dashboard">
+          <div class="stat-grid">
+            <div class="stat-card">
+              <div class="stat-head">
+                <span class="stat-label">TOTAL STATIONS</span
+                ><span class="stat-icon"
+                  ><svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M4 21V9l8-5 8 5v12" />
+                    <path d="M9 21v-6h6v6" /></svg
+                ></span>
+              </div>
+              <div class="stat-value placeholder">—</div>
+              <div class="stat-sub">All stations active</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <span class="stat-label">ACTIVE CARGO</span
+                ><span class="stat-icon"
+                  ><svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M21 8l-9-5-9 5 9 5 9-5z" />
+                    <path d="M3 8v8l9 5 9-5V8" /></svg
+                ></span>
+              </div>
+              <div class="stat-value placeholder">—</div>
+              <div class="stat-sub">In transit &amp; pending</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <span class="stat-label">ALERTS</span
+                ><span class="stat-icon"
+                  ><svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path
+                      d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"
+                    />
+                    <path d="M12 9.5v4.2" /></svg
+                ></span>
+              </div>
+              <div class="stat-value placeholder">—</div>
+              <div class="stat-sub">Requires attention</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <span class="stat-label">INVENTORY HEALTH</span
+                ><span class="stat-icon"
+                  ><svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M3 17l5-5 4 4 8-9" /></svg
+                ></span>
+              </div>
+              <div class="stat-value placeholder">—</div>
+              <div class="stat-sub">Avg. across all stations</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <span class="stat-label">TOTAL PERSONNEL</span
+                ><span class="stat-icon"
+                  ><svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="9" cy="8" r="3.2" />
+                    <path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" />
+                    <circle cx="17.5" cy="8.5" r="2.4" /></svg
+                ></span>
+              </div>
+              <div class="stat-value placeholder">—</div>
+              <div class="stat-sub">Deployed across stations</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-head">
+                <span class="stat-label">ACTIVE SHIPMENTS</span
+                ><span class="stat-icon"
+                  ><svg
+                    width="13"
+                    height="13"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <path d="M3 17h13l4-6h-4V6H3v11z" />
+                    <circle cx="7" cy="19" r="1.6" />
+                    <circle cx="16" cy="19" r="1.6" /></svg
+                ></span>
+              </div>
+              <div class="stat-value placeholder">—</div>
+              <div class="stat-sub">Across all routes</div>
+            </div>
+          </div>
+
+          <div class="columns">
+            <div class="col col-stations">
+              <div class="card">
+                <div class="card-head">
+                  <span class="card-title">Antarctic Station Overview</span>
+                </div>
+                <div class="station-body">
+                  <div class="station-list">
+                    <div class="station-row">
+                      <div class="top-line">
+                        <span class="station-dot"></span
+                        ><span class="station-name">BHARATI</span>
+                      </div>
+                      <div class="station-coords">—° —' —, —° —' —</div>
+                      <div class="health-label">HEALTH</div>
+                      <div class="health-track">
+                        <div class="health-fill"></div>
+                      </div>
+                    </div>
+                    <div class="station-row">
+                      <div class="top-line">
+                        <span class="station-dot"></span
+                        ><span class="station-name">MAITRI</span>
+                      </div>
+                      <div class="station-coords">—° —' —, —° —' —</div>
+                      <div class="health-label">HEALTH</div>
+                      <div class="health-track">
+                        <div class="health-fill"></div>
+                      </div>
+                    </div>
+                    <div class="station-row">
+                      <div class="top-line">
+                        <span class="station-dot"></span
+                        ><span class="station-name">HIMADRI</span>
+                      </div>
+                      <div class="station-coords">—° —' —, —° —' —</div>
+                      <div class="health-label">HEALTH</div>
+                      <div class="health-track">
+                        <div class="health-fill"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="map-area">
+                    <svg
+                      width="70%"
+                      height="70%"
+                      viewBox="0 0 200 200"
+                      fill="none"
+                    >
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="90"
+                        stroke="rgba(127,127,127,0.15)"
+                      />
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="62"
+                        stroke="rgba(127,127,127,0.15)"
+                      />
+                      <circle
+                        cx="100"
+                        cy="100"
+                        r="34"
+                        stroke="rgba(127,127,127,0.15)"
+                      />
+                      <path
+                        d="M60 70 Q100 40 150 65 Q170 100 140 140 Q100 165 65 135 Q40 100 60 70Z"
+                        stroke="rgba(63,212,238,0.22)"
+                        stroke-width="1.2"
+                      />
+                      <line
+                        x1="100"
+                        y1="100"
+                        x2="70"
+                        y2="75"
+                        stroke="rgba(127,127,127,0.3)"
+                        stroke-dasharray="2 3"
+                      />
+                      <line
+                        x1="100"
+                        y1="100"
+                        x2="128"
+                        y2="80"
+                        stroke="rgba(127,127,127,0.3)"
+                        stroke-dasharray="2 3"
+                      />
+                      <line
+                        x1="100"
+                        y1="100"
+                        x2="118"
+                        y2="128"
+                        stroke="rgba(127,127,127,0.3)"
+                        stroke-dasharray="2 3"
+                      />
+                      <circle cx="70" cy="75" r="4" fill="#4e5a76" />
+                      <circle cx="128" cy="80" r="4" fill="#4e5a76" />
+                      <circle cx="118" cy="128" r="4" fill="#4e5a76" />
+                    </svg>
+                    <div class="map-controls">
+                      <div class="icon-btn">
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2.4"
+                        >
+                          <path d="M12 5v14M5 12h14" />
+                        </svg>
+                      </div>
+                      <div class="icon-btn">
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="2.4"
+                        >
+                          <path d="M5 12h14" />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-head">
+                  <span class="card-title">Critical Alerts</span
+                  ><span class="view-all" data-goto="view-alerts"
+                    >View all</span
+                  >
+                </div>
+                <div class="alert-list">
+                  <div class="alert-row">
+                    <div class="alert-icon critical">
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                      >
+                        <path
+                          d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"
+                        />
+                        <path d="M12 9.5v4.2" />
+                      </svg>
+                    </div>
+                    <div class="alert-text">
+                      <div class="alert-title-row">
+                        <span class="alert-title">—</span
+                        ><span class="alert-tag critical">CRITICAL</span>
+                      </div>
+                      <div class="alert-sub">—</div>
+                    </div>
+                  </div>
+                  <div class="alert-row">
+                    <div class="alert-icon warning">
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                      >
+                        <path
+                          d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"
+                        />
+                        <path d="M12 9.5v4.2" />
+                      </svg>
+                    </div>
+                    <div class="alert-text">
+                      <div class="alert-title-row">
+                        <span class="alert-title">—</span
+                        ><span class="alert-tag warning">WARNING</span>
+                      </div>
+                      <div class="alert-sub">—</div>
+                    </div>
+                  </div>
+                  <div class="alert-row">
+                    <div class="alert-icon info">
+                      <svg
+                        width="13"
+                        height="13"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2.2"
+                      >
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 8v.01M12 11v5" />
+                      </svg>
+                    </div>
+                    <div class="alert-text">
+                      <div class="alert-title-row">
+                        <span class="alert-title">—</span
+                        ><span class="alert-tag info">INFO</span>
+                      </div>
+                      <div class="alert-sub">—</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="col col-middle">
+              <div class="row-split">
+                <div class="card">
+                  <div class="card-head">
+                    <span class="card-title"
+                      >Inventory Distribution<span class="sub"
+                        >By Category</span
+                      ></span
+                    >
+                  </div>
+                  <div class="donut-wrap">
+                    <svg width="92" height="92" viewBox="0 0 100 100">
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="none"
+                        stroke="rgba(127,127,127,0.15)"
+                        stroke-width="12"
+                      />
+                      <circle
+                        cx="50"
+                        cy="50"
+                        r="40"
+                        fill="none"
+                        stroke="rgba(127,127,127,0.3)"
+                        stroke-width="12"
+                        stroke-dasharray="1 6"
+                        stroke-linecap="round"
+                      />
+                      <text
+                        x="50"
+                        y="55"
+                        text-anchor="middle"
+                        class="donut-center-label"
+                      >
+                        —%
+                      </text>
+                    </svg>
+                    <div class="legend">
+                      <div class="legend-row">
+                        <span
+                          class="legend-dot"
+                          style="background: var(--cyan)"
+                        ></span
+                        ><span class="legend-name">Fuel</span
+                        ><span class="legend-val">—%</span>
+                      </div>
+                      <div class="legend-row">
+                        <span
+                          class="legend-dot"
+                          style="background: var(--green)"
+                        ></span
+                        ><span class="legend-name">Food</span
+                        ><span class="legend-val">—%</span>
+                      </div>
+                      <div class="legend-row">
+                        <span
+                          class="legend-dot"
+                          style="background: var(--amber)"
+                        ></span
+                        ><span class="legend-name">Medical</span
+                        ><span class="legend-val">—%</span>
+                      </div>
+                      <div class="legend-row">
+                        <span
+                          class="legend-dot"
+                          style="background: var(--blue)"
+                        ></span
+                        ><span class="legend-name">Equipment</span
+                        ><span class="legend-val">—%</span>
+                      </div>
+                      <div class="legend-row">
+                        <span
+                          class="legend-dot"
+                          style="background: var(--text-faint)"
+                        ></span
+                        ><span class="legend-name">Others</span
+                        ><span class="legend-val">—%</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="card">
+                  <div class="card-head">
+                    <span class="card-title"
+                      >Shipments Status<span class="sub">This Month</span></span
+                    >
+                  </div>
+                  <div class="chart-legend">
+                    <span class="item"
+                      ><span
+                        class="legend-dot"
+                        style="background: var(--green)"
+                      ></span
+                      >Delivered</span
+                    >
+                    <span class="item"
+                      ><span
+                        class="legend-dot"
+                        style="background: var(--blue)"
+                      ></span
+                      >In Transit</span
+                    >
+                    <span class="item"
+                      ><span
+                        class="legend-dot"
+                        style="background: var(--amber)"
+                      ></span
+                      >Pending</span
+                    >
+                  </div>
+                  <div class="chart-box">
+                    <span class="chart-empty-text">Chart data pending</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-head">
+                  <span class="card-title">Recent Shipments</span
+                  ><span class="view-all" data-goto="view-shipments"
+                    >View all</span
+                  >
+                </div>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Shipment ID</th>
+                      <th>Route</th>
+                      <th>Status</th>
+                      <th>ETA</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>—</td>
+                      <td>—</td>
+                      <td><span class="status-chip">—</span></td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <td>—</td>
+                      <td>—</td>
+                      <td><span class="status-chip">—</span></td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <td>—</td>
+                      <td>—</td>
+                      <td><span class="status-chip">—</span></td>
+                      <td>—</td>
+                    </tr>
+                    <tr>
+                      <td>—</td>
+                      <td>—</td>
+                      <td><span class="status-chip">—</span></td>
+                      <td>—</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="col col-side">
+              <div class="card">
+                <div class="card-head">
+                  <span class="card-title">Mission Timeline</span
+                  ><span class="view-all">View all</span>
+                </div>
+                <div class="timeline">
+                  <div class="tl-item">
+                    <div class="tl-marker">
+                      <span class="tl-dot"></span><span class="tl-line"></span>
+                    </div>
+                    <div class="tl-content">
+                      <div class="tl-title">—</div>
+                      <div class="tl-time">—</div>
+                    </div>
+                  </div>
+                  <div class="tl-item">
+                    <div class="tl-marker">
+                      <span class="tl-dot"></span><span class="tl-line"></span>
+                    </div>
+                    <div class="tl-content">
+                      <div class="tl-title">—</div>
+                      <div class="tl-time">—</div>
+                    </div>
+                  </div>
+                  <div class="tl-item">
+                    <div class="tl-marker">
+                      <span class="tl-dot"></span><span class="tl-line"></span>
+                    </div>
+                    <div class="tl-content">
+                      <div class="tl-title">—</div>
+                      <div class="tl-time">—</div>
+                    </div>
+                  </div>
+                  <div class="tl-item">
+                    <div class="tl-marker">
+                      <span class="tl-dot"></span><span class="tl-line"></span>
+                    </div>
+                    <div class="tl-content">
+                      <div class="tl-title">—</div>
+                      <div class="tl-time">—</div>
+                    </div>
+                  </div>
+                  <div class="tl-item">
+                    <div class="tl-marker"><span class="tl-dot"></span></div>
+                    <div class="tl-content">
+                      <div class="tl-title">—</div>
+                      <div class="tl-time">—</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="card-head">
+                  <span class="card-title">Weather at Stations</span>
+                </div>
+                <div class="weather-row">
+                  <div class="weather-card">
+                    <div class="weather-icon">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      >
+                        <path
+                          d="M17.5 19H9a5 5 0 111.3-9.8A6 6 0 0117.5 12a3.5 3.5 0 010 7z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="weather-temp">—°</div>
+                    <div class="weather-cond">—</div>
+                    <div class="weather-place">Bharati</div>
+                  </div>
+                  <div class="weather-card">
+                    <div class="weather-icon">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      >
+                        <path
+                          d="M17.5 19H9a5 5 0 111.3-9.8A6 6 0 0117.5 12a3.5 3.5 0 010 7z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="weather-temp">—°</div>
+                    <div class="weather-cond">—</div>
+                    <div class="weather-place">Maitri</div>
+                  </div>
+                  <div class="weather-card">
+                    <div class="weather-icon">
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="1.8"
+                      >
+                        <path
+                          d="M17.5 19H9a5 5 0 111.3-9.8A6 6 0 0117.5 12a3.5 3.5 0 010 7z"
+                        />
+                      </svg>
+                    </div>
+                    <div class="weather-temp">—°</div>
+                    <div class="weather-cond">—</div>
+                    <div class="weather-place">Himadri</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ========== PLACEHOLDER VIEWS ========== -->
+        <section class="view" id="view-cargo">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M21 8l-9-5-9 5 9 5 9-5z" />
+                  <path d="M3 8v8l9 5 9-5V8" />
+                </svg>
+              </div>
+              <h2>Cargo</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-shipments">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M3 17h13l4-6h-4V6H3v11z" />
+                  <circle cx="7" cy="19" r="1.6" />
+                  <circle cx="16" cy="19" r="1.6" />
+                </svg>
+              </div>
+              <h2>Shipments</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-inventory">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="4" rx="1" />
+                  <path d="M5 8v11a1 1 0 001 1h12a1 1 0 001-1V8" />
+                </svg>
+              </div>
+              <h2>Inventory</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-inventory-lowstock">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="4" rx="1" />
+                  <path d="M5 8v11a1 1 0 001 1h12a1 1 0 001-1V8" />
+                </svg>
+              </div>
+              <h2>Inventory — Low Stock</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-inventory-categories">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="4" rx="1" />
+                  <path d="M5 8v11a1 1 0 001 1h12a1 1 0 001-1V8" />
+                </svg>
+              </div>
+              <h2>Inventory — Categories</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-personnel">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="9" cy="8" r="3.2" />
+                  <path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" />
+                </svg>
+              </div>
+              <h2>Personnel</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-personnel-shifts">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="9" cy="8" r="3.2" />
+                  <path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" />
+                </svg>
+              </div>
+              <h2>Personnel — Shifts</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-personnel-assignments">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="9" cy="8" r="3.2" />
+                  <path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" />
+                </svg>
+              </div>
+              <h2>Personnel — Assignments</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-stations">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M4 21V9l8-5 8 5v12" />
+                  <path d="M9 21v-6h6v6" />
+                </svg>
+              </div>
+              <h2>Stations</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-alerts">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"
+                  />
+                  <path d="M12 9.5v4.2" />
+                </svg>
+              </div>
+              <h2>Alerts</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-reports">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M14 3H6a1 1 0 00-1 1v16a1 1 0 001 1h12a1 1 0 001-1V8z"
+                  />
+                  <path d="M14 3v5h5" />
+                </svg>
+              </div>
+              <h2>Reports</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section class="view" id="view-settings">
+          <div class="card">
+            <div class="empty-view">
+              <div class="icon">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="3" />
+                </svg>
+              </div>
+              <h2>Settings</h2>
+              <p>
+                No layout built for this view yet — ask and it'll be mocked
+                next.
+              </p>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="../js/pl-sidebar.js"></script>
+    <script src="../js/dashboard.js"></script>
+  </body>
+</html>
