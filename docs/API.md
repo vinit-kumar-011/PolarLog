@@ -95,3 +95,99 @@ Updates status. Send `{"status": "loaded"}`.
 ## DELETE /api/cargo/<id>
 
 Removes a cargo item.
+---
+
+## GET /api/stations
+
+Returns all stations.
+
+## GET /api/stations/<id>
+
+Returns one station by ID. Returns `404` if the station does not exist.
+
+## POST /api/stations
+
+Creates a new station.
+
+---
+
+## GET /api/expeditions
+
+Returns all expeditions.
+
+## GET /api/expeditions/<id>
+
+Returns one expedition by ID. Returns `404` if the expedition does not exist.
+
+## POST /api/expeditions
+
+Creates a new expedition.
+
+## PUT /api/expeditions/<id>
+
+Updates an expedition's status.
+
+## DELETE /api/expeditions/<id>
+
+Deletes an expedition.
+
+---
+
+## GET /api/personnel
+
+Returns all personnel with their station and expedition information.
+
+## GET /api/personnel/<id>
+
+Returns one personnel record by ID.
+
+## POST /api/personnel
+
+Creates a new personnel record.
+
+Required fields:
+
+- `name`
+- `role`
+- `contact`
+
+## PUT /api/personnel/<id>
+
+Updates a personnel record.
+
+## DELETE /api/personnel/<id>
+
+Deletes a personnel record.
+
+---
+
+## GET /api/shipments
+
+Returns all shipments.
+
+## GET /api/shipments/<id>
+
+Returns one shipment by ID.
+
+## GET /api/shipments/in-transit
+
+Returns all shipments currently in transit.
+
+## POST /api/shipments
+
+Creates a new shipment.
+
+Required field:
+
+- `reference`
+
+## PUT /api/shipments/<id>/status
+
+Updates the status of a shipment.
+
+Example request:
+
+```json
+{
+  "status": "in_transit"
+}
