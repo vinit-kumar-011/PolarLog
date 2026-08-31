@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In – PolarLog</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css/design-system.css" />
+    <link rel="stylesheet" href="../css/login.css" />
+  </head>
+  <body>
+    <div class="login-shell">
+      <a href="index.html" class="login-brand">
+        <div class="login-brand-mark">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M12 2v20M4.5 6l15 12M19.5 6l-15 12M2 12h20" />
+          </svg>
+        </div>
+        <div class="login-brand-text">
+          <div class="name">POLARLOG</div>
+          <div class="tag">Integrated Polar Expedition Logistics</div>
+        </div>
+      </a>
+
+      <div class="login-card">
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to access cargo, stations and shipment data.</p>
+
+        <div class="login-error" id="loginError"></div>
+
+        <form id="loginForm">
+          <div class="login-field">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              placeholder="you@polarlog.in"
+              autocomplete="username"
+            />
+          </div>
+          <div class="login-field">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div class="login-row-between">
+            <label class="login-remember">
+              <input type="checkbox" checked />
+              Remember me
+            </label>
+            <a href="#" class="login-forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="login-submit">Sign In</button>
+        </form>
+
+        <div class="login-demo-note">
+          <b>Hackathon demo:</b> use <b>astro@polarlog.in</b> /
+          <b>polar2026</b>, or
+          <button type="button" id="fillDemoBtn">autofill it</button>. Any
+          email + password will also work — there's no backend behind this
+          yet.
+        </div>
+      </div>
+
+      <div class="login-footer-link">
+        <a href="index.html">&larr; Back to home</a>
+      </div>
+    </div>
+
+    <script src="../js/login.js"></script>
+  </body>
+</html>

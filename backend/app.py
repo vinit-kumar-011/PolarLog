@@ -6,6 +6,8 @@ from routes.alerts import alerts_bp
 from routes.stations import stations_bp
 from routes.expeditions import expeditions_bp
 
+from routes.cargo import cargo_bp
+
 app = Flask(__name__)
 CORS(app)
 
@@ -13,6 +15,7 @@ app.register_blueprint(inventory_bp)
 app.register_blueprint(alerts_bp)
 app.register_blueprint(stations_bp)
 app.register_blueprint(expeditions_bp)
+app.register_blueprint(cargo_bp)
 
 
 @app.route("/")
