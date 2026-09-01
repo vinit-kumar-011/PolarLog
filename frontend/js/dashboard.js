@@ -11,9 +11,19 @@ let dbCargo = [];
 let dbShipments = [];
 let dbAlerts = [];
 let dbPersonnel = [];
+let isLoadingDashboard = false;
 
 async function loadDashboard() {
+  // Guard: prevent duplicate simultaneous loads
+  if (isLoadingDashboard) {
+    console.warn("Dashboard load already in progress, skipping...");
+    return;
+  }
+
+  isLoadingDashboard = true;
+
   try {
+    console.log("Loading dashboard data...");
     const [stations, inventory, cargo, shipments, alerts, personnel] =
       await Promise.all([
         apiGet("/api/stations"),
@@ -24,12 +34,30 @@ async function loadDashboard() {
         apiGet("/api/personnel"),
       ]);
 
+    // Clear old data
+    dbStations = [];
+    dbInventory = [];
+    dbCargo = [];
+    dbShipments = [];
+    dbAlerts = [];
+    dbPersonnel = [];
+
+    // Load new data
     dbStations = stations || [];
     dbInventory = inventory || [];
     dbCargo = cargo || [];
     dbShipments = shipments || [];
     dbAlerts = alerts || [];
     dbPersonnel = personnel || [];
+
+    console.log("Dashboard data loaded:", {
+      stations: dbStations.length,
+      inventory: dbInventory.length,
+      cargo: dbCargo.length,
+      shipments: dbShipments.length,
+      alerts: dbAlerts.length,
+      personnel: dbPersonnel.length,
+    });
 
     renderKPIs();
     renderStationList();
@@ -40,10 +68,18 @@ async function loadDashboard() {
     renderTimeline();
   } catch (err) {
     console.error("Dashboard failed to load:", err);
+  } finally {
+    isLoadingDashboard = false;
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadDashboard);
+// Only attach listener once
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", loadDashboard);
+} else {
+  // If this script loads after DOMContentLoaded already fired
+  loadDashboard();
+}
 
 function setText(id, val) {
   const el = document.getElementById(id);
@@ -98,13 +134,17 @@ function formatCoord(value, isLat) {
 
 function renderStationList() {
   const container = document.getElementById("stationListContainer");
-  if (!container) return;
+  if (!container) {
+    console.warn("stationListContainer not found in DOM");
+    return;
+  }
 
   if (dbStations.length === 0) {
     container.innerHTML = '<p class="empty-state">No station data yet</p>';
     return;
   }
 
+  // IMPORTANT: use = not +=
   container.innerHTML = dbStations
     .map((station) => {
       const items = dbInventory.filter((i) => i.station === station.name);

@@ -80,9 +80,9 @@ document.addEventListener("DOMContentLoaded", () => {
       currentStockFilter = e.target.value;
       renderTable();
     });
-  document.getElementById("newItemBtn").addEventListener("click", () => {
-    showToast("New Item form isn't wired up yet.", "warn");
-  });
+  document
+    .getElementById("newItemBtn")
+    .addEventListener("click", openNewItemModal);
 
   // Sidebar sub-links to #lowstock / #categories just scroll to the
   // matching panel on this same page (no separate view to toggle).
@@ -252,7 +252,13 @@ function renderTable() {
     const tr = document.createElement("tr");
     if (item.id === selectedItemId) tr.classList.add("selected");
     tr.innerHTML = `
-      <td class="cell-id">${item.name || cap(item.category) || "—"}</td>
+      <td class="cell-id">${item.name || cap(item.category) || "—"}${
+        item._pending
+          ? '<span class="pending-badge">PENDING SYNC</span>'
+          : item._pendingDelta
+            ? `<span class="pending-badge">+${item._pendingDelta} PENDING</span>`
+            : ""
+      }</td>
       <td>${cap(item.category) || "—"}</td>
       <td>${item.station || "—"}</td>
       <td>${item.quantity ?? "—"}</td>
@@ -414,4 +420,186 @@ function showToast(message, type = "") {
   toast.textContent = message;
   wrap.appendChild(toast);
   setTimeout(() => toast.remove(), 4000);
+}
+
+/* =========================================================
+   NEW ITEM — works offline
+   On submit: tries the network immediately. If that fails
+   (offline), apiSend() queues it in IndexedDB and this just
+   adds an optimistic "pending sync" row so the item is visible
+   right away; sync-manager.js replays it automatically once
+   back online and the pending tag clears on the next reload.
+========================================================= */
+function ensureModalStyles() {
+  if (document.getElementById("plModalStyles")) return;
+  const style = document.createElement("style");
+  style.id = "plModalStyles";
+  style.textContent = `
+    .pl-modal-overlay{position:fixed;inset:0;background:rgba(2,6,12,0.6);
+      display:flex;align-items:center;justify-content:center;z-index:500;}
+    .pl-modal{background:var(--panel,#10161f);border:1px solid var(--border,#1e2635);
+      border-radius:14px;padding:22px;width:380px;max-width:90vw;display:flex;
+      flex-direction:column;gap:12px;}
+    .pl-modal h3{font-size:15.5px;font-weight:700;margin-bottom:2px;}
+    .pl-modal label{display:flex;flex-direction:column;gap:5px;font-size:12px;
+      color:var(--text-dim,#8892a4);}
+    .pl-modal input,.pl-modal select{background:var(--panel-2,#131a26);
+      border:1px solid var(--border,#1e2635);color:var(--text,#e8ecf3);
+      padding:9px 10px;border-radius:8px;font-size:13px;outline:none;}
+    .pl-modal-row{display:flex;gap:10px;}
+    .pl-modal-row > label{flex:1;}
+    .pl-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
+    .pl-modal-err{font-size:12px;color:#ff8b93;display:none;}
+    .pending-badge{display:inline-block;margin-left:7px;font-size:9.5px;
+      font-weight:700;letter-spacing:.3px;color:#ffc35c;
+      background:rgba(245,165,36,0.16);padding:2px 6px;border-radius:8px;
+      vertical-align:middle;}
+  `;
+  document.head.appendChild(style);
+}
+
+function openNewItemModal() {
+  ensureModalStyles();
+
+  const stationOpts = allStations
+    .map((s) => `<option value="${s.station_id}">${s.name}</option>`)
+    .join("");
+
+  const overlay = document.createElement("div");
+  overlay.className = "pl-modal-overlay";
+  overlay.innerHTML = `
+    <div class="pl-modal">
+      <h3>Add Inventory Item</h3>
+      <label>Name
+        <input type="text" id="niName" placeholder="e.g. Diesel" />
+      </label>
+      <div class="pl-modal-row">
+        <label>Category
+          <select id="niCategory">
+            <option value="fuel">Fuel</option>
+            <option value="food">Food</option>
+            <option value="medical">Medical</option>
+            <option value="equipment">Equipment</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label>Station
+          <select id="niStation">${stationOpts}</select>
+        </label>
+      </div>
+      <div class="pl-modal-row">
+        <label>Quantity
+          <input type="number" id="niQuantity" min="0" placeholder="0" />
+        </label>
+        <label>Unit
+          <input type="text" id="niUnit" placeholder="units" />
+        </label>
+        <label>Reorder level
+          <input type="number" id="niReorder" min="0" placeholder="0" />
+        </label>
+      </div>
+      <div class="pl-modal-err" id="niErr"></div>
+      <div class="pl-modal-actions">
+        <button type="button" class="btn" id="niCancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="niSubmit">Add Item</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+  overlay
+    .querySelector("#niCancel")
+    .addEventListener("click", () => overlay.remove());
+  overlay
+    .querySelector("#niSubmit")
+    .addEventListener("click", () => submitNewItem(overlay));
+}
+
+async function submitNewItem(overlay) {
+  const errBox = overlay.querySelector("#niErr");
+  const name = overlay.querySelector("#niName").value.trim();
+  const category = overlay.querySelector("#niCategory").value;
+  const stationId = overlay.querySelector("#niStation").value;
+  const quantity = overlay.querySelector("#niQuantity").value;
+  const unit = overlay.querySelector("#niUnit").value.trim();
+  const reorder = overlay.querySelector("#niReorder").value;
+
+  if (!name || !stationId || quantity === "") {
+    errBox.textContent = "Name, station and quantity are required.";
+    errBox.style.display = "block";
+    return;
+  }
+
+  const payload = {
+    name,
+    category,
+    station_id: parseInt(stationId, 10),
+    quantity: parseInt(quantity, 10),
+    unit: unit || "units",
+    reorder_level: reorder === "" ? 0 : parseInt(reorder, 10),
+  };
+
+  const result = await apiSend("/api/inventory", "POST", payload);
+  const stationName =
+    allStations.find((s) => s.station_id === payload.station_id)?.name || "—";
+
+  if (result.ok) {
+    overlay.remove();
+    if (result.data && result.data.merged) {
+      showToast(
+        `Added ${payload.quantity} — now ${result.data.quantity} total.`,
+        "success",
+      );
+    } else {
+      showToast("Item added.", "success");
+    }
+    loadInventory(); // re-pull the real list so it's fully in sync
+    return;
+  }
+
+  if (result.queued) {
+    overlay.remove();
+
+    // Mirror the backend's merge behavior locally: if this station already
+    // has this item (same name + category), add to it instead of creating
+    // a second row that would just get folded away once synced anyway.
+    const match = allInventory.find(
+      (i) =>
+        !i._pending &&
+        (i.station || "").toLowerCase() === stationName.toLowerCase() &&
+        (i.category || "").toLowerCase() === payload.category.toLowerCase() &&
+        (i.name || "").toLowerCase() === payload.name.toLowerCase(),
+    );
+
+    if (match) {
+      match.quantity = (match.quantity || 0) + payload.quantity;
+      match._pendingDelta = (match._pendingDelta || 0) + payload.quantity;
+      showToast(
+        `Offline — will add ${payload.quantity} to existing ${match.name} once synced.`,
+        "warn",
+      );
+    } else {
+      allInventory.push({
+        id: `pending-${result.id}`,
+        ...payload,
+        station: stationName,
+        status: "ok",
+        _pending: true,
+      });
+      showToast("Offline — item queued, will sync automatically.", "warn");
+    }
+
+    renderStats();
+    renderTable();
+    renderCategoryBreakdown();
+    renderLowStockList();
+    renderStationHealth();
+    return;
+  }
+
+  errBox.textContent = result.error || "Could not add item.";
+  errBox.style.display = "block";
 }
