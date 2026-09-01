@@ -1,167 +1,203 @@
-const API_BASE_URL = "http://localhost:5000/api";
+javascript;
+let allStations = [];
+let allInventory = [];
+let allShipments = [];
+let allPersonnel = [];
 
-// Helper API Fetcher
-async function sendApiRequest(endpoint, payload) {
+async function loadStations() {
   try {
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token") || ""}`,
-      },
-      body: JSON.stringify(payload),
-    });
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || "Server error");
-    return data;
-  } catch (err) {
-    console.warn(
-      "Backend API connection failed, executing frontend fallback execution.",
+    [allStations, allInventory, allShipments, allPersonnel] = await Promise.all(
+      [
+        apiGet("/api/stations"),
+        apiGet("/api/inventory"),
+        apiGet("/api/shipments"),
+        apiGet("/api/personnel"),
+      ],
     );
-    return null;
+
+    renderStationSummary();
+    renderStationCards();
+    renderInventoryHealth();
+    renderActivities(); // uses alerts - see Part 3
+  } catch (err) {
+    console.error("Stations page failed:", err);
+    showToast("Could not reach the server.");
   }
 }
 
-// Toast Helper
-function showToast(msg) {
-  const container = document.getElementById("toastContainer");
-  const toast = document.createElement("div");
-  toast.className = "toast";
-  toast.innerText = msg;
-  container.appendChild(toast);
-  setTimeout(() => toast.remove(), 3500);
+document.addEventListener("DOMContentLoaded", loadStations);
+
+javascript;
+function renderStationSummary() {
+  document.getElementById("summaryOperational").textContent =
+    allStations.filter((s) => s.status === "operational").length;
+
+  document.getElementById("summaryPersonnel").textContent = allPersonnel.length;
+
+  const avgHealth = Math.round(
+    allInventory.reduce(
+      (sum, i) =>
+        sum + Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
+      0,
+    ) / allInventory.length,
+  );
+  document.getElementById("summaryHealth").textContent = avgHealth + "%";
+
+  document.getElementById("summaryShipments").textContent = allShipments.filter(
+    (s) => s.status === "in_transit",
+  ).length;
 }
 
-// Header Actions (Notifications, Settings, Profile)
-function toggleNotifications() {
-  document.getElementById("notifDot").style.display = "none";
-  showToast("Notifications: Himadri Station reports low fuel stock level");
-}
+function renderStationCards(filter = "all") {
+  const container = document.getElementById("stationCards");
+  container.innerHTML = "";
 
-function openSettings() {
-  showToast("Opening System Settings & SATCOM Parameters panel");
-}
+  let stations = allStations;
 
-function openProfile() {
-  showToast("User Profile: ASTRO (Logistics Operator)");
-}
+  if (filter === "operational") {
+    stations = stations.filter((s) => s.status === "operational");
+  } else if (filter === "low-stock") {
+    stations = stations.filter((s) =>
+      allInventory.some(
+        (i) =>
+          i.station === s.name &&
+          (i.status === "low" || i.status === "critical"),
+      ),
+    );
+  }
 
-// Modal Controls
-function openModal(id) {
-  document.getElementById(id).classList.add("active");
-}
-function closeModal(id) {
-  document.getElementById(id).classList.remove("active");
-}
+  stations.forEach((station) => {
+    const items = allInventory.filter((i) => i.station === station.name);
+    const people = allPersonnel.filter((p) => p.station === station.name);
+    const inbound = allShipments.filter(
+      (s) => s.destination === station.name && s.status === "in_transit",
+    );
+    const critical = items.filter((i) => i.status === "critical").length;
 
-// Quick Action Buttons
-async function triggerAction(actionName) {
-  showToast(`Success: ${actionName}`);
-  addActivityLog(actionName, "Just now");
-  await sendApiRequest("actions/trigger", { actionType: actionName });
-}
+    const health =
+      items.length === 0
+        ? 0
+        : Math.round(
+            items.reduce(
+              (sum, i) =>
+                sum +
+                Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
+              0,
+            ) / items.length,
+          );
 
-// Dropdown Filter Functionality
-function filterStations() {
-  const val = document.getElementById("statusFilter").value;
-  const cards = document.querySelectorAll(".station-card");
-  cards.forEach((card) => {
-    if (val === "all" || card.dataset.status === val) {
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
-    }
+    const card = document.createElement("div");
+    card.className = "station-card";
+    card.onclick = () => selectStation(station.station_id);
+    card.innerHTML = `
+      <div class="station-card-header">
+        <h3>${station.name}</h3>
+        <span class="station-code">${station.code}</span>
+      </div>
+      <p class="station-region">${station.region}</p>
+      <p class="station-coords">${station.latitude}°, ${station.longitude}°</p>
+      <div class="station-stats">
+        <div><strong>${people.length}</strong><span>Personnel</span></div>
+        <div><strong>${inbound.length}</strong><span>Inbound</span></div>
+        <div><strong>${health}%</strong><span>Stock</span></div>
+      </div>
+      ${
+        critical > 0
+          ? `<div class="station-warning">${critical} critical shortage${critical > 1 ? "s" : ""}</div>`
+          : ""
+      }
+    `;
+    container.appendChild(card);
   });
 }
 
-// View Alerts Action
-function filterAlertsOnly() {
-  document.getElementById("statusFilter").value = "warning";
-  filterStations();
-  showToast("Filtered view to stations with Active Alerts");
-}
+// Wire your filter dropdown to this
+document.getElementById("stationFilter").addEventListener("change", (e) => {
+  renderStationCards(e.target.value);
+});
 
-// Append Activity Log Item
-function addActivityLog(text, time) {
-  const log = document.getElementById("activityLog");
-  const item = document.createElement("div");
-  item.className = "list-item";
-  item.innerHTML = `<span>${text}</span><span style="color: var(--text-muted);">${time}</span>`;
-  log.insertBefore(item, log.firstChild);
-}
+function renderInventoryHealth() {
+  const container = document.getElementById("inventoryHealthBars");
+  container.innerHTML = "";
 
-// Submit Form: Add New Station Card
-async function submitNewStation() {
-  const name = document.getElementById("stationName").value;
-  const coords = document.getElementById("stationCoords").value;
+  allStations.forEach((station) => {
+    const items = allInventory.filter((i) => i.station === station.name);
+    if (items.length === 0) return;
 
-  if (!name || !coords) {
-    showToast("Error: Please fill in all fields");
-    return;
-  }
+    const health = Math.round(
+      items.reduce(
+        (sum, i) =>
+          sum + Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
+        0,
+      ) / items.length,
+    );
 
-  const payload = { name, coords, status: "operational" };
-  await sendApiRequest("stations", payload);
+    const level = health < 50 ? "critical" : health < 75 ? "warning" : "good";
 
-  const container = document.getElementById("stationsContainer");
-  const card = document.createElement("div");
-  card.className = "station-card";
-  card.dataset.status = "operational";
-  card.innerHTML = `
-      <div class="station-image-container">
-        <img src="images/bharti.jpg" alt="${name}" />
-        <span class="status-tag operational">Operational</span>
+    const bar = document.createElement("div");
+    bar.className = "health-row";
+    bar.innerHTML = `
+      <span class="health-label">${station.name}</span>
+      <div class="health-track">
+        <div class="health-fill ${level}" style="width:${health}%"></div>
       </div>
-      <div class="station-info">
-        <h4>${name.toUpperCase()}</h4>
-        <p class="coords">${coords}</p>
-        <div class="metrics-summary">
-          <div class="metric-box"><span>Inventory</span><strong>100%</strong></div>
-          <div class="metric-box"><span>Personnel</span><strong class="count-personnel">10</strong></div>
-          <div class="metric-box"><span>Shipments</span><strong>0</strong></div>
-        </div>
+      <span class="health-percent">${health}%</span>
+    `;
+    container.appendChild(bar);
+  });
+}
+async function selectStation(stationId) {
+  const summary = await apiGet(`/api/stations/${stationId}/summary`);
+  // { station_id, name, region, status, personnel_count, inventory_items, open_alerts }
+
+  document.getElementById("detailName").textContent = summary.name;
+  document.getElementById("detailRegion").textContent = summary.region;
+  document.getElementById("detailPersonnel").textContent =
+    summary.personnel_count;
+  document.getElementById("detailItems").textContent = summary.inventory_items;
+  document.getElementById("detailAlerts").textContent = summary.open_alerts;
+}
+async function renderActivities() {
+  const alerts = await apiGet("/api/alerts");
+  const container = document.getElementById("activitiesFeed");
+  container.innerHTML = "";
+
+  alerts.slice(0, 8).forEach((a) => {
+    const item = document.createElement("div");
+    item.className = "activity-item";
+    item.innerHTML = `
+      <span class="activity-dot ${a.severity}"></span>
+      <div class="activity-body">
+        <p>${a.message}</p>
+        <span class="activity-meta">
+          ${a.station || "System"} · ${a.created_at} · ${a.status}
+        </span>
       </div>
     `;
-  container.appendChild(card);
-  closeModal("addStationModal");
-  showToast(`New station ${name.toUpperCase()} registered successfully!`);
-
-  const totalCount = document.querySelectorAll(".station-card").length;
-  document.getElementById("stat-total").innerText =
-    totalCount < 10 ? `0${totalCount}` : totalCount;
-  document.getElementById("stat-op").innerText =
-    totalCount < 10 ? `0${totalCount}` : totalCount;
-}
-
-// Submit Form: Assign Personnel
-async function submitPersonnelAssignment() {
-  const count = parseInt(document.getElementById("personnelCount").value, 10);
-  const station = document.getElementById("stationSelect").value;
-
-  await sendApiRequest("personnel/assign", { stationId: station, count });
-
-  const cards = document.querySelectorAll(".station-card");
-  cards.forEach((card) => {
-    const title = card.querySelector("h4").innerText;
-    if (title === station) {
-      const el = card.querySelector(".count-personnel");
-      const current = parseInt(el.innerText, 10);
-      el.innerText = current + count;
-    }
+    container.appendChild(item);
   });
-
-  const totalEl = document.getElementById("stat-personnel");
-  totalEl.innerText = parseInt(totalEl.innerText, 10) + count;
-
-  closeModal("assignModal");
-  showToast(`Assigned ${count} personnel to ${station}`);
-  addActivityLog(`Deployed ${count} personnel to ${station}`, "Just now");
 }
+// PLACEHOLDER DATA - no weather API connected.
+// A production deployment would use IMD or a satellite feed.
+const WEATHER_PLACEHOLDER = [
+  { station: "Bharati", temp: -18, condition: "Clear", wind: 24 },
+  { station: "Maitri", temp: -22, condition: "Snow", wind: 35 },
+  { station: "Himadri", temp: -9, condition: "Overcast", wind: 18 },
+];
 
-// Real-time Latency Pulse Generator
-setInterval(() => {
-  const latencyEl = document.getElementById("latency-val");
-  if (!latencyEl) return; // lives in the old sidebar footer, no longer on the page
-  const latency = Math.floor(135 + Math.random() * 20);
-  latencyEl.innerText = `${latency} ms`;
-}, 3000);
+function renderWeather() {
+  const container = document.getElementById("weatherWidget");
+  container.innerHTML = "";
+
+  WEATHER_PLACEHOLDER.forEach((w) => {
+    const card = document.createElement("div");
+    card.className = "weather-card";
+    card.innerHTML = `
+      <h4>${w.station}</h4>
+      <span class="weather-temp">${w.temp}°C</span>
+      <span class="weather-condition">${w.condition}</span>
+      <span class="weather-wind">${w.wind} km/h</span>
+    `;
+    container.appendChild(card);
+  });
+}

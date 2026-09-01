@@ -149,13 +149,6 @@
         icon: "weight",
         color: "blue2",
       },
-      {
-        label: "TOTAL VALUE",
-        value: "₹ --",
-        foot: "Approx. value",
-        icon: "rupee",
-        color: "purple",
-      },
     ];
 
     const icons = {
@@ -183,9 +176,7 @@
     $("#statsRow").innerHTML = cards
       .map((c, i) => {
         const [fg, bg] = colorMap[c.color];
-        const iconKey = ["box", "truck", "clock", "check", "weight", "rupee"][
-          i
-        ];
+        const iconKey = ["box", "truck", "clock", "check", "weight"][i];
         return `<div class="stat-card" data-stat="${c.label}">
         <div class="stat-icon" style="background:${bg}; color:${fg}">${icons[iconKey]}</div>
         <div class="stat-label">${c.label}</div>
