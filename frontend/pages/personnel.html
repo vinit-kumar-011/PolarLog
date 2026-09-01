@@ -3,14 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PolarLog — Cargo (Enhanced)</title>
-    <link rel="stylesheet" href="../css/cargo.css" />
+    <title>PolarLog — Personnel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../css/personnel.css" />
     <link rel="stylesheet" href="../css/pl-sidebar.css" />
   </head>
   <body>
     <div class="app">
-      <!-- ================= SIDEBAR ================= -->
-      <aside class="pl-sidebar">
+      <!-- ================= SIDEBAR (shared across all pages) ================= -->
+<aside class="pl-sidebar">
         <a href="dashboard.html" class="pl-logo-row">
           <div class="pl-logo-mark">
             <svg
@@ -376,10 +382,8 @@
       <div class="main">
         <div class="topbar">
           <div>
-            <div class="page-title">Cargo (Enhanced)</div>
-            <div class="page-sub">
-              Manage and track all cargo across Antarctic missions
-            </div>
+            <div class="page-title">Personnel</div>
+            <div class="page-sub">Everyone currently deployed across every station</div>
           </div>
           <div class="topbar-right">
             <div
@@ -407,117 +411,85 @@
                 <circle cx="11" cy="11" r="7" />
                 <path d="m21 21-4.3-4.3" />
               </svg>
-              <input id="topSearch" placeholder="Search cargo..." />
+              <input id="topSearch" placeholder="Search personnel..." />
             </div>
-            <div style="position: relative">
-              <button class="icon-btn" id="bellBtn">
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                >
-                  <path d="M6 8a6 6 0 1 1 12 0c0 5 2 6 2 6H4s2-1 2-6Z" />
-                  <path d="M10 20a2 2 0 0 0 4 0" />
-                </svg>
-                <span class="badge" id="bellBadge">0</span>
-              </button>
-              <div class="notif-panel" id="notifPanel">
-                <div class="notif-panel-head">
-                  Notifications <span id="notifClear">Clear all</span>
-                </div>
-                <div id="notifList"></div>
-              </div>
-            </div>
-            <button class="icon-btn" id="themeBtn">
-              <svg
-                width="16"
-                height="16"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="2"
-              >
-                <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
-              </svg>
-            </button>
           </div>
         </div>
 
         <div class="content">
           <!-- stat cards -->
-          <div class="stats-row" id="statsRow"></div>
+          <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--blue-bg); color: var(--blue)">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="8" r="3.2" /><path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6" /><circle cx="17.5" cy="8.5" r="2.4" /><path d="M16 14.3c2.7.4 4.9 2.3 5 5.7" />
+                </svg>
+              </div>
+              <div class="stat-label">TOTAL PERSONNEL</div>
+              <div class="stat-value" id="statTotal">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--green-bg); color: var(--green)">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="m4 13 5 5L20 7" />
+                </svg>
+              </div>
+              <div class="stat-label">DEPLOYED</div>
+              <div class="stat-value" id="statDeployed">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--amber-bg); color: var(--amber)">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" />
+                </svg>
+              </div>
+              <div class="stat-label">OTHER STATUS</div>
+              <div class="stat-value" id="statOther">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--purple-bg); color: var(--purple)">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M4 21V9l8-5 8 5v12" /><path d="M9 21v-6h6v6" />
+                </svg>
+              </div>
+              <div class="stat-label">STATIONS COVERED</div>
+              <div class="stat-value" id="statStations">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background: var(--red-bg); color: var(--red)">
+                <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 8l-9-5-9 5 9 5 9-5z" /><path d="M3 8v8l9 5 9-5V8" />
+                </svg>
+              </div>
+              <div class="stat-label">ROLES</div>
+              <div class="stat-value" id="statRoles">—</div>
+            </div>
+          </div>
 
           <div class="body-grid">
             <!-- LEFT -->
             <div class="left-col">
               <div class="filters">
                 <div class="search-box">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <circle cx="11" cy="11" r="7" />
-                    <path d="m21 21-4.3-4.3" />
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
                   </svg>
-                  <input
-                    id="tableSearch"
-                    placeholder="Search cargo by ID, name, or category..."
-                  />
+                  <input id="tableSearch" placeholder="Search by name or role..." />
                 </div>
-                <select class="filter-select" id="filterCategory"></select>
-                <select class="filter-select" id="filterStation"></select>
-                <select class="filter-select" id="filterStatus"></select>
-                <select class="filter-select" id="filterPriority"></select>
-                <button
-                  class="btn icon-only"
-                  id="filterMoreBtn"
-                  title="More filters"
-                >
-                  <svg
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M4 6h16M7 12h10M10 18h4" />
-                  </svg>
-                </button>
-                <button class="btn" id="exportBtn">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                  >
-                    <path d="M12 3v12" />
-                    <path d="m7 10 5 5 5-5" />
-                    <path d="M4 19h16" />
-                  </svg>
-                  Export
-                </button>
-                <button class="btn btn-primary" id="newCargoBtn">
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.4"
-                  >
+                <select class="filter-select" id="filterStation">
+                  <option value="">All stations</option>
+                </select>
+                <select class="filter-select" id="filterRole">
+                  <option value="">All roles</option>
+                </select>
+                <select class="filter-select" id="filterStatus">
+                  <option value="">All statuses</option>
+                </select>
+                <button class="btn btn-primary" id="newPersonBtn">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
                     <path d="M12 5v14M5 12h14" />
                   </svg>
-                  New Cargo
+                  New Person
                 </button>
               </div>
 
@@ -526,205 +498,74 @@
                   <table>
                     <thead>
                       <tr>
-                        <th>Cargo ID</th>
-                        <th>Item</th>
-                        <th>Category</th>
-                        <th>Origin</th>
-                        <th>Destination</th>
-                        <th>Qty</th>
-                        <th>Unit</th>
-                        <th class="sortable" data-sort="weight">
-                          Weight <span class="sort-arrow">▾</span>
-                        </th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Station</th>
+                        <th>Expedition Season</th>
+                        <th>Contact</th>
                         <th>Status</th>
-                        <th>ETA</th>
-                        <th class="sortable" data-sort="priority">
-                          Priority <span class="sort-arrow">▾</span>
-                        </th>
-                        <th>Actions</th>
                       </tr>
                     </thead>
-                    <tbody id="tableBody"></tbody>
+                    <tbody id="tableBody">
+                      <tr>
+                        <td colspan="6" class="empty-row">Loading…</td>
+                      </tr>
+                    </tbody>
                   </table>
                 </div>
                 <div class="table-foot">
-                  <div class="table-foot-text" id="tableFootText">
-                    Showing 1 to 10 of 127 entries
-                  </div>
-                  <div class="pagination" id="pagination"></div>
+                  <div class="table-foot-text" id="tableFootText">—</div>
                 </div>
               </div>
             </div>
 
             <!-- RIGHT -->
             <div class="right-col">
-              <div class="panel" id="cargoDetailsPanel"></div>
-
-              <div class="panel">
+              <div class="panel" id="personDetailsPanel">
                 <div class="panel-title-row">
-                  <div class="panel-title">Shipment Progress</div>
+                  <div class="panel-title">Personnel Details</div>
                 </div>
-                <div class="progress-track" id="progressTrack"></div>
+                <p class="empty-state">Select a person to see their details</p>
               </div>
 
-              <div class="panel">
+              <div class="panel" id="rolesPanel">
                 <div class="panel-title-row">
-                  <div class="panel-title">Quick Actions</div>
+                  <div class="panel-title">By Role</div>
                 </div>
-                <div class="qa-grid">
-                  <button
-                    class="qa-btn"
-                    data-toast="Opening live tracker for selected cargo…"
-                  >
-                    <div class="qa-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path
-                          d="M12 21s7-6.3 7-12a7 7 0 1 0-14 0c0 5.7 7 12 7 12Z"
-                        />
-                        <circle cx="12" cy="9" r="2.4" />
-                      </svg>
-                    </div>
-                    Track Shipment
-                  </button>
-                  <button class="qa-btn" id="updateStatusBtn">
-                    <div class="qa-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="m4 13 5 5L20 7" />
-                      </svg>
-                    </div>
-                    Update Status
-                  </button>
-                  <button
-                    class="qa-btn"
-                    data-toast-success="Document generated and ready to download."
-                  >
-                    <div class="qa-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path
-                          d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8Z"
-                        />
-                        <path d="M14 3v5h5" />
-                      </svg>
-                    </div>
-                    Generate Document
-                  </button>
-                  <button class="qa-btn" id="reportIssueBtn">
-                    <div class="qa-icon">
-                      <svg
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        stroke-width="2"
-                      >
-                        <path d="M12 9v4" />
-                        <path d="M12 17h.01" />
-                        <path
-                          d="M10.3 3.9 2.5 17a1.5 1.5 0 0 0 1.3 2.3h16.4a1.5 1.5 0 0 0 1.3-2.3L13.7 3.9a1.7 1.7 0 0 0-3.4 0Z"
-                        />
-                      </svg>
-                    </div>
-                    Report Issue
-                  </button>
+                <div id="roleBreakdown">
+                  <p class="empty-state">Loading…</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <!-- BOTTOM ROW -->
           <div class="bottom-grid">
             <div class="panel">
               <div class="panel-title-row">
-                <div class="panel-title">Cargo Overview</div>
-                <select class="month-select" id="monthSelect">
-                  <option>This Month</option>
-                  <option>Last Month</option>
-                  <option>This Quarter</option>
-                </select>
+                <div class="panel-title">Personnel by Station</div>
               </div>
-              <svg
-                id="lineChart"
-                viewBox="0 0 560 220"
-                style="width: 100%; height: 200px; overflow: visible"
-              ></svg>
-              <div class="chart-legend">
-                <div class="legend-item">
-                  <span class="legend-dot" style="background: #3b82f6"></span>In
-                  Transit
-                </div>
-                <div class="legend-item">
-                  <span class="legend-dot" style="background: #f5a524"></span
-                  >Pending
-                </div>
-                <div class="legend-item">
-                  <span class="legend-dot" style="background: #22c55e"></span
-                  >Delivered
-                </div>
+              <div id="stationPersonnelList">
+                <p class="empty-state">Loading…</p>
               </div>
             </div>
 
             <div class="panel">
               <div class="panel-title-row">
-                <div class="panel-title">Cargo by Category</div>
+                <div class="panel-title">Active Expeditions</div>
               </div>
-              <div class="donut-wrap">
-                <div class="donut">
-                  <div
-                    id="donutBg"
-                    style="width: 100%; height: 100%; border-radius: 50%"
-                  ></div>
-                  <div class="donut-hole">
-                    <div class="donut-total">--</div>
-                    <div class="donut-total-label">Total</div>
-                  </div>
-                </div>
-                <div class="donut-legend" id="donutLegend"></div>
+              <div id="expeditionList">
+                <p class="empty-state">Loading…</p>
               </div>
-            </div>
-
-            <div class="panel">
-              <div class="panel-title-row">
-                <div class="panel-title">Alerts &amp; Notifications</div>
-                <button class="link-btn" data-toast="Opening full alerts log…">
-                  View all
-                </button>
-              </div>
-              <div id="alertsList"></div>
-              <button
-                class="view-all-btn"
-                data-toast="Opening full alerts log…"
-              >
-                View all alerts
-              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== Modal ===== -->
-    <div class="overlay" id="overlay">
-      <div class="modal" id="modalBox"></div>
-    </div>
-
     <div class="toast-wrap" id="toastWrap"></div>
 
     <script src="../js/config.js"></script>
     <script src="../js/pl-sidebar.js"></script>
-    <script src="../js/cargo.js"></script>
+    <script src="../js/personnel.js"></script>
   </body>
 </html>
