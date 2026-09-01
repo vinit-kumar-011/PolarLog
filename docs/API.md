@@ -196,3 +196,53 @@ Example request:
 {
   "status": "in_transit"
 }
+
+## POST /api/auth/login
+
+Checks a username and password. Send:
+
+```json
+{
+  "username": "hmd_office",
+  "password": "himadri123"
+}
+```
+
+**Success — 200:**
+
+```json
+{
+  "user_id": 5,
+  "username": "hmd_office",
+  "full_name": "K. Verma",
+  "role": "station_officer",
+  "station_id": 3,
+  "station": "Himadri",
+  "message": "Login successful"
+}
+```
+
+**Wrong credentials — 401:** `{"error": "Invalid username or password"}`
+**Missing a field — 400:** `{"error": "Username and password are required"}`
+
+Roles: `admin`, `coordinator`, `station_officer`, `field_staff`
+
+## GET /api/users
+
+All users, without password hashes. For an admin screen.
+
+```json
+[
+  {
+    "user_id": 1,
+    "username": "admin",
+    "full_name": "System Administrator",
+    "role": "admin",
+    "station": null
+  }
+]
+```
+
+---
+
+**Demo accounts:** admin/admin123 · coord/coord123 · bhr_office/bharati123 · mtr_office/maitri123 · hmd_office/himadri123
