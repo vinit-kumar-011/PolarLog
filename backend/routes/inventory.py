@@ -118,3 +118,41 @@ def delete_item(item_id):
     if changed == 0:
         return jsonify({"error": "Item not found"}), 404
     return jsonify({"message": "Item deleted"})
+
+    # ---------- forecast: days until each item runs out ----------
+@inventory_bp.route("/api/inventory/forecast", methods=["GET"])
+def get_forecast():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT i.item_id, i.name, i.category, i.quantity, i.unit,
+               i.daily_usage_rate, s.name AS station,
+               ROUND(i.quantity / NULLIF(i.daily_usage_rate, 0), 1) AS days_remaining
+        FROM inventory i
+        JOIN stations s ON i.station_id = s.station_id
+        WHERE i.daily_usage_rate > 0
+        ORDER BY days_remaining ASC
+    """)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(rows)
+
+# ---------- forecast: only the urgent ones ----------
+@inventory_bp.route("/api/inventory/forecast/urgent", methods=["GET"])
+def get_urgent_forecast():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT i.item_id, i.name, i.quantity, i.daily_usage_rate, s.name AS station,
+               ROUND(i.quantity / NULLIF(i.daily_usage_rate, 0), 1) AS days_remaining
+        FROM inventory i
+        JOIN stations s ON i.station_id = s.station_id
+        WHERE i.daily_usage_rate > 0
+          AND (i.quantity / i.daily_usage_rate) <= 14
+        ORDER BY days_remaining ASC
+    """)
+    rows = cursor.fetchall()
+    cursor.close()
+    conn.close()
+    return jsonify(rows)
