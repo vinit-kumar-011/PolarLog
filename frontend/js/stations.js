@@ -1,203 +1,321 @@
-javascript;
+/* =========================================================
+   POLARLOG — STATIONS PAGE
+   Uses the shared apiGet() helper from config.js.
+   Expects GET /api/stations, /api/inventory, /api/personnel,
+   /api/shipments and /api/alerts (see the matching *.py routes).
+========================================================= */
+
 let allStations = [];
 let allInventory = [];
-let allShipments = [];
 let allPersonnel = [];
+let allShipments = [];
+let allAlerts = [];
+let currentStatusFilter = "all";
+
+const STATION_IMAGES = {
+  bharati: "../assets/images/bharti.jpg",
+  maitri: "../assets/images/maitri.jpg",
+  himadri: "../assets/images/himadri.jpg",
+};
 
 async function loadStations() {
   try {
-    [allStations, allInventory, allShipments, allPersonnel] = await Promise.all(
-      [
+    const [stations, inventory, personnel, shipments, alerts] =
+      await Promise.all([
         apiGet("/api/stations"),
         apiGet("/api/inventory"),
-        apiGet("/api/shipments"),
         apiGet("/api/personnel"),
-      ],
-    );
+        apiGet("/api/shipments"),
+        apiGet("/api/alerts"),
+      ]);
 
-    renderStationSummary();
+    allStations = stations || [];
+    allInventory = inventory || [];
+    allPersonnel = personnel || [];
+    allShipments = shipments || [];
+    allAlerts = alerts || [];
+
+    renderSummary();
     renderStationCards();
-    renderInventoryHealth();
-    renderActivities(); // uses alerts - see Part 3
+    renderStationHealthList();
+    renderActivityLog();
+    populateStationSelect();
   } catch (err) {
-    console.error("Stations page failed:", err);
-    showToast("Could not reach the server.");
+    console.error("Stations page failed to load:", err);
+    toast("Could not reach the server. Is the backend running?");
+    document.getElementById("stationsContainer").innerHTML =
+      '<p style="color:var(--text-muted)">Could not load station data.</p>';
   }
 }
 
 document.addEventListener("DOMContentLoaded", loadStations);
 
-javascript;
-function renderStationSummary() {
-  document.getElementById("summaryOperational").textContent =
-    allStations.filter((s) => s.status === "operational").length;
-
-  document.getElementById("summaryPersonnel").textContent = allPersonnel.length;
-
-  const avgHealth = Math.round(
-    allInventory.reduce(
-      (sum, i) =>
-        sum + Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
-      0,
-    ) / allInventory.length,
+/* ---------------- helpers ---------------- */
+function itemHealth(item) {
+  const pct = Math.min(
+    100,
+    Math.round(((item.quantity || 0) / (item.reorder_level || 1)) * 100),
   );
-  document.getElementById("summaryHealth").textContent = avgHealth + "%";
-
-  document.getElementById("summaryShipments").textContent = allShipments.filter(
-    (s) => s.status === "in_transit",
-  ).length;
+  return isFinite(pct) ? pct : 0;
 }
 
-function renderStationCards(filter = "all") {
-  const container = document.getElementById("stationCards");
-  container.innerHTML = "";
+function stationHealth(stationName) {
+  const items = allInventory.filter((i) => i.station === stationName);
+  if (items.length === 0) return 0;
+  return Math.round(
+    items.reduce((sum, i) => sum + itemHealth(i), 0) / items.length,
+  );
+}
+
+function stationHasShortage(stationName) {
+  return allInventory.some(
+    (i) =>
+      i.station === stationName &&
+      (i.status === "critical" || i.status === "low"),
+  );
+}
+
+/* ---------------- summary stat cards ---------------- */
+function renderSummary() {
+  const setText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+
+  setText("stat-total", String(allStations.length).padStart(2, "0"));
+  setText(
+    "stat-op",
+    String(
+      allStations.filter((s) => s.status === "operational").length,
+    ).padStart(2, "0"),
+  );
+  setText("stat-personnel", allPersonnel.length);
+
+  const avgHealth = allInventory.length
+    ? Math.round(
+        allInventory.reduce((sum, i) => sum + itemHealth(i), 0) /
+          allInventory.length,
+      )
+    : 0;
+  setText("stat-inv-health", avgHealth + "%");
+
+  setText(
+    "stat-shipments",
+    allShipments.filter((s) => s.status === "in_transit").length,
+  );
+}
+
+/* ---------------- station cards ---------------- */
+function renderStationCards() {
+  const container = document.getElementById("stationsContainer");
+  if (!container) return;
 
   let stations = allStations;
-
-  if (filter === "operational") {
+  if (currentStatusFilter === "operational") {
     stations = stations.filter((s) => s.status === "operational");
-  } else if (filter === "low-stock") {
-    stations = stations.filter((s) =>
-      allInventory.some(
-        (i) =>
-          i.station === s.name &&
-          (i.status === "low" || i.status === "critical"),
-      ),
-    );
+  } else if (currentStatusFilter === "warning") {
+    stations = stations.filter((s) => stationHasShortage(s.name));
   }
 
-  stations.forEach((station) => {
-    const items = allInventory.filter((i) => i.station === station.name);
-    const people = allPersonnel.filter((p) => p.station === station.name);
-    const inbound = allShipments.filter(
-      (s) => s.destination === station.name && s.status === "in_transit",
-    );
-    const critical = items.filter((i) => i.status === "critical").length;
+  if (stations.length === 0) {
+    container.innerHTML =
+      '<p style="color:var(--text-muted)">No stations match this filter.</p>';
+    return;
+  }
 
-    const health =
-      items.length === 0
-        ? 0
-        : Math.round(
-            items.reduce(
-              (sum, i) =>
-                sum +
-                Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
-              0,
-            ) / items.length,
-          );
+  container.innerHTML = stations
+    .map((station) => {
+      const key = (station.name || "").toLowerCase();
+      const img =
+        STATION_IMAGES[key] || "../assets/images/antarctic-stations-map.jpg";
+      const health = stationHealth(station.name);
+      const personnelCount = allPersonnel.filter(
+        (p) => p.station === station.name,
+      ).length;
+      const inboundShipments = allShipments.filter(
+        (s) => s.destination === station.name && s.status === "in_transit",
+      ).length;
+      const warn = stationHasShortage(station.name);
+      const statusClass = warn ? "warning" : "operational";
+      const statusLabel = warn ? "Low Stock" : "Operational";
 
-    const card = document.createElement("div");
-    card.className = "station-card";
-    card.onclick = () => selectStation(station.station_id);
-    card.innerHTML = `
-      <div class="station-card-header">
-        <h3>${station.name}</h3>
-        <span class="station-code">${station.code}</span>
-      </div>
-      <p class="station-region">${station.region}</p>
-      <p class="station-coords">${station.latitude}°, ${station.longitude}°</p>
-      <div class="station-stats">
-        <div><strong>${people.length}</strong><span>Personnel</span></div>
-        <div><strong>${inbound.length}</strong><span>Inbound</span></div>
-        <div><strong>${health}%</strong><span>Stock</span></div>
-      </div>
-      ${
-        critical > 0
-          ? `<div class="station-warning">${critical} critical shortage${critical > 1 ? "s" : ""}</div>`
-          : ""
-      }
-    `;
-    container.appendChild(card);
-  });
+      return `<div class="station-card" data-status="${statusClass}">
+        <div class="station-image-container">
+          <img src="${img}" alt="${station.name} Station" />
+          <span class="status-tag ${statusClass}">${statusLabel}</span>
+        </div>
+        <div class="station-info">
+          <h4>${(station.name || "").toUpperCase()}</h4>
+          <p class="coords">${station.latitude ?? "—"}°, ${station.longitude ?? "—"}°</p>
+          <div class="metrics-summary">
+            <div class="metric-box">
+              <span>Inventory</span><strong>${health}%</strong>
+            </div>
+            <div class="metric-box">
+              <span>Personnel</span><strong class="count-personnel">${personnelCount}</strong>
+            </div>
+            <div class="metric-box">
+              <span>Shipments</span><strong>${inboundShipments}</strong>
+            </div>
+          </div>
+        </div>
+      </div>`;
+    })
+    .join("");
 }
 
-// Wire your filter dropdown to this
-document.getElementById("stationFilter").addEventListener("change", (e) => {
-  renderStationCards(e.target.value);
-});
-
-function renderInventoryHealth() {
-  const container = document.getElementById("inventoryHealthBars");
-  container.innerHTML = "";
-
-  allStations.forEach((station) => {
-    const items = allInventory.filter((i) => i.station === station.name);
-    if (items.length === 0) return;
-
-    const health = Math.round(
-      items.reduce(
-        (sum, i) =>
-          sum + Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
-        0,
-      ) / items.length,
-    );
-
-    const level = health < 50 ? "critical" : health < 75 ? "warning" : "good";
-
-    const bar = document.createElement("div");
-    bar.className = "health-row";
-    bar.innerHTML = `
-      <span class="health-label">${station.name}</span>
-      <div class="health-track">
-        <div class="health-fill ${level}" style="width:${health}%"></div>
-      </div>
-      <span class="health-percent">${health}%</span>
-    `;
-    container.appendChild(bar);
-  });
+function filterStations() {
+  const select = document.getElementById("statusFilter");
+  currentStatusFilter = select ? select.value : "all";
+  renderStationCards();
 }
-async function selectStation(stationId) {
-  const summary = await apiGet(`/api/stations/${stationId}/summary`);
-  // { station_id, name, region, status, personnel_count, inventory_items, open_alerts }
 
-  document.getElementById("detailName").textContent = summary.name;
-  document.getElementById("detailRegion").textContent = summary.region;
-  document.getElementById("detailPersonnel").textContent =
-    summary.personnel_count;
-  document.getElementById("detailItems").textContent = summary.inventory_items;
-  document.getElementById("detailAlerts").textContent = summary.open_alerts;
+/* ---------------- inventory health by station ---------------- */
+function renderStationHealthList() {
+  const container = document.getElementById("stationHealthList");
+  if (!container) return;
+
+  if (allStations.length === 0) {
+    container.innerHTML =
+      '<p style="color:var(--text-muted)">No station data yet</p>';
+    return;
+  }
+
+  container.innerHTML = allStations
+    .map((station) => {
+      const health = stationHealth(station.name);
+      const color = health < 50 ? "#fb923c" : "#4ade80";
+      const fillClass = health < 50 ? "progress-fill warning" : "progress-fill";
+      return `<div class="list-item">
+        <div>
+          <strong>${station.name} Station</strong>
+          <div class="progress-bar-bg">
+            <div class="${fillClass}" style="width:${health}%"></div>
+          </div>
+        </div>
+        <span style="color:${color}">${health}%</span>
+      </div>`;
+    })
+    .join("");
 }
-async function renderActivities() {
-  const alerts = await apiGet("/api/alerts");
-  const container = document.getElementById("activitiesFeed");
-  container.innerHTML = "";
 
-  alerts.slice(0, 8).forEach((a) => {
-    const item = document.createElement("div");
-    item.className = "activity-item";
-    item.innerHTML = `
-      <span class="activity-dot ${a.severity}"></span>
-      <div class="activity-body">
-        <p>${a.message}</p>
-        <span class="activity-meta">
-          ${a.station || "System"} · ${a.created_at} · ${a.status}
-        </span>
-      </div>
-    `;
-    container.appendChild(item);
-  });
+/* ---------------- recent activity (from alerts) ---------------- */
+function timeAgo(dateStr) {
+  if (!dateStr) return "—";
+  const then = new Date(dateStr.replace(" ", "T"));
+  if (isNaN(then.getTime())) return dateStr;
+  const diffMs = Date.now() - then.getTime();
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs} hr ago`;
+  return `${Math.round(hrs / 24)} day(s) ago`;
 }
-// PLACEHOLDER DATA - no weather API connected.
-// A production deployment would use IMD or a satellite feed.
-const WEATHER_PLACEHOLDER = [
-  { station: "Bharati", temp: -18, condition: "Clear", wind: 24 },
-  { station: "Maitri", temp: -22, condition: "Snow", wind: 35 },
-  { station: "Himadri", temp: -9, condition: "Overcast", wind: 18 },
-];
 
-function renderWeather() {
-  const container = document.getElementById("weatherWidget");
-  container.innerHTML = "";
+function renderActivityLog() {
+  const container = document.getElementById("activityLog");
+  if (!container) return;
 
-  WEATHER_PLACEHOLDER.forEach((w) => {
-    const card = document.createElement("div");
-    card.className = "weather-card";
-    card.innerHTML = `
-      <h4>${w.station}</h4>
-      <span class="weather-temp">${w.temp}°C</span>
-      <span class="weather-condition">${w.condition}</span>
-      <span class="weather-wind">${w.wind} km/h</span>
-    `;
-    container.appendChild(card);
-  });
+  const recent = [...allAlerts]
+    .sort((a, b) => (a.created_at < b.created_at ? 1 : -1))
+    .slice(0, 5);
+
+  if (recent.length === 0) {
+    container.innerHTML =
+      '<p style="color:var(--text-muted)">No recent activity</p>';
+    return;
+  }
+
+  container.innerHTML = recent
+    .map((a) => {
+      const isWarn = a.severity === "critical" || a.severity === "warning";
+      return `<div class="list-item${isWarn ? " warning-item" : ""}">
+        <span>${a.message || "—"}</span>
+        <span style="color:${isWarn ? "#fb923c" : "var(--text-muted)"}">${timeAgo(a.created_at)}</span>
+      </div>`;
+    })
+    .join("");
+}
+
+/* ---------------- assign-personnel modal select ---------------- */
+function populateStationSelect() {
+  const select = document.getElementById("stationSelect");
+  if (!select) return;
+  select.innerHTML = allStations
+    .map(
+      (s) =>
+        `<option value="${s.name}">${(s.name || "").toUpperCase()}</option>`,
+    )
+    .join("");
+}
+
+/* ---------------- modal + toast + quick-action handlers ----------------
+   These are called directly from inline onclick="" attributes in
+   stations.html, so they're attached to window rather than kept private
+   inside a closure.
+------------------------------------------------------------------------ */
+function openModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.add("active");
+}
+
+function closeModal(id) {
+  const modal = document.getElementById(id);
+  if (modal) modal.classList.remove("active");
+}
+
+function submitNewStation() {
+  const name = document.getElementById("stationName").value.trim();
+  if (!name) {
+    toast("Enter a station name first.");
+    return;
+  }
+  // NOTE: there's no POST /api/stations endpoint yet, so this is a
+  // demo-only confirmation — it doesn't persist to the database.
+  toast(`"${name}" queued for registration (demo only — not yet saved).`);
+  closeModal("addStationModal");
+  document.getElementById("stationName").value = "";
+  document.getElementById("stationCoords").value = "";
+}
+
+function submitPersonnelAssignment() {
+  const station = document.getElementById("stationSelect").value;
+  const count = document.getElementById("personnelCount").value;
+  // NOTE: there's no assignment-write endpoint yet, so this is a
+  // demo-only confirmation — it doesn't persist to the database.
+  toast(`${count} personnel queued for assignment to ${station} (demo only).`);
+  closeModal("assignModal");
+}
+
+function triggerAction(message) {
+  toast(message);
+}
+
+function filterAlertsOnly() {
+  window.location.href = "alerts.html";
+}
+
+function toggleNotifications() {
+  toast(
+    `${allAlerts.filter((a) => a.status === "open").length} open alert(s).`,
+  );
+}
+
+function openSettings() {
+  toast("Settings screen isn't wired up yet.");
+}
+
+function openProfile() {
+  toast("Profile screen isn't wired up yet.");
+}
+
+function toast(message) {
+  const wrap = document.getElementById("toastContainer");
+  if (!wrap) return;
+  const t = document.createElement("div");
+  t.className = "toast";
+  t.textContent = message;
+  wrap.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
 }

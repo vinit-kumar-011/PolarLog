@@ -53,7 +53,7 @@
 
   // Dropdown option sets — keep these in sync with your backend's enums.
   const CATEGORIES = ["Fuel", "Food", "Equipment", "Medical", "Others"];
-  const STATIONS = []; // e.g. ["Bharati","Himadri","Maitri"]
+  let STATIONS = []; // populated from /api/stations once loaded
   const STATUSES = ["In Transit", "Pending", "Delivered"];
   const PRIORITIES = ["High", "Medium", "Low"];
   const UNIT_FOR = {}; // e.g. {"Fuel Drums":"Drum"}
@@ -62,18 +62,85 @@
     return arr[Math.floor(r * arr.length)];
   }
 
-  // Empty by default — populated by fetchCargoData() when a backend is connected.
+  // Populated from /api/cargo once loaded — see initFromBackend() below.
   const DATA = [];
+
+  // Maps the DB's lowercase enum values to the labels this UI renders with.
+  const CATEGORY_LABELS = {
+    fuel: "Fuel",
+    food: "Food",
+    equipment: "Equipment",
+    medical: "Medical",
+    other: "Others",
+  };
+  const STATUS_LABELS = {
+    pending: "Pending",
+    in_transit: "In Transit",
+    delivered: "Delivered",
+  };
+  const PRIORITY_LABELS = {
+    low: "Low",
+    normal: "Medium",
+    high: "High",
+    critical: "High",
+  };
+
+  function mapCargoRow(row, i) {
+    return {
+      id: "CRG-" + row.cargo_id,
+      item: row.item_name || "—",
+      category: CATEGORY_LABELS[row.category] || row.category || "Others",
+      origin: row.origin || "—",
+      destination: row.destination || "—",
+      qty: row.quantity ?? 0,
+      unit: row.unit || "units",
+      weight: row.weight_kg || 0,
+      status: STATUS_LABELS[row.status] || row.status || "Pending",
+      eta: row.eta || "—",
+      priority: PRIORITY_LABELS[row.priority] || row.priority || "Medium",
+    };
+  }
 
   async function fetchCargoData() {
     try {
-      // const res = await fetch(BACKEND.cargoEndpoint);
-      // const json = await res.json();
-      // DATA.push(...json);
-      return [];
+      const rows = await apiGet(BACKEND.cargoEndpoint);
+      return (rows || []).map(mapCargoRow);
     } catch (err) {
       console.error("Failed to load cargo data:", err);
       return [];
+    }
+  }
+
+  async function fetchStationNames() {
+    try {
+      const rows = await apiGet("/api/stations");
+      return (rows || []).map((s) => s.name).filter(Boolean);
+    } catch (err) {
+      console.error("Failed to load stations:", err);
+      return [];
+    }
+  }
+
+  function setLiveStatus(online) {
+    const pill = document.getElementById("livePill");
+    const dot = document.getElementById("liveDot");
+    const text = document.getElementById("liveText");
+    const sync = document.getElementById("syncText");
+    if (!pill) return;
+    if (online) {
+      pill.style.color = "var(--green)";
+      pill.style.background = "var(--green-bg)";
+      dot.style.background = "var(--green)";
+      dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
+      text.textContent = "LIVE";
+      sync.textContent = "Synced just now";
+    } else {
+      pill.style.color = "var(--red)";
+      pill.style.background = "var(--red-bg)";
+      dot.style.background = "var(--red)";
+      dot.style.boxShadow = "none";
+      text.textContent = "OFFLINE";
+      sync.textContent = "Sync failed";
     }
   }
 
@@ -200,7 +267,7 @@
       options.map((o) => `<option value="${o}">${o}</option>`).join("");
   }
   fillSelect("#filterCategory", "All Categories", CATEGORIES);
-  fillSelect("#filterStation", "All Stations", STATIONS);
+  fillSelect("#filterStation", "All Stations", STATIONS); // re-populated in init() once stations load
   fillSelect("#filterStatus", "All Status", STATUSES);
   fillSelect("#filterPriority", "All Priority", PRIORITIES);
 
@@ -886,20 +953,24 @@
     updateBellBadge();
   }
 
-  // Uncomment once BACKEND endpoints are live — this fetches real data,
-  // then re-renders every widget with it instead of the empty state.
-  //
-  // async function initFromBackend(){
-  //   const rows = await fetchCargoData();
-  //   DATA.push(...rows);
-  //   selectedId = DATA[0] ? DATA[0].id : null;
-  //   $("#satcomState").textContent = "Connected";
-  //   $("#satcomDot").style.background = "var(--green)";
-  //   $("#liveText").textContent = "ONLINE";
-  //   $("#syncText").textContent = "Last synced: just now";
-  //   renderAll();
-  // }
-  // initFromBackend();
+  async function initFromBackend() {
+    const [rows, stationNames] = await Promise.all([
+      fetchCargoData(),
+      fetchStationNames(),
+    ]);
 
-  renderAll();
+    DATA.push(...rows);
+    STATIONS = stationNames;
+    fillSelect("#filterStation", "All Stations", STATIONS);
+    selectedId = DATA[0] ? DATA[0].id : null;
+
+    setLiveStatus(true);
+    renderAll();
+  }
+
+  initFromBackend().catch((err) => {
+    console.error("Cargo page failed to load:", err);
+    setLiveStatus(false);
+    renderAll();
+  });
 })();

@@ -1,207 +1,327 @@
+/* =========================================================
+   POLARLOG — DASHBOARD (Overview page)
+   Uses the shared apiGet() helper from config.js.
+   Pulls /api/stations, /api/inventory, /api/cargo, /api/shipments,
+   /api/alerts and /api/personnel and renders the overview cards.
+========================================================= */
+
+let dbStations = [];
+let dbInventory = [];
+let dbCargo = [];
+let dbShipments = [];
+let dbAlerts = [];
+let dbPersonnel = [];
+
 async function loadDashboard() {
   try {
-    const [inventory, cargo, shipments, alerts, stations, personnel] =
+    const [stations, inventory, cargo, shipments, alerts, personnel] =
       await Promise.all([
+        apiGet("/api/stations"),
         apiGet("/api/inventory"),
         apiGet("/api/cargo"),
         apiGet("/api/shipments"),
         apiGet("/api/alerts"),
-        apiGet("/api/stations"),
         apiGet("/api/personnel"),
       ]);
 
-    renderKPIs(inventory, cargo, shipments, alerts, stations, personnel);
-    renderInventoryDonut(inventory);
-    renderShipmentsBar(shipments);
-    renderCriticalAlerts(alerts);
-    renderRecentShipments(shipments);
-    renderStationOverview(stations, inventory);
-    renderWeather(); // placeholder - see Part 3
+    dbStations = stations || [];
+    dbInventory = inventory || [];
+    dbCargo = cargo || [];
+    dbShipments = shipments || [];
+    dbAlerts = alerts || [];
+    dbPersonnel = personnel || [];
+
+    renderKPIs();
+    renderStationList();
+    renderCriticalAlerts();
+    renderDonut();
+    renderShipmentsChart();
+    renderRecentShipments();
+    renderTimeline();
   } catch (err) {
     console.error("Dashboard failed to load:", err);
-    showToast("Could not reach the server. Is the backend running?");
   }
 }
 
 document.addEventListener("DOMContentLoaded", loadDashboard);
 
-function renderKPIs(inventory, cargo, shipments, alerts, stations, personnel) {
-  // Active stations
-  document.getElementById("kpiStations").textContent = stations.filter(
-    (s) => s.status === "operational",
-  ).length;
+function setText(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = val;
+}
 
-  // Cargo not yet delivered
-  document.getElementById("kpiCargo").textContent = cargo.filter(
-    (c) => c.status !== "delivered",
-  ).length;
-
-  // Open alerts, plus how many are critical
-  const openAlerts = alerts.filter((a) => a.status === "open");
-  document.getElementById("kpiAlerts").textContent = openAlerts.length;
-  document.getElementById("kpiAlertsCritical").textContent =
-    openAlerts.filter((a) => a.severity === "critical").length + " critical";
-
-  // Personnel currently deployed
-  document.getElementById("kpiPersonnel").textContent = personnel.length;
-
-  // Shipments on the move
-  document.getElementById("kpiShipments").textContent = shipments.filter(
-    (s) => s.status === "in_transit",
-  ).length;
-
-  // Inventory health - average across every item
-  const health = Math.round(
-    inventory.reduce(
-      (sum, i) =>
-        sum + Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
-      0,
-    ) / inventory.length,
+function itemHealth(item) {
+  const pct = Math.min(
+    100,
+    Math.round(((item.quantity || 0) / (item.reorder_level || 1)) * 100),
   );
-  document.getElementById("kpiHealth").textContent = health + "%";
+  return isFinite(pct) ? pct : 0;
 }
 
-let inventoryChart = null;
+/* ---------------- KPI stat cards ---------------- */
+function renderKPIs() {
+  setText(
+    "kpiStations",
+    dbStations.filter((s) => s.status === "operational").length,
+  );
 
-function renderInventoryDonut(inventory) {
-  // Add up quantity per category
-  const byCategory = {};
-  inventory.forEach((item) => {
-    byCategory[item.category] =
-      (byCategory[item.category] || 0) + item.quantity;
-  });
-  // byCategory is now { fuel: 7720, food: 1710, medical: 50, equipment: 36 }
+  setText("kpiCargo", dbCargo.filter((c) => c.status !== "delivered").length);
 
-  const ctx = document.getElementById("inventoryDonut").getContext("2d");
+  const openAlerts = dbAlerts.filter((a) => a.status === "open");
+  setText("kpiAlerts", openAlerts.length);
 
-  if (inventoryChart) inventoryChart.destroy(); // avoid stacking charts on reload
+  const avgHealth = dbInventory.length
+    ? Math.round(
+        dbInventory.reduce((sum, i) => sum + itemHealth(i), 0) /
+          dbInventory.length,
+      )
+    : 0;
+  setText("kpiHealth", dbInventory.length ? avgHealth + "%" : "—");
 
-  inventoryChart = new Chart(ctx, {
-    type: "doughnut",
-    data: {
-      labels: Object.keys(byCategory).map(
-        (c) => c.charAt(0).toUpperCase() + c.slice(1),
-      ),
-      datasets: [
-        {
-          data: Object.values(byCategory),
-          backgroundColor: [
-            "#2E8BC0",
-            "#F97316",
-            "#12456B",
-            "#A9D6E5",
-            "#5B7182",
-          ],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: "bottom" } },
-    },
-  });
+  setText("kpiPersonnel", dbPersonnel.length);
+
+  setText(
+    "kpiShipments",
+    dbShipments.filter((s) => s.status === "in_transit").length,
+  );
 }
-let shipmentsChart = null;
 
-function renderShipmentsBar(shipments) {
-  const counts = { delivered: 0, in_transit: 0, pending: 0 };
-  shipments.forEach((s) => {
-    if (counts[s.status] !== undefined) counts[s.status]++;
-  });
-
-  const ctx = document.getElementById("shipmentsBar").getContext("2d");
-
-  if (shipmentsChart) shipmentsChart.destroy();
-
-  shipmentsChart = new Chart(ctx, {
-    type: "bar",
-    data: {
-      labels: ["Delivered", "In Transit", "Pending"],
-      datasets: [
-        {
-          label: "Shipments",
-          data: [counts.delivered, counts.in_transit, counts.pending],
-          backgroundColor: ["#2E8BC0", "#F97316", "#A9D6E5"],
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
-    },
-  });
+/* ---------------- Antarctic Station Overview list ---------------- */
+function formatCoord(value, isLat) {
+  if (value === null || value === undefined) return "—° —' —";
+  const dir = isLat ? (value >= 0 ? "N" : "S") : value >= 0 ? "E" : "W";
+  const abs = Math.abs(value);
+  const deg = Math.floor(abs);
+  const min = Math.round((abs - deg) * 60);
+  return `${deg}° ${min}' ${dir}`;
 }
-function renderCriticalAlerts(alerts) {
+
+function renderStationList() {
+  const container = document.getElementById("stationListContainer");
+  if (!container) return;
+
+  if (dbStations.length === 0) {
+    container.innerHTML = '<p class="empty-state">No station data yet</p>';
+    return;
+  }
+
+  container.innerHTML = dbStations
+    .map((station) => {
+      const items = dbInventory.filter((i) => i.station === station.name);
+      const health = items.length
+        ? Math.round(
+            items.reduce((sum, i) => sum + itemHealth(i), 0) / items.length,
+          )
+        : 0;
+      const coords = `${formatCoord(station.latitude, true)}, ${formatCoord(station.longitude, false)}`;
+      return `<div class="station-row">
+        <div class="top-line">
+          <span class="station-dot"></span><span class="station-name">${(station.name || "").toUpperCase()}</span>
+        </div>
+        <div class="station-coords">${coords}</div>
+        <div class="health-label">HEALTH</div>
+        <div class="health-track">
+          <div class="health-fill" style="width:${health}%"></div>
+        </div>
+      </div>`;
+    })
+    .join("");
+}
+
+/* ---------------- Critical Alerts ---------------- */
+function renderCriticalAlerts() {
   const container = document.getElementById("criticalAlertsList");
-  container.innerHTML = "";
+  if (!container) return;
 
-  const open = alerts.filter((a) => a.status === "open");
+  const top = [...dbAlerts]
+    .filter((a) => a.status === "open")
+    .sort((a, b) => (a.severity === "critical" ? -1 : 1))
+    .slice(0, 3);
 
-  if (open.length === 0) {
+  if (top.length === 0) {
     container.innerHTML = '<p class="empty-state">No open alerts</p>';
     return;
   }
 
-  open.slice(0, 5).forEach((alert) => {
-    const item = document.createElement("div");
-    item.className = `alert-item alert-${alert.severity}`;
-    item.innerHTML = `
-      <span class="alert-badge ${alert.severity}">${alert.severity}</span>
-      <div class="alert-body">
-        <p class="alert-message">${alert.message}</p>
-        <span class="alert-meta">${alert.station || "All stations"} · ${alert.created_at}</span>
-      </div>
-    `;
-    container.appendChild(item);
+  container.innerHTML = top
+    .map((a) => {
+      const sev = a.severity || "info";
+      const tagLabel = sev.charAt(0).toUpperCase() + sev.slice(1);
+      return `<div class="alert-row">
+        <div class="alert-icon ${sev}">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z" />
+            <path d="M12 9.5v4.2" />
+          </svg>
+        </div>
+        <div class="alert-text">
+          <div class="alert-title-row">
+            <span class="alert-title">${a.message || "—"}</span><span class="alert-tag ${sev}">${tagLabel.toUpperCase()}</span>
+          </div>
+          <div class="alert-sub">${a.station || "All stations"} · ${a.created_at || "—"}</div>
+        </div>
+      </div>`;
+    })
+    .join("");
+}
+
+/* ---------------- Inventory Distribution donut ---------------- */
+const DONUT_CATEGORIES = ["fuel", "food", "medical", "equipment"];
+const DONUT_COLORS = {
+  fuel: "var(--cyan)",
+  food: "var(--green)",
+  medical: "var(--amber)",
+  equipment: "var(--blue)",
+  others: "var(--text-faint)",
+};
+const LEGEND_IDS = {
+  fuel: "legendValFuel",
+  food: "legendValFood",
+  medical: "legendValMedical",
+  equipment: "legendValEquipment",
+  others: "legendValOthers",
+};
+
+function renderDonut() {
+  if (dbInventory.length === 0) return;
+
+  const byCategory = {};
+  let total = 0;
+  dbInventory.forEach((item) => {
+    const cat = DONUT_CATEGORIES.includes(item.category)
+      ? item.category
+      : "others";
+    byCategory[cat] = (byCategory[cat] || 0) + (item.quantity || 0);
+    total += item.quantity || 0;
+  });
+
+  const donutWrap = document.querySelector(".donut-wrap svg");
+  if (donutWrap) {
+    const circumference = 2 * Math.PI * 40;
+    let offsetAcc = 0;
+    let svgSegments = "";
+    [...DONUT_CATEGORIES, "others"].forEach((cat) => {
+      const val = byCategory[cat] || 0;
+      const pct = total > 0 ? val / total : 0;
+      const dash = pct * circumference;
+      if (dash > 0) {
+        svgSegments += `<circle cx="50" cy="50" r="40" fill="none" stroke="${DONUT_COLORS[cat]}" stroke-width="12" stroke-dasharray="${dash} ${circumference - dash}" stroke-dashoffset="${-offsetAcc}" transform="rotate(-90 50 50)"/>`;
+      }
+      offsetAcc += dash;
+    });
+    // remove any previously injected segments, then insert fresh ones
+    donutWrap.querySelectorAll("circle.dyn-segment").forEach((c) => c.remove());
+    donutWrap.insertAdjacentHTML(
+      "beforeend",
+      svgSegments.replace(/<circle /g, '<circle class="dyn-segment" '),
+    );
+  }
+
+  const topCat = [...DONUT_CATEGORIES, "others"].reduce(
+    (best, cat) =>
+      (byCategory[cat] || 0) > (byCategory[best] || 0) ? cat : best,
+    "fuel",
+  );
+  const topPct =
+    total > 0 ? Math.round(((byCategory[topCat] || 0) / total) * 100) : 0;
+  setText("donutCenterLabel", topPct + "%");
+
+  [...DONUT_CATEGORIES, "others"].forEach((cat) => {
+    const val = byCategory[cat] || 0;
+    const pct = total > 0 ? ((val / total) * 100).toFixed(1) : "0.0";
+    setText(LEGEND_IDS[cat], pct + "%");
   });
 }
-function renderRecentShipments(shipments) {
-  const tbody = document.getElementById("recentShipmentsBody");
-  tbody.innerHTML = "";
 
-  shipments.slice(0, 5).forEach((s) => {
-    const row = document.createElement("tr");
-    row.innerHTML = `
-      <td>${s.reference}</td>
-      <td>${s.origin} → ${s.destination}</td>
-      <td><span class="status-badge ${s.status}">${s.status.replace("_", " ")}</span></td>
-      <td>${s.eta || "—"}</td>
-    `;
-    tbody.appendChild(row);
+/* ---------------- Shipments Status chart ---------------- */
+function renderShipmentsChart() {
+  const box = document.getElementById("shipmentsChartBox");
+  if (!box) return;
+  if (dbShipments.length === 0) return; // leave "Chart data pending"
+
+  const counts = { delivered: 0, in_transit: 0, pending: 0 };
+  dbShipments.forEach((s) => {
+    if (counts[s.status] !== undefined) counts[s.status]++;
   });
+  const max = Math.max(1, counts.delivered, counts.in_transit, counts.pending);
+  const bars = [
+    { label: "Delivered", key: "delivered", color: "var(--green)" },
+    { label: "In Transit", key: "in_transit", color: "var(--blue)" },
+    { label: "Pending", key: "pending", color: "var(--amber)" },
+  ];
+  box.innerHTML = bars
+    .map((b) => {
+      const val = counts[b.key];
+      const pct = Math.round((val / max) * 100);
+      return `<div style="display:flex;align-items:center;gap:8px;margin:6px 0;">
+        <span style="width:70px;font-size:11px;color:var(--text-faint);">${b.label}</span>
+        <div style="flex:1;background:rgba(127,127,127,0.12);border-radius:4px;height:14px;overflow:hidden;">
+          <div style="width:${pct}%;height:100%;background:${b.color};"></div>
+        </div>
+        <span style="width:24px;font-size:11px;text-align:right;">${val}</span>
+      </div>`;
+    })
+    .join("");
 }
-function renderStationOverview(stations, inventory) {
-  const container = document.getElementById("stationOverviewList");
-  container.innerHTML = "";
 
-  stations.forEach((station) => {
-    const items = inventory.filter((i) => i.station === station.name);
-    const critical = items.filter((i) => i.status === "critical").length;
+/* ---------------- Recent Shipments table ---------------- */
+function renderRecentShipments() {
+  const body = document.getElementById("recentShipmentsBody");
+  if (!body || dbShipments.length === 0) return; // leave placeholder rows
 
-    const health =
-      items.length === 0
-        ? 0
-        : Math.round(
-            items.reduce(
-              (sum, i) =>
-                sum +
-                Math.min(100, (i.quantity / (i.reorder_level || 1)) * 100),
-              0,
-            ) / items.length,
-          );
+  const recent = [...dbShipments]
+    .sort((a, b) => (a.eta > b.eta ? -1 : 1))
+    .slice(0, 4);
 
-    const row = document.createElement("div");
-    row.className = "station-row";
-    row.innerHTML = `
-      <span class="station-name">${station.name}</span>
-      <span class="station-region">${station.region}</span>
-      <div class="health-bar">
-        <div class="health-fill" style="width:${health}%"></div>
-      </div>
-      <span class="health-value">${health}%</span>
-      ${critical > 0 ? `<span class="badge critical">${critical} critical</span>` : ""}
-    `;
-    container.appendChild(row);
+  body.innerHTML = recent
+    .map(
+      (s) => `<tr>
+        <td>${s.reference || "—"}</td>
+        <td>${s.origin || "—"} → ${s.destination || "—"}</td>
+        <td><span class="status-chip">${(s.status || "—").replace("_", " ")}</span></td>
+        <td>${s.eta || "—"}</td>
+      </tr>`,
+    )
+    .join("");
+}
+
+/* ---------------- Mission Timeline (recent activity) ---------------- */
+function renderTimeline() {
+  const container = document.getElementById("missionTimelineContainer");
+  if (!container) return;
+
+  // Combine open alerts + shipment dispatches into one recency-sorted feed.
+  const events = [];
+  dbAlerts.forEach((a) => {
+    events.push({
+      title: a.message || "Alert raised",
+      time: a.created_at || "—",
+    });
   });
+  dbShipments
+    .filter((s) => s.status === "in_transit")
+    .forEach((s) => {
+      events.push({
+        title: `${s.reference} en route to ${s.destination || "—"}`,
+        time: `ETA ${s.eta || "—"}`,
+      });
+    });
+
+  const top = events.slice(0, 5);
+  if (top.length === 0) {
+    container.innerHTML = '<p class="empty-state">No recent activity</p>';
+    return;
+  }
+
+  container.innerHTML = top
+    .map(
+      (e, i) => `<div class="tl-item">
+        <div class="tl-marker"><span class="tl-dot"></span>${i < top.length - 1 ? '<span class="tl-line"></span>' : ""}</div>
+        <div class="tl-content">
+          <div class="tl-title">${e.title}</div>
+          <div class="tl-time">${e.time}</div>
+        </div>
+      </div>`,
+    )
+    .join("");
 }

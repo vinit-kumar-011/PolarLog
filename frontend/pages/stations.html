@@ -443,12 +443,12 @@
           </div>
           <div class="stat-card">
             <span class="label">INVENTORY HEALTH</span>
-            <h3>82%</h3>
+            <h3 id="stat-inv-health">82%</h3>
             <span class="subtext">Avg. across stations</span>
           </div>
           <div class="stat-card">
             <span class="label">ACTIVE SHIPMENTS</span>
-            <h3>26</h3>
+            <h3 id="stat-shipments">26</h3>
             <span class="subtext">Across all stations</span>
           </div>
         </section>
@@ -537,32 +537,12 @@
 
           <div class="panel-card">
             <h4>Inventory Health by Station</h4>
-            <div class="list-item">
-              <div>
-                <strong>Bharati Station</strong>
-                <div class="progress-bar-bg">
-                  <div class="progress-fill" style="width: 82%"></div>
+            <div id="stationHealthList">
+              <div class="list-item">
+                <div>
+                  <strong>Loading…</strong>
                 </div>
               </div>
-              <span style="color: #4ade80">82%</span>
-            </div>
-            <div class="list-item">
-              <div>
-                <strong>Maitri Station</strong>
-                <div class="progress-bar-bg">
-                  <div class="progress-fill" style="width: 76%"></div>
-                </div>
-              </div>
-              <span style="color: #4ade80">76%</span>
-            </div>
-            <div class="list-item">
-              <div>
-                <strong>Himadri Station</strong>
-                <div class="progress-bar-bg">
-                  <div class="progress-fill warning" style="width: 48%"></div>
-                </div>
-              </div>
-              <span style="color: #fb923c">48%</span>
             </div>
           </div>
 

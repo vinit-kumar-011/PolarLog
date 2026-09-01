@@ -477,7 +477,7 @@
                     <path d="M9 21v-6h6v6" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiStations">—</div>
               <div class="stat-sub">All stations active</div>
             </div>
             <div class="stat-card">
@@ -496,7 +496,7 @@
                     <path d="M3 8v8l9 5 9-5V8" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiCargo">—</div>
               <div class="stat-sub">In transit &amp; pending</div>
             </div>
             <div class="stat-card">
@@ -517,7 +517,7 @@
                     <path d="M12 9.5v4.2" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiAlerts">—</div>
               <div class="stat-sub">Requires attention</div>
             </div>
             <div class="stat-card">
@@ -535,7 +535,7 @@
                     <path d="M3 17l5-5 4 4 8-9" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiHealth">—</div>
               <div class="stat-sub">Avg. across all stations</div>
             </div>
             <div class="stat-card">
@@ -555,7 +555,7 @@
                     <circle cx="17.5" cy="8.5" r="2.4" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiPersonnel">—</div>
               <div class="stat-sub">Deployed across stations</div>
             </div>
             <div class="stat-card">
@@ -575,7 +575,7 @@
                     <circle cx="16" cy="19" r="1.6" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiShipments">—</div>
               <div class="stat-sub">Across all routes</div>
             </div>
           </div>
@@ -587,7 +587,7 @@
                   <span class="card-title">Antarctic Station Overview</span>
                 </div>
                 <div class="station-body">
-                  <div class="station-list">
+                  <div class="station-list" id="stationListContainer">
                     <div class="station-row">
                       <div class="top-line">
                         <span class="station-dot"></span
@@ -717,7 +717,7 @@
                     >View all</span
                   >
                 </div>
-                <div class="alert-list">
+                <div class="alert-list" id="criticalAlertsList">
                   <div class="alert-row">
                     <div class="alert-icon critical">
                       <svg
@@ -827,6 +827,7 @@
                         y="55"
                         text-anchor="middle"
                         class="donut-center-label"
+                        id="donutCenterLabel"
                       >
                         —%
                       </text>
@@ -838,7 +839,7 @@
                           style="background: var(--cyan)"
                         ></span
                         ><span class="legend-name">Fuel</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValFuel">—%</span>
                       </div>
                       <div class="legend-row">
                         <span
@@ -846,7 +847,7 @@
                           style="background: var(--green)"
                         ></span
                         ><span class="legend-name">Food</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValFood">—%</span>
                       </div>
                       <div class="legend-row">
                         <span
@@ -854,7 +855,9 @@
                           style="background: var(--amber)"
                         ></span
                         ><span class="legend-name">Medical</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValMedical"
+                          >—%</span
+                        >
                       </div>
                       <div class="legend-row">
                         <span
@@ -862,7 +865,9 @@
                           style="background: var(--blue)"
                         ></span
                         ><span class="legend-name">Equipment</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValEquipment"
+                          >—%</span
+                        >
                       </div>
                       <div class="legend-row">
                         <span
@@ -870,7 +875,7 @@
                           style="background: var(--text-faint)"
                         ></span
                         ><span class="legend-name">Others</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValOthers">—%</span>
                       </div>
                     </div>
                   </div>
@@ -905,7 +910,7 @@
                       >Pending</span
                     >
                   </div>
-                  <div class="chart-box">
+                  <div class="chart-box" id="shipmentsChartBox">
                     <span class="chart-empty-text">Chart data pending</span>
                   </div>
                 </div>
@@ -927,7 +932,7 @@
                       <th>ETA</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="recentShipmentsBody">
                     <tr>
                       <td>—</td>
                       <td>—</td>
@@ -963,7 +968,7 @@
                   <span class="card-title">Mission Timeline</span
                   ><span class="view-all">View all</span>
                 </div>
-                <div class="timeline">
+                <div class="timeline" id="missionTimelineContainer">
                   <div class="tl-item">
                     <div class="tl-marker">
                       <span class="tl-dot"></span><span class="tl-line"></span>
