@@ -3,20 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Stations – PolarLog</title>
-
+    <title>PolarLog — Shipments</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-
-    <link rel="stylesheet" href="../css/stations.css" />
+    <link rel="stylesheet" href="../css/shipments.css" />
     <link rel="stylesheet" href="../css/pl-sidebar.css" />
   </head>
   <body>
-    <div class="dashboard-wrapper">
+    <div class="app">
+      <!-- ================= SIDEBAR (shared across dashboard/cargo/stations/shipments) ================= -->
       <aside class="pl-sidebar">
         <a href="dashboard.html" class="pl-logo-row">
           <div class="pl-logo-mark">
@@ -375,325 +374,253 @@
         </div>
       </aside>
 
-      <main class="main-content">
-        <header class="header-bar">
-          <div class="header-title">
-            <h2>Stations (Enhanced)</h2>
-            <p>All Indian Antarctic Stations</p>
+      <!-- ================= MAIN ================= -->
+      <div class="main">
+        <div class="topbar">
+          <div>
+            <div class="page-title">Shipments</div>
+            <div class="page-sub">
+              Track every shipment moving between stations
+            </div>
           </div>
-          <div class="header-controls">
-            <button
-              class="icon-btn"
-              title="Notifications"
-              onclick="toggleNotifications()"
+          <div class="topbar-right">
+            <div
+              class="live-pill"
+              id="livePill"
+              style="color: var(--text-faint); background: var(--panel-2)"
             >
-              🔔
-              <span class="notification-dot" id="notifDot"></span>
-            </button>
-            <button
-              class="icon-btn"
-              title="System Settings"
-              onclick="openSettings()"
-            >
-              ⚙️
-            </button>
-            <button
-              class="icon-btn"
-              title="User Profile"
-              onclick="openProfile()"
-            >
-              👤
-            </button>
-
-            <select
-              class="filter-select"
-              id="statusFilter"
-              onchange="filterStations()"
-            >
-              <option value="all">All Statuses</option>
-              <option value="operational">Operational</option>
-              <option value="warning">Low Stock</option>
-            </select>
-            <span class="badge-online">ONLINE</span>
-            <button class="btn-add" onclick="openModal('addStationModal')">
-              + Add Station
-            </button>
-          </div>
-        </header>
-
-        <section class="stats-grid">
-          <div class="stat-card">
-            <span class="label">TOTAL STATIONS</span>
-            <h3 id="stat-total">03</h3>
-            <span class="subtext">All stations active</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">OPERATIONAL</span>
-            <h3 id="stat-op">03</h3>
-            <span class="subtext success">100% operational</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">TOTAL PERSONNEL</span>
-            <h3 id="stat-personnel">142</h3>
-            <span class="subtext">Across all stations</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">INVENTORY HEALTH</span>
-            <h3>82%</h3>
-            <span class="subtext">Avg. across stations</span>
-          </div>
-          <div class="stat-card">
-            <span class="label">ACTIVE SHIPMENTS</span>
-            <h3>26</h3>
-            <span class="subtext">Across all stations</span>
-          </div>
-        </section>
-
-        <section class="stations-grid" id="stationsContainer">
-          <div class="station-card" data-status="operational">
-            <div class="station-image-container">
-              <img src="../assets/images/bharti.jpg" alt="Bharati Station" />
-              <span class="status-tag operational">Operational</span>
+              <span
+                class="dot-live"
+                id="liveDot"
+                style="background: var(--text-faint); box-shadow: none"
+              ></span>
+              <span id="liveText">OFFLINE</span>
             </div>
-            <div class="station-info">
-              <h4>BHARATI</h4>
-              <p class="coords">70° 44' S, 11° 44' E</p>
-              <div class="metrics-summary">
-                <div class="metric-box">
-                  <span>Inventory</span><strong>82%</strong>
-                </div>
-                <div class="metric-box">
-                  <span>Personnel</span
-                  ><strong class="count-personnel">48</strong>
-                </div>
-                <div class="metric-box">
-                  <span>Shipments</span><strong>5</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="station-card" data-status="operational">
-            <div class="station-image-container">
-              <img src="../assets/images/maitri.jpg" alt="Maitri Station" />
-              <span class="status-tag operational">Operational</span>
-            </div>
-            <div class="station-info">
-              <h4>MAITRI</h4>
-              <p class="coords">70° 45' S, 11° 44' E</p>
-              <div class="metrics-summary">
-                <div class="metric-box">
-                  <span>Inventory</span><strong>76%</strong>
-                </div>
-                <div class="metric-box">
-                  <span>Personnel</span
-                  ><strong class="count-personnel">52</strong>
-                </div>
-                <div class="metric-box">
-                  <span>Shipments</span><strong>4</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="station-card" data-status="warning">
-            <div class="station-image-container">
-              <img src="../assets/images/himadri.jpg" alt="Himadri Station" />
-              <span class="status-tag warning">Low Stock</span>
-            </div>
-            <div class="station-info">
-              <h4>HIMADRI</h4>
-              <p class="coords">69° 24' S, 76° 12' E</p>
-              <div class="metrics-summary">
-                <div class="metric-box">
-                  <span>Inventory</span><strong>48%</strong>
-                </div>
-                <div class="metric-box">
-                  <span>Personnel</span
-                  ><strong class="count-personnel">42</strong>
-                </div>
-                <div class="metric-box">
-                  <span>Shipments</span><strong>3</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="bottom-grid">
-          <div class="panel-card">
-            <h4>Station Status Map</h4>
-            <div class="map-container">
-              <img
-                src="../assets/images/antarctic-stations-map.jpg"
-                alt="Antarctic Stations Map"
-              />
-            </div>
-          </div>
-
-          <div class="panel-card">
-            <h4>Inventory Health by Station</h4>
-            <div class="list-item">
-              <div>
-                <strong>Bharati Station</strong>
-                <div class="progress-bar-bg">
-                  <div class="progress-fill" style="width: 82%"></div>
-                </div>
-              </div>
-              <span style="color: #4ade80">82%</span>
-            </div>
-            <div class="list-item">
-              <div>
-                <strong>Maitri Station</strong>
-                <div class="progress-bar-bg">
-                  <div class="progress-fill" style="width: 76%"></div>
-                </div>
-              </div>
-              <span style="color: #4ade80">76%</span>
-            </div>
-            <div class="list-item">
-              <div>
-                <strong>Himadri Station</strong>
-                <div class="progress-bar-bg">
-                  <div class="progress-fill warning" style="width: 48%"></div>
-                </div>
-              </div>
-              <span style="color: #fb923c">48%</span>
-            </div>
-          </div>
-
-          <div class="panel-card">
-            <h4>Recent Station Activities</h4>
-            <div id="activityLog">
-              <div class="list-item">
-                <span>Inventory updated</span>
-                <span style="color: var(--text-muted)">2 min ago</span>
-              </div>
-              <div class="list-item">
-                <span>New shipment arrived</span>
-                <span style="color: var(--text-muted)">15 min ago</span>
-              </div>
-              <div class="list-item warning-item">
-                <span>Low stock alert</span>
-                <span style="color: #fb923c">45 min ago</span>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section class="quick-actions-panel">
-          <h4 style="color: #fff; font-size: 14px">Quick Actions</h4>
-          <div class="quick-actions-grid">
-            <button
-              class="action-button"
-              onclick="openModal('addStationModal')"
-            >
-              <strong>+ Add New Station</strong><br /><span
-                style="color: var(--text-muted)"
-                >Register station</span
+            <div class="sync-text" id="syncText">Not yet synced</div>
+            <div class="search-box" style="width: 190px">
+              <svg
+                width="14"
+                height="14"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
               >
-            </button>
-            <button
-              class="action-button"
-              onclick="triggerAction('Inventory Sync Triggered')"
-            >
-              <strong>📦 Update Inventory</strong><br /><span
-                style="color: var(--text-muted)"
-                >Bulk inventory update</span
-              >
-            </button>
-            <button class="action-button" onclick="openModal('assignModal')">
-              <strong>👤 Assign Personnel</strong><br /><span
-                style="color: var(--text-muted)"
-                >Deploy to station</span
-              >
-            </button>
-            <button
-              class="action-button"
-              onclick="triggerAction('Shipment Manifest Generated')"
-            >
-              <strong>🚚 Create Shipment</strong><br /><span
-                style="color: var(--text-muted)"
-                >New shipment request</span
-              >
-            </button>
-            <button class="action-button" onclick="filterAlertsOnly()">
-              <strong>⚠️ View Alerts</strong><br /><span
-                style="color: var(--text-muted)"
-                >Station alerts & warnings</span
-              >
-            </button>
+                <circle cx="11" cy="11" r="7" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
+              <input id="topSearch" placeholder="Search shipments..." />
+            </div>
           </div>
-        </section>
-      </main>
-    </div>
-
-    <div class="modal-overlay" id="addStationModal">
-      <div class="modal-content">
-        <h3>Add New Polar Station</h3>
-        <div class="form-group">
-          <label>Station Name</label>
-          <input
-            type="text"
-            id="stationName"
-            placeholder="e.g. DAKSHIN GANGOTRI"
-          />
         </div>
-        <div class="form-group">
-          <label>Coordinates</label>
-          <input
-            type="text"
-            id="stationCoords"
-            placeholder="e.g. 70° 05' S, 12° 00' E"
-          />
-        </div>
-        <div class="modal-actions">
-          <button class="btn-cancel" onclick="closeModal('addStationModal')">
-            Cancel
-          </button>
-          <button class="btn-submit" onclick="submitNewStation()">
-            Save Station
-          </button>
+
+        <div class="content">
+          <!-- stat cards -->
+          <div class="stats-row" id="statsRow">
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: var(--blue-bg); color: var(--blue)"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="M3 17h13l4-6h-4V6H3v11z" />
+                  <circle cx="7" cy="19" r="1.6" />
+                  <circle cx="16" cy="19" r="1.6" />
+                </svg>
+              </div>
+              <div class="stat-label">TOTAL SHIPMENTS</div>
+              <div class="stat-value" id="statTotal">—</div>
+            </div>
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: var(--amber-bg); color: var(--amber)"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <circle cx="12" cy="12" r="9" />
+                  <path d="M12 7v5l3 2" />
+                </svg>
+              </div>
+              <div class="stat-label">IN TRANSIT</div>
+              <div class="stat-value" id="statInTransit">—</div>
+            </div>
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: var(--purple-bg); color: var(--purple)"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <rect x="3" y="4" width="18" height="4" rx="1" />
+                  <path d="M5 8v11a1 1 0 001 1h12a1 1 0 001-1V8" />
+                </svg>
+              </div>
+              <div class="stat-label">PENDING</div>
+              <div class="stat-value" id="statPending">—</div>
+            </div>
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: var(--green-bg); color: var(--green)"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path d="m4 13 5 5L20 7" />
+                </svg>
+              </div>
+              <div class="stat-label">DELIVERED</div>
+              <div class="stat-value" id="statDelivered">—</div>
+            </div>
+            <div class="stat-card">
+              <div
+                class="stat-icon"
+                style="background: var(--red-bg); color: var(--red)"
+              >
+                <svg
+                  width="19"
+                  height="19"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path
+                    d="M10.3 3.9L2.7 18a1.8 1.8 0 001.6 2.7h15.4a1.8 1.8 0 001.6-2.7L13.7 3.9a1.8 1.8 0 00-3.4 0z"
+                  />
+                  <path d="M12 9.5v4.2" />
+                  <circle cx="12" cy="17" r="0.4" fill="currentColor" />
+                </svg>
+              </div>
+              <div class="stat-label">DELAYED</div>
+              <div class="stat-value" id="statDelayed">—</div>
+            </div>
+          </div>
+
+          <div class="body-grid">
+            <!-- LEFT -->
+            <div class="left-col">
+              <div class="filters">
+                <div class="search-box">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                  >
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="m21 21-4.3-4.3" />
+                  </svg>
+                  <input
+                    id="tableSearch"
+                    placeholder="Search by reference, origin, or destination..."
+                  />
+                </div>
+                <select class="filter-select" id="filterStatus">
+                  <option value="">All statuses</option>
+                  <option value="pending">Pending</option>
+                  <option value="in_transit">In Transit</option>
+                  <option value="delivered">Delivered</option>
+                </select>
+                <select class="filter-select" id="filterStation"></select>
+                <button class="btn btn-primary" id="newShipmentBtn">
+                  <svg
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.4"
+                  >
+                    <path d="M12 5v14M5 12h14" />
+                  </svg>
+                  New Shipment
+                </button>
+              </div>
+
+              <div class="table-wrap">
+                <div style="overflow-x: auto">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Reference</th>
+                        <th>Cargo</th>
+                        <th>Origin → Destination</th>
+                        <th>Status</th>
+                        <th>Departure</th>
+                        <th>ETA</th>
+                        <th>Priority</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                      <tr>
+                        <td colspan="7" class="empty-row">
+                          Loading shipments…
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="table-foot">
+                  <div class="table-foot-text" id="tableFootText">—</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- RIGHT -->
+            <div class="right-col">
+              <div class="panel" id="shipmentDetailsPanel">
+                <div class="panel-title-row">
+                  <div class="panel-title">Shipment Details</div>
+                </div>
+                <p class="empty-state">Select a shipment to see its details</p>
+              </div>
+
+              <div class="panel">
+                <div class="panel-title-row">
+                  <div class="panel-title">Shipment Progress</div>
+                </div>
+                <div class="progress-track" id="progressTrack">
+                  <p class="empty-state">Select a shipment above</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="modal-overlay" id="assignModal">
-      <div class="modal-content">
-        <h3>Assign Personnel to Station</h3>
-        <div class="form-group">
-          <label>Target Station</label>
-          <select id="stationSelect">
-            <option value="BHARATI">BHARATI</option>
-            <option value="MAITRI">MAITRI</option>
-            <option value="HIMADRI">HIMADRI</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Number of Personnel</label>
-          <input type="number" id="personnelCount" value="1" min="1" />
-        </div>
-        <div class="modal-actions">
-          <button class="btn-cancel" onclick="closeModal('assignModal')">
-            Cancel
-          </button>
-          <button class="btn-submit" onclick="submitPersonnelAssignment()">
-            Assign
-          </button>
-        </div>
-      </div>
-      <div class="widget-header">
-        <h3>Station Weather</h3>
-        <span class="badge-muted" title="No live weather feed connected yet"
-          >Sample data</span
-        >
-      </div>
-    </div>
-
-    <div class="toast-container" id="toastContainer"></div>
+    <div class="toast-wrap" id="toastWrap"></div>
 
     <script src="js/config.js"></script>
     <script src="../js/pl-sidebar.js"></script>
-    <script src="../js/stations.js"></script>
+    <script src="../js/shipments.js"></script>
   </body>
 </html>
