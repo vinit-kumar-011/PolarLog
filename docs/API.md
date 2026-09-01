@@ -69,10 +69,15 @@ All cargo across all shipments, highest priority first.
     "priority": "critical",
     "status": "in_transit",
     "shipment_ref": "SHP-2026-003",
+    "origin": "Tromso, Norway",
+    "eta": "2026-09-08",
     "destination": "Himadri"
   }
 ]
 ```
+
+`origin` and `eta` come from the linked shipment. Both are `null` if the cargo
+isn't assigned to a shipment yet — show an empty cell.
 
 ## GET /api/cargo/<id>
 

@@ -13,7 +13,9 @@ def get_cargo():
         SELECT c.cargo_id, c.item_name, c.category, c.quantity, c.unit,
                c.weight_kg, c.priority, c.status,
                s.reference AS shipment_ref,
-               st.name AS destination
+               s.origin AS origin,
+               DATE_FORMAT(s.eta, '%Y-%m-%d') AS eta,
+           st.name AS destination
         FROM cargo c
         LEFT JOIN shipments s ON c.shipment_id = s.shipment_id
         LEFT JOIN stations st ON s.destination_id = st.station_id
