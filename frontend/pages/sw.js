@@ -6,11 +6,7 @@
    (offline-first sync) work.
 ========================================================= */
 
-<<<<<<< HEAD
-const CACHE_NAME = "polarlog-shell-v2";
-=======
 const CACHE_NAME = "polarlog-shell-v4";
->>>>>>> 678cdcc (your message)
 
 // Everything needed to render the app shell offline.
 // Paths are relative to this file's location (/pages/sw.js).
@@ -116,13 +112,12 @@ self.addEventListener("fetch", (event) => {
         .then((response) => {
           // Cache a copy of newly-seen shell assets for next time.
           const copy = response.clone();
-<<<<<<< HEAD
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
-=======
           caches
             .open(CACHE_NAME)
             .then((cache) => cache.put(event.request, copy));
->>>>>>> 678cdcc (your message)
+          caches
+            .open(CACHE_NAME)
+            .then((cache) => cache.put(event.request, copy));
           return response;
         })
         .catch(() => {
