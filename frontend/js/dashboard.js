@@ -59,6 +59,10 @@ async function loadDashboard() {
       personnel: dbPersonnel.length,
     });
 
+<<<<<<< HEAD
+=======
+    setLiveStatus(true);
+>>>>>>> 678cdcc (your message)
     renderKPIs();
     renderStationList();
     renderCriticalAlerts();
@@ -68,6 +72,10 @@ async function loadDashboard() {
     renderTimeline();
   } catch (err) {
     console.error("Dashboard failed to load:", err);
+<<<<<<< HEAD
+=======
+    setLiveStatus(false);
+>>>>>>> 678cdcc (your message)
   } finally {
     isLoadingDashboard = false;
   }

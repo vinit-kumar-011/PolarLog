@@ -104,7 +104,9 @@
   async function fetchCargoData() {
     try {
       const rows = await apiGet(BACKEND.cargoEndpoint);
-      return (rows || []).map(mapCargoRow);
+      const mapped = (rows || []).map(mapCargoRow);
+      mapped.__stale = !!(rows && rows.__stale); // preserve the flag across the map
+      return mapped;
     } catch (err) {
       console.error("Failed to load cargo data:", err);
       return [];
@@ -118,29 +120,6 @@
     } catch (err) {
       console.error("Failed to load stations:", err);
       return [];
-    }
-  }
-
-  function setLiveStatus(online) {
-    const pill = document.getElementById("livePill");
-    const dot = document.getElementById("liveDot");
-    const text = document.getElementById("liveText");
-    const sync = document.getElementById("syncText");
-    if (!pill) return;
-    if (online) {
-      pill.style.color = "var(--green)";
-      pill.style.background = "var(--green-bg)";
-      dot.style.background = "var(--green)";
-      dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
-      text.textContent = "LIVE";
-      sync.textContent = "Synced just now";
-    } else {
-      pill.style.color = "var(--red)";
-      pill.style.background = "var(--red-bg)";
-      dot.style.background = "var(--red)";
-      dot.style.boxShadow = "none";
-      text.textContent = "OFFLINE";
-      sync.textContent = "Sync failed";
     }
   }
 
@@ -964,7 +943,7 @@
     fillSelect("#filterStation", "All Stations", STATIONS);
     selectedId = DATA[0] ? DATA[0].id : null;
 
-    setLiveStatus(true);
+    setLiveStatus(!rows.__stale && navigator.onLine);
     renderAll();
   }
 

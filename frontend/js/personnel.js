@@ -25,6 +25,8 @@ async function loadPersonnel() {
 
     allPersonnel = personnel || [];
     allStations = stations || [];
+    const stale = allPersonnel.__stale || allStations.__stale;
+    setLiveStatus(!stale && navigator.onLine);
 
     setLiveStatus(true);
     populateFilters();
@@ -72,28 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-function setLiveStatus(online) {
-  const pill = document.getElementById("livePill");
-  const dot = document.getElementById("liveDot");
-  const text = document.getElementById("liveText");
-  const sync = document.getElementById("syncText");
-  if (online) {
-    pill.style.color = "var(--green)";
-    pill.style.background = "var(--green-bg)";
-    dot.style.background = "var(--green)";
-    dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
-    text.textContent = "LIVE";
-    sync.textContent = "Synced just now";
-  } else {
-    pill.style.color = "var(--red)";
-    pill.style.background = "var(--red-bg)";
-    dot.style.background = "var(--red)";
-    dot.style.boxShadow = "none";
-    text.textContent = "OFFLINE";
-    sync.textContent = "Sync failed";
-  }
-}
-
 function cap(s) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
@@ -101,7 +81,10 @@ function cap(s) {
 function populateFilters() {
   const stationNames = [
     ...new Set(
-      [...allStations.map((s) => s.name), ...allPersonnel.map((p) => p.station)].filter(Boolean),
+      [
+        ...allStations.map((s) => s.name),
+        ...allPersonnel.map((p) => p.station),
+      ].filter(Boolean),
     ),
   ];
   const stSelect = document.getElementById("filterStation");
@@ -115,7 +98,9 @@ function populateFilters() {
     '<option value="">All roles</option>' +
     roles.map((r) => `<option value="${r}">${r}</option>`).join("");
 
-  const statuses = [...new Set(allPersonnel.map((p) => p.status).filter(Boolean))];
+  const statuses = [
+    ...new Set(allPersonnel.map((p) => p.status).filter(Boolean)),
+  ];
   const statusSelect = document.getElementById("filterStatus");
   statusSelect.innerHTML =
     '<option value="">All statuses</option>' +
@@ -126,7 +111,8 @@ function renderStats() {
   const total = allPersonnel.length;
   const deployed = allPersonnel.filter((p) => p.status === "deployed").length;
   const other = total - deployed;
-  const stations = new Set(allPersonnel.map((p) => p.station).filter(Boolean)).size;
+  const stations = new Set(allPersonnel.map((p) => p.station).filter(Boolean))
+    .size;
   const roles = new Set(allPersonnel.map((p) => p.role).filter(Boolean)).size;
 
   document.getElementById("statTotal").textContent = total;
@@ -138,7 +124,8 @@ function renderStats() {
 
 function getFilteredPersonnel() {
   return allPersonnel.filter((p) => {
-    if (currentStationFilter && p.station !== currentStationFilter) return false;
+    if (currentStationFilter && p.station !== currentStationFilter)
+      return false;
     if (currentRoleFilter && p.role !== currentRoleFilter) return false;
     if (currentStatusFilter && p.status !== currentStatusFilter) return false;
     if (currentSearch) {
@@ -169,7 +156,8 @@ function renderTable() {
     `Showing ${rows.length} of ${allPersonnel.length} personnel`;
 
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">No personnel match your filters</td></tr>';
+    tbody.innerHTML =
+      '<tr><td colspan="6" class="empty-row">No personnel match your filters</td></tr>';
     return;
   }
 
@@ -259,7 +247,10 @@ function renderStationPersonnel() {
   const container = document.getElementById("stationPersonnelList");
   const stationNames = [
     ...new Set(
-      [...allStations.map((s) => s.name), ...allPersonnel.map((p) => p.station)].filter(Boolean),
+      [
+        ...allStations.map((s) => s.name),
+        ...allPersonnel.map((p) => p.station),
+      ].filter(Boolean),
     ),
   ];
 
@@ -290,7 +281,9 @@ function renderStationPersonnel() {
 
 function renderExpeditions() {
   const container = document.getElementById("expeditionList");
-  const seasons = [...new Set(allPersonnel.map((p) => p.season).filter(Boolean))];
+  const seasons = [
+    ...new Set(allPersonnel.map((p) => p.season).filter(Boolean)),
+  ];
 
   if (seasons.length === 0) {
     container.innerHTML = '<p class="empty-state">No expedition data yet</p>';

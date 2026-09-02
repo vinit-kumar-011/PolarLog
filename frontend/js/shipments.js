@@ -24,14 +24,14 @@ async function loadShipments() {
 
     allShipments = shipments || [];
     allStations = stations || [];
+    const stale = allShipments.__stale || allStations.__stale;
+    setLiveStatus(!stale && navigator.onLine);
 
-    setLiveStatus(true);
     populateStationFilter();
     renderStats();
     renderTable();
   } catch (err) {
     console.error("Shipments page failed to load:", err);
-    setLiveStatus(false);
     showToast("Could not reach the server. Is the backend running?", "err");
     document.getElementById("tableBody").innerHTML =
       '<tr><td colspan="7" class="empty-row">Could not load shipments</td></tr>';
@@ -57,28 +57,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showToast("New Shipment form isn't wired up yet.", "warn");
   });
 });
-
-function setLiveStatus(online) {
-  const pill = document.getElementById("livePill");
-  const dot = document.getElementById("liveDot");
-  const text = document.getElementById("liveText");
-  const sync = document.getElementById("syncText");
-  if (online) {
-    pill.style.color = "var(--green)";
-    pill.style.background = "var(--green-bg)";
-    dot.style.background = "var(--green)";
-    dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
-    text.textContent = "LIVE";
-    sync.textContent = "Synced just now";
-  } else {
-    pill.style.color = "var(--red)";
-    pill.style.background = "var(--red-bg)";
-    dot.style.background = "var(--red)";
-    dot.style.boxShadow = "none";
-    text.textContent = "OFFLINE";
-    sync.textContent = "Sync failed";
-  }
-}
 
 function populateStationFilter() {
   const select = document.getElementById("filterStation");

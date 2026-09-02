@@ -18,6 +18,7 @@ const CATEGORY_COLORS = {
 
 let allInventory = [];
 let allStations = [];
+let forecastData = []; // add this
 let selectedItemId = null;
 let currentSearch = "";
 let currentCategoryFilter = "";
@@ -26,24 +27,29 @@ let currentStockFilter = "";
 
 async function loadInventory() {
   try {
-    const [inventory, stations] = await Promise.all([
+    const [inventory, stations, forecast] = await Promise.all([
       apiGet("/api/inventory"),
       apiGet("/api/stations").catch(() => []),
+      apiGet("/api/inventory/forecast/with-shipments").catch(() => []),
     ]);
+
+    const stale = inventory?.__stale || stations?.__stale;
 
     allInventory = (inventory || []).map((item, i) => ({
       id: item.id ?? i,
       ...item,
     }));
     allStations = stations || [];
+    forecastData = forecast || [];
 
-    setLiveStatus(true);
+    setLiveStatus(!stale && navigator.onLine);
     populateFilters();
     renderStats();
     renderTable();
     renderCategoryBreakdown();
     renderLowStockList();
     renderStationHealth();
+    renderForecast();
   } catch (err) {
     console.error("Inventory page failed to load:", err);
     setLiveStatus(false);
@@ -56,6 +62,8 @@ async function loadInventory() {
       '<p class="empty-state">Could not load low stock items</p>';
     document.getElementById("stationHealthList").innerHTML =
       '<p class="empty-state">Could not load station health</p>';
+    document.getElementById("forecastList").innerHTML =
+      '<p class="empty-state">Could not load forecast</p>';
   }
 }
 
@@ -104,28 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 });
-
-function setLiveStatus(online) {
-  const pill = document.getElementById("livePill");
-  const dot = document.getElementById("liveDot");
-  const text = document.getElementById("liveText");
-  const sync = document.getElementById("syncText");
-  if (online) {
-    pill.style.color = "var(--green)";
-    pill.style.background = "var(--green-bg)";
-    dot.style.background = "var(--green)";
-    dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
-    text.textContent = "LIVE";
-    sync.textContent = "Synced just now";
-  } else {
-    pill.style.color = "var(--red)";
-    pill.style.background = "var(--red-bg)";
-    dot.style.background = "var(--red)";
-    dot.style.boxShadow = "none";
-    text.textContent = "OFFLINE";
-    sync.textContent = "Sync failed";
-  }
-}
 
 function itemHealth(item) {
   const pct = Math.min(
@@ -408,6 +394,62 @@ function renderStationHealth() {
         <span class="health-label">${name}</span>
         <div class="health-track"><div class="health-fill ${level}" style="width:${health}%"></div></div>
         <span class="health-percent">${health}%</span>
+      </div>`;
+    })
+    .join("");
+}
+
+function renderForecast() {
+  const container = document.getElementById("forecastList");
+
+  const items = [...forecastData]
+    .sort(
+      (a, b) => (a.days_remaining ?? Infinity) - (b.days_remaining ?? Infinity),
+    )
+    .slice(0, 8);
+
+  if (items.length === 0) {
+    container.innerHTML =
+      '<p class="empty-state">No usage-rate data yet to forecast from</p>';
+    return;
+  }
+
+  container.innerHTML = items
+    .map((item) => {
+      const days = item.days_remaining;
+      const urgent = days !== null && days <= 7;
+      const soon = days !== null && days > 7 && days <= 14;
+      const color = urgent
+        ? "var(--red)"
+        : soon
+          ? "var(--amber)"
+          : "var(--green)";
+      const bg = urgent
+        ? "var(--red-bg)"
+        : soon
+          ? "var(--amber-bg)"
+          : "var(--green-bg)";
+
+      const shipment = item.incoming_shipment;
+      const shipmentTag = shipment
+        ? `<div class="lowstock-sub" style="margin-top:2px">
+             <span class="pill pill-blue">Incoming: ${shipment.reference}</span>
+             ${cap((shipment.status || "").replace(/_/g, " "))} · ETA ${shipment.eta || "—"}
+           </div>`
+        : `<div class="lowstock-sub" style="margin-top:2px;color:var(--text-faint)">No shipment incoming</div>`;
+
+      return `<div class="lowstock-item">
+        <div class="lowstock-ic" style="background:${bg};color:${color}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" />
+          </svg>
+        </div>
+        <div>
+          <div class="lowstock-title">${item.name || "—"}</div>
+          <div class="lowstock-sub">${item.station || "—"} · ${cap(item.category) || "—"}</div>
+          ${shipmentTag}
+        </div>
+        <div class="lowstock-qty">${days != null ? days + " days" : "—"}</div>
       </div>`;
     })
     .join("");

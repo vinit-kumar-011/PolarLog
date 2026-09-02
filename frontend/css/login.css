@@ -187,3 +187,12 @@ body {
 .login-footer-link a:hover {
   text-decoration: underline;
 }
+
+.login-submit:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+.login-submit:disabled:hover {
+  background: var(--polar-blue);
+  color: #ffffff;
+}
