@@ -150,11 +150,8 @@ def add_item():
     conn = get_connection()
     cursor = conn.cursor(dictionary=True)
 
-<<<<<<< HEAD
     # Same station + same category + same name (case-insensitive) counts
     # as "the same stock" - add to it rather than creating a new row.
-=======
->>>>>>> 678cdcc (your message)
     cursor.execute(
         """SELECT item_id, quantity FROM inventory
            WHERE station_id = %s AND category = %s AND LOWER(name) = LOWER(%s)
@@ -233,7 +230,6 @@ def delete_item(item_id):
 
     if changed == 0:
         return jsonify({"error": "Item not found"}), 404
-<<<<<<< HEAD
     return jsonify({"message": "Item deleted"})
 
 # ---------- forecast, but also shows if help is already on the way ----------
@@ -280,6 +276,4 @@ def get_forecast_with_shipments():
                 break
 
     return jsonify(forecast_items)
-=======
     return jsonify({"message": "Item deleted"})
->>>>>>> 678cdcc (your message)
