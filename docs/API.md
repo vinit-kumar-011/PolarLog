@@ -246,3 +246,11 @@ All users, without password hashes. For an admin screen.
 ---
 
 **Demo accounts:** admin/admin123 · coord/coord123 · bhr_office/bharati123 · mtr_office/maitri123 · hmd_office/himadri123
+
+
+## GET /api/inventory/forecast/with-shipments
+
+Same as /api/inventory/forecast, but each item also includes
+`incoming_shipment` — null if nothing's coming, or an object with
+`reference`, `status`, and `eta` if a shipment carrying that item
+is already heading to that station.
