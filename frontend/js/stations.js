@@ -35,6 +35,7 @@ async function loadStations() {
     allShipments = shipments || [];
     allAlerts = alerts || [];
 
+    setLiveStatus(true);
     renderSummary();
     renderStationCards();
     renderStationHealthList();
@@ -42,6 +43,7 @@ async function loadStations() {
     populateStationSelect();
   } catch (err) {
     console.error("Stations page failed to load:", err);
+    setLiveStatus(false);
     toast("Could not reach the server. Is the backend running?");
     document.getElementById("stationsContainer").innerHTML =
       '<p style="color:var(--text-muted)">Could not load station data.</p>';

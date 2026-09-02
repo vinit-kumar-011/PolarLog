@@ -14,6 +14,9 @@
 
     <link rel="stylesheet" href="../css/design-system.css" />
     <link rel="stylesheet" href="../css/login.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#03111f" />
+    <link rel="apple-touch-icon" href="../assets/icons/icon-192.png" />
   </head>
   <body>
     <div class="login-shell">
@@ -74,11 +77,11 @@
         </form>
 
         <div class="login-demo-note">
-          <b>Hackathon demo:</b> use <b>astro@polarlog.in</b> /
-          <b>polar2026</b>, or
-          <button type="button" id="fillDemoBtn">autofill it</button>. Any
-          email + password will also work — there's no backend behind this
-          yet.
+          <b>Demo login:</b> use <b>bhr_office</b> / <b>bharati2026</b>, or
+          <button type="button" id="fillDemoBtn">autofill it</button>.
+          Checked against the real database — other seeded accounts:
+          <b>admin</b>/admin2026, <b>coord</b>/coord2026,
+          <b>mtr_office</b>/maitri2026, <b>hmd_office</b>/himadri2026.
         </div>
       </div>
 
@@ -87,6 +90,10 @@
       </div>
     </div>
 
+    <script src="../js/offline-db.js"></script>
+    <script src="../js/config.js"></script>
     <script src="../js/login.js"></script>
+    <script src="../js/sync-manager.js"></script>
+    <script src="../js/pwa-register.js"></script>
   </body>
 </html>

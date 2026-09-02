@@ -24,6 +24,8 @@ async function loadAlerts() {
 
     allAlerts = alerts || [];
     allStations = stations || [];
+    const stale = allAlerts.__stale || allStations.__stale;
+    setLiveStatus(!stale && navigator.onLine);
 
     setLiveStatus(true);
     populateFilters();
@@ -68,28 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-function setLiveStatus(online) {
-  const pill = document.getElementById("livePill");
-  const dot = document.getElementById("liveDot");
-  const text = document.getElementById("liveText");
-  const sync = document.getElementById("syncText");
-  if (online) {
-    pill.style.color = "var(--green)";
-    pill.style.background = "var(--green-bg)";
-    dot.style.background = "var(--green)";
-    dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
-    text.textContent = "LIVE";
-    sync.textContent = "Synced just now";
-  } else {
-    pill.style.color = "var(--red)";
-    pill.style.background = "var(--red-bg)";
-    dot.style.background = "var(--red)";
-    dot.style.boxShadow = "none";
-    text.textContent = "OFFLINE";
-    sync.textContent = "Sync failed";
-  }
-}
-
 function cap(s) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
 }
@@ -97,7 +77,10 @@ function cap(s) {
 function populateFilters() {
   const stationNames = [
     ...new Set(
-      [...allStations.map((s) => s.name), ...allAlerts.map((a) => a.station)].filter(Boolean),
+      [
+        ...allStations.map((s) => s.name),
+        ...allAlerts.map((a) => a.station),
+      ].filter(Boolean),
     ),
   ];
   const stSelect = document.getElementById("filterStation");
@@ -111,7 +94,8 @@ function renderStats() {
   const critical = allAlerts.filter((a) => a.severity === "critical").length;
   const warning = allAlerts.filter((a) => a.severity === "warning").length;
   const open = allAlerts.filter((a) => a.status === "open").length;
-  const stations = new Set(allAlerts.map((a) => a.station).filter(Boolean)).size;
+  const stations = new Set(allAlerts.map((a) => a.station).filter(Boolean))
+    .size;
 
   document.getElementById("statTotal").textContent = total;
   document.getElementById("statCritical").textContent = critical;
@@ -122,8 +106,10 @@ function renderStats() {
 
 function getFilteredAlerts() {
   return allAlerts.filter((a) => {
-    if (currentSeverityFilter && a.severity !== currentSeverityFilter) return false;
-    if (currentStationFilter && a.station !== currentStationFilter) return false;
+    if (currentSeverityFilter && a.severity !== currentSeverityFilter)
+      return false;
+    if (currentStationFilter && a.station !== currentStationFilter)
+      return false;
     if (currentStatusFilter && a.status !== currentStatusFilter) return false;
     if (currentSearch) {
       const haystack = `${a.message || ""} ${a.alert_type || ""}`.toLowerCase();
@@ -161,7 +147,8 @@ function renderTable() {
     `Showing ${rows.length} of ${allAlerts.length} alerts`;
 
   if (rows.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="6" class="empty-row">No alerts match your filters</td></tr>';
+    tbody.innerHTML =
+      '<tr><td colspan="6" class="empty-row">No alerts match your filters</td></tr>';
     return;
   }
 
@@ -230,7 +217,11 @@ function renderSeverityBreakdown() {
     if (bySeverity[a.severity] !== undefined) bySeverity[a.severity]++;
   });
   const total = allAlerts.length;
-  const colors = { critical: "var(--red)", warning: "var(--amber)", info: "var(--blue)" };
+  const colors = {
+    critical: "var(--red)",
+    warning: "var(--amber)",
+    info: "var(--blue)",
+  };
 
   container.innerHTML = Object.keys(bySeverity)
     .map((sev) => {
@@ -260,7 +251,8 @@ function renderCriticalOpen() {
   container.innerHTML = items
     .map((a) => {
       const color = a.severity === "critical" ? "var(--red)" : "var(--amber)";
-      const bg = a.severity === "critical" ? "var(--red-bg)" : "var(--amber-bg)";
+      const bg =
+        a.severity === "critical" ? "var(--red-bg)" : "var(--amber-bg)";
       return `<div class="lowstock-item">
         <div class="lowstock-ic" style="background:${bg};color:${color}">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -280,7 +272,10 @@ function renderStationAlerts() {
   const container = document.getElementById("stationAlertsList");
   const stationNames = [
     ...new Set(
-      [...allStations.map((s) => s.name), ...allAlerts.map((a) => a.station)].filter(Boolean),
+      [
+        ...allStations.map((s) => s.name),
+        ...allAlerts.map((a) => a.station),
+      ].filter(Boolean),
     ),
   ];
 
@@ -294,7 +289,8 @@ function renderStationAlerts() {
       const alerts = allAlerts.filter((a) => a.station === name);
       const open = alerts.filter((a) => a.status === "open").length;
       const level = open === 0 ? "good" : open > 1 ? "critical" : "warning";
-      const pct = alerts.length === 0 ? 0 : Math.round((open / alerts.length) * 100);
+      const pct =
+        alerts.length === 0 ? 0 : Math.round((open / alerts.length) * 100);
       return `<div class="health-row">
         <span class="health-label">${name}</span>
         <div class="health-track"><div class="health-fill ${level}" style="width:${pct}%"></div></div>

@@ -18,6 +18,7 @@ const CATEGORY_COLORS = {
 
 let allInventory = [];
 let allStations = [];
+let forecastData = []; // add this
 let selectedItemId = null;
 let currentSearch = "";
 let currentCategoryFilter = "";
@@ -26,24 +27,29 @@ let currentStockFilter = "";
 
 async function loadInventory() {
   try {
-    const [inventory, stations] = await Promise.all([
+    const [inventory, stations, forecast] = await Promise.all([
       apiGet("/api/inventory"),
       apiGet("/api/stations").catch(() => []),
+      apiGet("/api/inventory/forecast/with-shipments").catch(() => []),
     ]);
+
+    const stale = inventory?.__stale || stations?.__stale;
 
     allInventory = (inventory || []).map((item, i) => ({
       id: item.id ?? i,
       ...item,
     }));
     allStations = stations || [];
+    forecastData = forecast || [];
 
-    setLiveStatus(true);
+    setLiveStatus(!stale && navigator.onLine);
     populateFilters();
     renderStats();
     renderTable();
     renderCategoryBreakdown();
     renderLowStockList();
     renderStationHealth();
+    renderForecast();
   } catch (err) {
     console.error("Inventory page failed to load:", err);
     setLiveStatus(false);
@@ -56,6 +62,8 @@ async function loadInventory() {
       '<p class="empty-state">Could not load low stock items</p>';
     document.getElementById("stationHealthList").innerHTML =
       '<p class="empty-state">Could not load station health</p>';
+    document.getElementById("forecastList").innerHTML =
+      '<p class="empty-state">Could not load forecast</p>';
   }
 }
 
@@ -80,9 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
       currentStockFilter = e.target.value;
       renderTable();
     });
-  document.getElementById("newItemBtn").addEventListener("click", () => {
-    showToast("New Item form isn't wired up yet.", "warn");
-  });
+  document
+    .getElementById("newItemBtn")
+    .addEventListener("click", openNewItemModal);
 
   // Sidebar sub-links to #lowstock / #categories just scroll to the
   // matching panel on this same page (no separate view to toggle).
@@ -104,28 +112,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   }
 });
-
-function setLiveStatus(online) {
-  const pill = document.getElementById("livePill");
-  const dot = document.getElementById("liveDot");
-  const text = document.getElementById("liveText");
-  const sync = document.getElementById("syncText");
-  if (online) {
-    pill.style.color = "var(--green)";
-    pill.style.background = "var(--green-bg)";
-    dot.style.background = "var(--green)";
-    dot.style.boxShadow = "0 0 0 3px rgba(34, 197, 94, 0.2)";
-    text.textContent = "LIVE";
-    sync.textContent = "Synced just now";
-  } else {
-    pill.style.color = "var(--red)";
-    pill.style.background = "var(--red-bg)";
-    dot.style.background = "var(--red)";
-    dot.style.boxShadow = "none";
-    text.textContent = "OFFLINE";
-    sync.textContent = "Sync failed";
-  }
-}
 
 function itemHealth(item) {
   const pct = Math.min(
@@ -252,7 +238,13 @@ function renderTable() {
     const tr = document.createElement("tr");
     if (item.id === selectedItemId) tr.classList.add("selected");
     tr.innerHTML = `
-      <td class="cell-id">${item.name || cap(item.category) || "—"}</td>
+      <td class="cell-id">${item.name || cap(item.category) || "—"}${
+        item._pending
+          ? '<span class="pending-badge">PENDING SYNC</span>'
+          : item._pendingDelta
+            ? `<span class="pending-badge">+${item._pendingDelta} PENDING</span>`
+            : ""
+      }</td>
       <td>${cap(item.category) || "—"}</td>
       <td>${item.station || "—"}</td>
       <td>${item.quantity ?? "—"}</td>
@@ -407,6 +399,62 @@ function renderStationHealth() {
     .join("");
 }
 
+function renderForecast() {
+  const container = document.getElementById("forecastList");
+
+  const items = [...forecastData]
+    .sort(
+      (a, b) => (a.days_remaining ?? Infinity) - (b.days_remaining ?? Infinity),
+    )
+    .slice(0, 8);
+
+  if (items.length === 0) {
+    container.innerHTML =
+      '<p class="empty-state">No usage-rate data yet to forecast from</p>';
+    return;
+  }
+
+  container.innerHTML = items
+    .map((item) => {
+      const days = item.days_remaining;
+      const urgent = days !== null && days <= 7;
+      const soon = days !== null && days > 7 && days <= 14;
+      const color = urgent
+        ? "var(--red)"
+        : soon
+          ? "var(--amber)"
+          : "var(--green)";
+      const bg = urgent
+        ? "var(--red-bg)"
+        : soon
+          ? "var(--amber-bg)"
+          : "var(--green-bg)";
+
+      const shipment = item.incoming_shipment;
+      const shipmentTag = shipment
+        ? `<div class="lowstock-sub" style="margin-top:2px">
+             <span class="pill pill-blue">Incoming: ${shipment.reference}</span>
+             ${cap((shipment.status || "").replace(/_/g, " "))} · ETA ${shipment.eta || "—"}
+           </div>`
+        : `<div class="lowstock-sub" style="margin-top:2px;color:var(--text-faint)">No shipment incoming</div>`;
+
+      return `<div class="lowstock-item">
+        <div class="lowstock-ic" style="background:${bg};color:${color}">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 3" />
+          </svg>
+        </div>
+        <div>
+          <div class="lowstock-title">${item.name || "—"}</div>
+          <div class="lowstock-sub">${item.station || "—"} · ${cap(item.category) || "—"}</div>
+          ${shipmentTag}
+        </div>
+        <div class="lowstock-qty">${days != null ? days + " days" : "—"}</div>
+      </div>`;
+    })
+    .join("");
+}
+
 function showToast(message, type = "") {
   const wrap = document.getElementById("toastWrap");
   const toast = document.createElement("div");
@@ -414,4 +462,186 @@ function showToast(message, type = "") {
   toast.textContent = message;
   wrap.appendChild(toast);
   setTimeout(() => toast.remove(), 4000);
+}
+
+/* =========================================================
+   NEW ITEM — works offline
+   On submit: tries the network immediately. If that fails
+   (offline), apiSend() queues it in IndexedDB and this just
+   adds an optimistic "pending sync" row so the item is visible
+   right away; sync-manager.js replays it automatically once
+   back online and the pending tag clears on the next reload.
+========================================================= */
+function ensureModalStyles() {
+  if (document.getElementById("plModalStyles")) return;
+  const style = document.createElement("style");
+  style.id = "plModalStyles";
+  style.textContent = `
+    .pl-modal-overlay{position:fixed;inset:0;background:rgba(2,6,12,0.6);
+      display:flex;align-items:center;justify-content:center;z-index:500;}
+    .pl-modal{background:var(--panel,#10161f);border:1px solid var(--border,#1e2635);
+      border-radius:14px;padding:22px;width:380px;max-width:90vw;display:flex;
+      flex-direction:column;gap:12px;}
+    .pl-modal h3{font-size:15.5px;font-weight:700;margin-bottom:2px;}
+    .pl-modal label{display:flex;flex-direction:column;gap:5px;font-size:12px;
+      color:var(--text-dim,#8892a4);}
+    .pl-modal input,.pl-modal select{background:var(--panel-2,#131a26);
+      border:1px solid var(--border,#1e2635);color:var(--text,#e8ecf3);
+      padding:9px 10px;border-radius:8px;font-size:13px;outline:none;}
+    .pl-modal-row{display:flex;gap:10px;}
+    .pl-modal-row > label{flex:1;}
+    .pl-modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
+    .pl-modal-err{font-size:12px;color:#ff8b93;display:none;}
+    .pending-badge{display:inline-block;margin-left:7px;font-size:9.5px;
+      font-weight:700;letter-spacing:.3px;color:#ffc35c;
+      background:rgba(245,165,36,0.16);padding:2px 6px;border-radius:8px;
+      vertical-align:middle;}
+  `;
+  document.head.appendChild(style);
+}
+
+function openNewItemModal() {
+  ensureModalStyles();
+
+  const stationOpts = allStations
+    .map((s) => `<option value="${s.station_id}">${s.name}</option>`)
+    .join("");
+
+  const overlay = document.createElement("div");
+  overlay.className = "pl-modal-overlay";
+  overlay.innerHTML = `
+    <div class="pl-modal">
+      <h3>Add Inventory Item</h3>
+      <label>Name
+        <input type="text" id="niName" placeholder="e.g. Diesel" />
+      </label>
+      <div class="pl-modal-row">
+        <label>Category
+          <select id="niCategory">
+            <option value="fuel">Fuel</option>
+            <option value="food">Food</option>
+            <option value="medical">Medical</option>
+            <option value="equipment">Equipment</option>
+            <option value="other">Other</option>
+          </select>
+        </label>
+        <label>Station
+          <select id="niStation">${stationOpts}</select>
+        </label>
+      </div>
+      <div class="pl-modal-row">
+        <label>Quantity
+          <input type="number" id="niQuantity" min="0" placeholder="0" />
+        </label>
+        <label>Unit
+          <input type="text" id="niUnit" placeholder="units" />
+        </label>
+        <label>Reorder level
+          <input type="number" id="niReorder" min="0" placeholder="0" />
+        </label>
+      </div>
+      <div class="pl-modal-err" id="niErr"></div>
+      <div class="pl-modal-actions">
+        <button type="button" class="btn" id="niCancel">Cancel</button>
+        <button type="button" class="btn btn-primary" id="niSubmit">Add Item</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay) overlay.remove();
+  });
+  overlay
+    .querySelector("#niCancel")
+    .addEventListener("click", () => overlay.remove());
+  overlay
+    .querySelector("#niSubmit")
+    .addEventListener("click", () => submitNewItem(overlay));
+}
+
+async function submitNewItem(overlay) {
+  const errBox = overlay.querySelector("#niErr");
+  const name = overlay.querySelector("#niName").value.trim();
+  const category = overlay.querySelector("#niCategory").value;
+  const stationId = overlay.querySelector("#niStation").value;
+  const quantity = overlay.querySelector("#niQuantity").value;
+  const unit = overlay.querySelector("#niUnit").value.trim();
+  const reorder = overlay.querySelector("#niReorder").value;
+
+  if (!name || !stationId || quantity === "") {
+    errBox.textContent = "Name, station and quantity are required.";
+    errBox.style.display = "block";
+    return;
+  }
+
+  const payload = {
+    name,
+    category,
+    station_id: parseInt(stationId, 10),
+    quantity: parseInt(quantity, 10),
+    unit: unit || "units",
+    reorder_level: reorder === "" ? 0 : parseInt(reorder, 10),
+  };
+
+  const result = await apiSend("/api/inventory", "POST", payload);
+  const stationName =
+    allStations.find((s) => s.station_id === payload.station_id)?.name || "—";
+
+  if (result.ok) {
+    overlay.remove();
+    if (result.data && result.data.merged) {
+      showToast(
+        `Added ${payload.quantity} — now ${result.data.quantity} total.`,
+        "success",
+      );
+    } else {
+      showToast("Item added.", "success");
+    }
+    loadInventory(); // re-pull the real list so it's fully in sync
+    return;
+  }
+
+  if (result.queued) {
+    overlay.remove();
+
+    // Mirror the backend's merge behavior locally: if this station already
+    // has this item (same name + category), add to it instead of creating
+    // a second row that would just get folded away once synced anyway.
+    const match = allInventory.find(
+      (i) =>
+        !i._pending &&
+        (i.station || "").toLowerCase() === stationName.toLowerCase() &&
+        (i.category || "").toLowerCase() === payload.category.toLowerCase() &&
+        (i.name || "").toLowerCase() === payload.name.toLowerCase(),
+    );
+
+    if (match) {
+      match.quantity = (match.quantity || 0) + payload.quantity;
+      match._pendingDelta = (match._pendingDelta || 0) + payload.quantity;
+      showToast(
+        `Offline — will add ${payload.quantity} to existing ${match.name} once synced.`,
+        "warn",
+      );
+    } else {
+      allInventory.push({
+        id: `pending-${result.id}`,
+        ...payload,
+        station: stationName,
+        status: "ok",
+        _pending: true,
+      });
+      showToast("Offline — item queued, will sync automatically.", "warn");
+    }
+
+    renderStats();
+    renderTable();
+    renderCategoryBreakdown();
+    renderLowStockList();
+    renderStationHealth();
+    return;
+  }
+
+  errBox.textContent = result.error || "Could not add item.";
+  errBox.style.display = "block";
 }

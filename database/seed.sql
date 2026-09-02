@@ -23,12 +23,18 @@ INSERT INTO stations (name, code, region, latitude, longitude, capacity, status)
 -- Real hashes get generated in Python with werkzeug.
 -- Never store a plain password here.
 -- ------------------------------------------------------------
+-- Demo passwords (same as username's station, for convenience):
+--   admin        / admin2026
+--   coord        / coord2026
+--   bhr_office   / bharati2026
+--   mtr_office   / maitri2026
+--   hmd_office   / himadri2026
 INSERT INTO users (username, password_hash, full_name, role, station_id) VALUES
-('admin',      'REPLACE_WITH_GENERATED_HASH', 'System Administrator', 'admin',           NULL),
-('coord',      'REPLACE_WITH_GENERATED_HASH', 'R. Nair',              'coordinator',     NULL),
-('bhr_office', 'REPLACE_WITH_GENERATED_HASH', 'S. Patnaik',           'station_officer', 1),
-('mtr_office', 'REPLACE_WITH_GENERATED_HASH', 'A. Mishra',            'station_officer', 2),
-('hmd_office', 'REPLACE_WITH_GENERATED_HASH', 'K. Verma',             'station_officer', 3);
+('admin', 'scrypt:32768:8:1$qD0UzIG91lEYBoUD$96aa5eb908807c7d27cbe61b627781a879cebea63822b9e6b49d09134d9fe31ddf1a3434e2fe29e2e265fbd9ecf839cc3a220bec85b390e1e2d81e7b5947bee3', 'System Administrator', 'admin', NULL),
+('coord', 'scrypt:32768:8:1$Xr3fQCoxVCaBXWpw$71f1658646fedb0034081d72b3749c269cb318a19f06465a36984a0fde4d2ba955603280d5ef239101327f3397d7b58b7c44a0badb68ecf15d286e1788bf5d5c', 'R. Nair', 'coordinator', NULL),
+('bhr_office', 'scrypt:32768:8:1$mffBfWCHVtWxxLHT$cbadfdca0de60ebf397708b614464557bc8ed2c4b17f71753884989e51f0f7bb9b20b1e8bb77e92be30d8e41caec28f2f5b72d89f869738ea332425ac91f5bbd', 'S. Patnaik', 'station_officer', 1),
+('mtr_office', 'scrypt:32768:8:1$clL6efQGO2OKriBh$bbe6bb9ba5f746ef9ba52e8d3485e1f9df72a4661ec3d9aa0ac940a34800a62f3cb3c4e3c47f13ad92bea91c4d6f6af50345c36860c0ca41fa0cc0eb6400ede5', 'A. Mishra', 'station_officer', 2),
+('hmd_office', 'scrypt:32768:8:1$8PeYV2fvVXzAbj81$46ee6872c5fe126d2f61a72c470b7b8816dc62b37ca55b16a6e9a7941c9af76cc85466569e284c317b16aa59ed9220939ce1d98eb2c8c9f22be0b199724053d4', 'K. Verma', 'station_officer', 3);
 
 -- ------------------------------------------------------------
 -- EXPEDITIONS
