@@ -151,3 +151,48 @@ def delete_item(item_id):
     if changed == 0:
         return jsonify({"error": "Item not found"}), 404
     return jsonify({"message": "Item deleted"})
+
+# ---------- forecast, but also shows if help is already on the way ----------
+@inventory_bp.route("/api/inventory/forecast/with-shipments", methods=["GET"])
+def get_forecast_with_shipments():
+    conn = get_connection()
+    cursor = conn.cursor(dictionary=True)
+
+    # 1. the same forecast list as before
+    cursor.execute("""
+        SELECT i.item_id, i.name, i.category, i.quantity, i.unit,
+               i.daily_usage_rate, i.station_id, s.name AS station,
+               ROUND(i.quantity / NULLIF(i.daily_usage_rate, 0), 1) AS days_remaining
+        FROM inventory i
+        JOIN stations s ON i.station_id = s.station_id
+        WHERE i.daily_usage_rate > 0
+        ORDER BY days_remaining ASC
+    """)
+    forecast_items = cursor.fetchall()
+
+    # 2. everything currently moving, with what it's carrying and where
+    cursor.execute("""
+        SELECT c.item_name, sh.destination_id, sh.reference, sh.status,
+               DATE_FORMAT(sh.eta, '%Y-%m-%d') AS eta
+        FROM cargo c
+        JOIN shipments sh ON c.shipment_id = sh.shipment_id
+        WHERE sh.status IN ('pending', 'in_transit')
+    """)
+    incoming = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # 3. match them up: for each low item, is something already coming?
+    for item in forecast_items:
+        item["incoming_shipment"] = None
+        for ship in incoming:
+            if ship["item_name"] == item["name"] and ship["destination_id"] == item["station_id"]:
+                item["incoming_shipment"] = {
+                    "reference": ship["reference"],
+                    "status": ship["status"],
+                    "eta": ship["eta"]
+                }
+                break
+
+    return jsonify(forecast_items)
