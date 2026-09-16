@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In – PolarLog</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../css/design-system.css" />
+    <link rel="stylesheet" href="../css/login.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#03111f" />
+    <link rel="apple-touch-icon" href="../assets/icons/icon-192.png" />
+  </head>
+  <body>
+    <div class="login-shell">
+      <a href="index.html" class="login-brand">
+        <div class="login-brand-mark">
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+          >
+            <path d="M12 2v20M4.5 6l15 12M19.5 6l-15 12M2 12h20" />
+          </svg>
+        </div>
+        <div class="login-brand-text">
+          <div class="name">POLARLOG</div>
+          <div class="tag">Integrated Polar Expedition Logistics</div>
+        </div>
+      </a>
+
+      <div class="login-card">
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to access cargo, stations and shipment data.</p>
+
+        <div class="login-error" id="loginError"></div>
+
+        <form id="loginForm">
+          <div class="login-field">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              placeholder="username"
+              autocomplete="username"
+            />
+          </div>
+          <div class="login-field">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <div class="login-row-between">
+            <label class="login-remember">
+              <input type="checkbox" checked />
+              Remember me
+            </label>
+            <a href="#" class="login-forgot">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="login-submit">Sign In</button>
+        </form>
+
+        <div class="login-demo-note">
+          <b>Demo login:</b> use <b>bhr_office</b> / <b>bharati2026</b>, or
+          <button type="button" id="fillDemoBtn">autofill it</button>.
+          Checked against the real database — other seeded accounts:
+          <b>admin</b>/admin2026, <b>coord</b>/coord2026,
+          <b>mtr_office</b>/maitri2026, <b>hmd_office</b>/himadri2026.
+        </div>
+      </div>
+
+      <div class="login-footer-link">
+        <a href="index.html">&larr; Back to home</a>
+      </div>
+    </div>
+
+    <script src="../js/offline-db.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/login.js"></script>
+    <script src="../js/sync-manager.js"></script>
+    <script src="../js/pwa-register.js"></script>
+  </body>
+</html>

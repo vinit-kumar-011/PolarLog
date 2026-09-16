@@ -1,0 +1,145 @@
+/* =========================================================
+   POLARLOG — ASSISTANT WIDGET
+   Floating chat launcher + panel. Include on any page after
+   design-system.css. Self-contained: doesn't touch existing
+   layout/grid rules.
+========================================================= */
+
+#pl-assistant-launcher {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1px solid var(--border-active);
+  background: var(--polar-blue);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-glow), var(--shadow-card);
+  z-index: 999;
+}
+
+#pl-assistant-launcher svg {
+  width: 22px;
+  height: 22px;
+}
+
+#pl-assistant-panel {
+  position: fixed;
+  bottom: 88px;
+  right: 24px;
+  width: 400px;
+  height: 560px;
+  max-height: 75vh;
+  background-color: #0a1f33;
+  opacity: 1;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card), 0 0 0 1px rgba(0, 0, 0, 0.4);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 999;
+  font-family: "Inter", sans-serif;
+  isolation: isolate;
+}
+
+#pl-assistant-panel.open {
+  display: flex;
+}
+
+#pl-assistant-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  background-color: #071729;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+#pl-assistant-close {
+  cursor: pointer;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  font-size: 16px;
+}
+
+#pl-assistant-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #050f1c;
+}
+
+.pl-assistant-msg {
+  max-width: 85%;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.pl-assistant-msg.user {
+  align-self: flex-end;
+  background: var(--polar-blue);
+  color: #fff;
+}
+
+.pl-assistant-msg.assistant {
+  align-self: flex-start;
+  background-color: #14324e;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.pl-assistant-msg.pending {
+  opacity: 0.6;
+  font-style: italic;
+}
+
+#pl-assistant-form {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid var(--border);
+  background-color: #071729;
+  flex-shrink: 0;
+}
+
+#pl-assistant-input {
+  flex: 1;
+  background-color: #0e2439;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+#pl-assistant-input:focus {
+  border-color: var(--border-active);
+}
+
+#pl-assistant-form button {
+  background: var(--polar-blue);
+  border: none;
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
