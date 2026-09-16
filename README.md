@@ -618,7 +618,7 @@ Open the local development URL in your browser.
 
 # 🤝 Team
 
-## ByteBenders
+## Byte_Benders
 
 **Smart India Hackathon 2026**
 
@@ -656,6 +656,6 @@ The architecture, interface and functionality may evolve throughout development.
 
 <br>
 
-Made with ❤️ by **ByteBenders**
+Made with ❤️ by **Byte_Benders**
 
 </p>
