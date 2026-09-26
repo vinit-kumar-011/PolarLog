@@ -3,6 +3,7 @@ from flask_cors import CORS
 
 from routes.inventory import inventory_bp
 from routes.alerts import alerts_bp
+from routes.assistant import assistant_bp
 from routes.stations import stations_bp
 from routes.expeditions import expeditions_bp
 
@@ -16,6 +17,7 @@ CORS(app)
 
 app.register_blueprint(inventory_bp)
 app.register_blueprint(alerts_bp)
+app.register_blueprint(assistant_bp)
 app.register_blueprint(stations_bp)
 app.register_blueprint(expeditions_bp)
 app.register_blueprint(cargo_bp)
