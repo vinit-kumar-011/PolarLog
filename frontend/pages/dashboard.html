@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <script src="../js/auth-guard.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>POLARLOG — Dashboard</title>
@@ -12,6 +13,10 @@
 
     <link rel="stylesheet" href="../css/dashboard.css" />
     <link rel="stylesheet" href="../css/pl-sidebar.css" />
+    <link rel="stylesheet" href="../css/assistant.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#03111f" />
+    <link rel="apple-touch-icon" href="../assets/icons/icon-192.png" />
   </head>
   <body>
     <div class="app">
@@ -95,9 +100,10 @@
           <div class="pl-nav-group">
             <div class="pl-nav-item-wrap">
               <a
-                href="dashboard.html#view-shipments"
+                href="shipments.html"
                 class="pl-nav-item"
                 data-view="view-shipments"
+                data-page="shipments.html"
               >
                 <span class="pl-nav-left">
                   <svg
@@ -121,9 +127,10 @@
           <div class="pl-nav-group">
             <div class="pl-nav-item-wrap">
               <a
-                href="dashboard.html#view-inventory"
+                href="inventory.html"
                 class="pl-nav-item"
                 data-view="view-inventory"
+                data-page="inventory.html"
               >
                 <span class="pl-nav-left">
                   <svg
@@ -162,15 +169,17 @@
             </div>
             <div class="pl-submenu" id="pl-sub-inventory">
               <a
-                href="dashboard.html#view-inventory-lowstock"
+                href="inventory.html#lowstock"
                 class="pl-sub-item"
                 data-view="view-inventory-lowstock"
+                id="navLowStock"
                 >Low Stock</a
               >
               <a
-                href="dashboard.html#view-inventory-categories"
+                href="inventory.html#categories"
                 class="pl-sub-item"
                 data-view="view-inventory-categories"
+                id="navCategories"
                 >Categories</a
               >
             </div>
@@ -179,9 +188,10 @@
           <div class="pl-nav-group">
             <div class="pl-nav-item-wrap">
               <a
-                href="dashboard.html#view-personnel"
+                href="personnel.html"
                 class="pl-nav-item"
                 data-view="view-personnel"
+                data-page="personnel.html"
               >
                 <span class="pl-nav-left">
                   <svg
@@ -264,9 +274,10 @@
           <div class="pl-nav-group">
             <div class="pl-nav-item-wrap">
               <a
-                href="dashboard.html#view-alerts"
+                href="alerts.html"
                 class="pl-nav-item"
                 data-view="view-alerts"
+                data-page="alerts.html"
               >
                 <span class="pl-nav-left">
                   <svg
@@ -471,7 +482,7 @@
                     <path d="M9 21v-6h6v6" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiStations">—</div>
               <div class="stat-sub">All stations active</div>
             </div>
             <div class="stat-card">
@@ -490,7 +501,7 @@
                     <path d="M3 8v8l9 5 9-5V8" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiCargo">—</div>
               <div class="stat-sub">In transit &amp; pending</div>
             </div>
             <div class="stat-card">
@@ -511,7 +522,7 @@
                     <path d="M12 9.5v4.2" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiAlerts">—</div>
               <div class="stat-sub">Requires attention</div>
             </div>
             <div class="stat-card">
@@ -529,7 +540,7 @@
                     <path d="M3 17l5-5 4 4 8-9" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiHealth">—</div>
               <div class="stat-sub">Avg. across all stations</div>
             </div>
             <div class="stat-card">
@@ -549,7 +560,7 @@
                     <circle cx="17.5" cy="8.5" r="2.4" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiPersonnel">—</div>
               <div class="stat-sub">Deployed across stations</div>
             </div>
             <div class="stat-card">
@@ -569,7 +580,7 @@
                     <circle cx="16" cy="19" r="1.6" /></svg
                 ></span>
               </div>
-              <div class="stat-value placeholder">—</div>
+              <div class="stat-value placeholder" id="kpiShipments">—</div>
               <div class="stat-sub">Across all routes</div>
             </div>
           </div>
@@ -581,7 +592,7 @@
                   <span class="card-title">Antarctic Station Overview</span>
                 </div>
                 <div class="station-body">
-                  <div class="station-list">
+                  <div class="station-list" id="stationListContainer">
                     <div class="station-row">
                       <div class="top-line">
                         <span class="station-dot"></span
@@ -711,7 +722,7 @@
                     >View all</span
                   >
                 </div>
-                <div class="alert-list">
+                <div class="alert-list" id="criticalAlertsList">
                   <div class="alert-row">
                     <div class="alert-icon critical">
                       <svg
@@ -821,6 +832,7 @@
                         y="55"
                         text-anchor="middle"
                         class="donut-center-label"
+                        id="donutCenterLabel"
                       >
                         —%
                       </text>
@@ -832,7 +844,7 @@
                           style="background: var(--cyan)"
                         ></span
                         ><span class="legend-name">Fuel</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValFuel">—%</span>
                       </div>
                       <div class="legend-row">
                         <span
@@ -840,7 +852,7 @@
                           style="background: var(--green)"
                         ></span
                         ><span class="legend-name">Food</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValFood">—%</span>
                       </div>
                       <div class="legend-row">
                         <span
@@ -848,7 +860,9 @@
                           style="background: var(--amber)"
                         ></span
                         ><span class="legend-name">Medical</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValMedical"
+                          >—%</span
+                        >
                       </div>
                       <div class="legend-row">
                         <span
@@ -856,7 +870,9 @@
                           style="background: var(--blue)"
                         ></span
                         ><span class="legend-name">Equipment</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValEquipment"
+                          >—%</span
+                        >
                       </div>
                       <div class="legend-row">
                         <span
@@ -864,7 +880,7 @@
                           style="background: var(--text-faint)"
                         ></span
                         ><span class="legend-name">Others</span
-                        ><span class="legend-val">—%</span>
+                        ><span class="legend-val" id="legendValOthers">—%</span>
                       </div>
                     </div>
                   </div>
@@ -899,7 +915,7 @@
                       >Pending</span
                     >
                   </div>
-                  <div class="chart-box">
+                  <div class="chart-box" id="shipmentsChartBox">
                     <span class="chart-empty-text">Chart data pending</span>
                   </div>
                 </div>
@@ -921,7 +937,7 @@
                       <th>ETA</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody id="recentShipmentsBody">
                     <tr>
                       <td>—</td>
                       <td>—</td>
@@ -957,7 +973,7 @@
                   <span class="card-title">Mission Timeline</span
                   ><span class="view-all">View all</span>
                 </div>
-                <div class="timeline">
+                <div class="timeline" id="missionTimelineContainer">
                   <div class="tl-item">
                     <div class="tl-marker">
                       <span class="tl-dot"></span><span class="tl-line"></span>
@@ -1379,10 +1395,57 @@
       </main>
     </div>
 
+    <script src="../js/offline-db.js"></script>
+    <script src="../js/config.js"></script>
     <script src="../js/pl-sidebar.js"></script>
     <script src="../js/dashboard.js"></script>
     <script src="../js/sync-manager.js"></script>
     <script src="../js/pwa-register.js"></script>
     <script src="../js/assistant.js"></script>
-  </body>
+  
+<script>
+async function loadStationWeather() {
+    const stations = [
+        { name: "Bharati", endpoint: "bharati" },
+        { name: "Maitri", endpoint: "maitri" },
+        { name: "Himadri", endpoint: "himadri" }
+    ];
+    const cards = document.querySelectorAll(".weather-card");
+    for (let i = 0; i < stations.length; i++) {
+        const card = cards[i];
+        if (!card) continue;
+        const tempElement = card.querySelector(".weather-temp");
+        const conditionElement = card.querySelector(".weather-cond");
+        try {
+            const response = await fetch(`http://localhost:5000/api/weather/${stations[i].endpoint}`);
+            if (!response.ok) throw new Error(`Weather API returned ${response.status}`);
+            const data = await response.json();
+            const current = data.current || {};
+            const units = data.current_units || {};
+            const temperature = current.temperature_2m;
+            tempElement.textContent = temperature !== undefined ? `${Math.round(temperature)}${units.temperature_2m || "°C"}` : "--°";
+            conditionElement.textContent = getWeatherCondition(current.weather_code);
+        } catch (error) {
+            console.error(`Weather error for ${stations[i].name}:`, error);
+            tempElement.textContent = "--°";
+            conditionElement.textContent = "Unavailable";
+        }
+    }
+}
+function getWeatherCondition(code) {
+    if (code === undefined || code === null) return "Unknown";
+    if (code === 0) return "Clear";
+    if (code >= 1 && code <= 3) return "Cloudy";
+    if (code >= 45 && code <= 48) return "Fog";
+    if (code >= 51 && code <= 57) return "Drizzle";
+    if (code >= 61 && code <= 67) return "Rain";
+    if (code >= 71 && code <= 77) return "Snow";
+    if (code >= 80 && code <= 82) return "Rain showers";
+    if (code >= 85 && code <= 86) return "Snow showers";
+    if (code >= 95 && code <= 99) return "Thunderstorm";
+    return "Unknown";
+}
+document.addEventListener("DOMContentLoaded", loadStationWeather);
+</script>
+</body>
 </html>
