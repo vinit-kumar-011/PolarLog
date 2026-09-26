@@ -11,9 +11,9 @@ def get_inventory():
     cursor = conn.cursor(dictionary=True)
     cursor.execute("""
         SELECT i.item_id, i.name, i.category, i.quantity, i.unit,
-               i.reorder_level, i.daily_usage, i.status, s.name AS station,
-               CASE WHEN i.daily_usage > 0
-                    THEN ROUND(i.quantity / i.daily_usage, 1)
+               i.reorder_level, i.daily_usage_rate, i.status, s.name AS station,
+               CASE WHEN i.daily_usage_rate > 0
+                    THEN ROUND(i.quantity / i.daily_usage_rate, 1)
                     ELSE NULL END AS days_remaining
         FROM inventory i
         JOIN stations s ON i.station_id = s.station_id
@@ -59,10 +59,10 @@ def get_inventory_forecast():
         )
         SELECT
             i.item_id, i.name, i.category, i.quantity, i.unit,
-            i.reorder_level, i.daily_usage, i.status AS stock_status,
+            i.reorder_level, i.daily_usage_rate, i.status AS stock_status,
             s.name AS station,
-            CASE WHEN i.daily_usage > 0
-                 THEN ROUND(i.quantity / i.daily_usage, 1)
+            CASE WHEN i.daily_usage_rate > 0
+                 THEN ROUND(i.quantity / i.daily_usage_rate, 1)
                  ELSE NULL END AS days_remaining,
             ib.reference AS ship_reference,
             ib.shipment_status AS ship_status,
@@ -92,7 +92,7 @@ def get_inventory_forecast():
             "quantity": r["quantity"],
             "unit": r["unit"],
             "reorder_level": r["reorder_level"],
-            "daily_usage": r["daily_usage"],
+            "daily_usage_rate": r["daily_usage_rate"],
             "stock_status": r["stock_status"],
             "station": r["station"],
             "days_remaining": r["days_remaining"],

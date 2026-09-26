@@ -1399,5 +1399,31 @@
     <script src="../js/dashboard.js"></script>
     <script src="../js/sync-manager.js"></script>
     <script src="../js/pwa-register.js"></script>
+<div style="margin: 20px; padding: 16px; border: 1px solid #333; border-radius: 8px; background: #111;">
+  <h3 style="margin-top:0; color:#fff;">Ask PolarLog</h3>
+  <input type="text" id="assistantQuestion" placeholder="e.g. what's critical at himadri" style="width: 60%; padding: 8px;">
+  <button id="assistantAskBtn" style="padding: 8px 16px;">Ask</button>
+  <p id="assistantAnswer" style="margin-top: 12px; color: #9cf;"></p>
+</div>
+
+<script>
+document.getElementById('assistantAskBtn').addEventListener('click', async function() {
+  const question = document.getElementById('assistantQuestion').value;
+  const answerBox = document.getElementById('assistantAnswer');
+  answerBox.textContent = 'Thinking...';
+  try {
+    const response = await fetch(`${API_BASE}/api/assistant/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: question })
+    });
+    const data = await response.json();
+    answerBox.textContent = data.answer;
+  } catch (err) {
+    answerBox.textContent = 'Could not reach the server.';
+  }
+});
+</script>
   </body>
-</html>
+
+  </html>
