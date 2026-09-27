@@ -26,6 +26,7 @@ async function initStationMap() {
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "&copy; OpenStreetMap contributors",
     maxZoom: 18,
+    noWrap: true,
   }).addTo(map);
 
   let stations;
@@ -57,7 +58,7 @@ async function initStationMap() {
       .addTo(map)
       .bindPopup(
         `<strong style="font-size:14px">${station.name}</strong><br>` +
-          `<span style="color:#666">${station.region || "—"}</span><br>` +
+          `<span style="color:#999">${station.region || "—"}</span><br>` +
           `<span style="font-size:12px">${lat.toFixed(4)}°, ${lng.toFixed(4)}°</span>`
       );
 

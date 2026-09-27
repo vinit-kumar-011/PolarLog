@@ -23,7 +23,7 @@ def ask_assistant():
     # locked to their own station regardless of what they type.
     is_admin = not current_user or current_user.get("role") == "admin"
     if is_admin:
-        for name in ["himadri", "bharati", "maitri"]:
+        for name in ["himadri", "bharati", "maitri", "himansh"]:
             if name in question:
                 station_filter = name.capitalize()
                 break
@@ -33,7 +33,7 @@ def ask_assistant():
     # know why, so the answer doesn't look like it ignored what they asked.
     scope_note = ""
     if not is_admin and station_filter:
-        for name in ["himadri", "bharati", "maitri"]:
+        for name in ["himadri", "bharati", "maitri", "himansh"]:
             if name in question and name.capitalize() != station_filter:
                 scope_note = f" (You're scoped to {station_filter} — {name.capitalize()} data isn't visible to your account.)"
                 break
