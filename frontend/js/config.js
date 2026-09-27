@@ -1,5 +1,12 @@
 // The one place the API address lives.
 const API_BASE = "http://localhost:5000";
+// Attach the session token to every request, when we have one.
+// Returns an empty object when logged out, so calls still work
+// against endpoints that don't require auth.
+function authHeaders() {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: "Bearer " + token } : {};
+}
 
 /* =========================================================
    apiGet(path)
@@ -14,7 +21,14 @@ const API_BASE = "http://localhost:5000";
 ========================================================= */
 async function apiGet(path) {
   try {
-    const response = await fetch(`${API_BASE}${path}`);
+    const response = await fetch(`${API_BASE}${path}`, {
+      headers: authHeaders(),
+    });
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+      return;
+    }
     if (!response.ok) {
       throw new Error(`${path} returned ${response.status}`);
     }
@@ -59,9 +73,14 @@ async function apiSend(path, method, body) {
   try {
     const response = await fetch(`${API_BASE}${path}`, {
       method,
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify(body),
     });
+    if (response.status === 401) {
+      localStorage.removeItem("token");
+      window.location.href = "login.html";
+      return { ok: false, error: "Session expired" };
+    }
     if (!response.ok) {
       const errBody = await response.json().catch(() => ({}));
       return {

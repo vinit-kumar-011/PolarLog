@@ -65,6 +65,9 @@
         };
 
         sessionStorage.setItem("polarlogDemoUser", JSON.stringify(user));
+                localStorage.setItem("token", result.body.token);
+        localStorage.setItem("user_id", result.body.user_id);
+        localStorage.setItem("role", result.body.role);
         window.location.href = "dashboard.html";
       })
       .catch(function () {

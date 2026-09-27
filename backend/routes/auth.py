@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from werkzeug.security import check_password_hash
 from db import get_connection
+from auth_utils import generate_token
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -31,6 +32,7 @@ def login():
         return jsonify({"error": "Invalid username or password"}), 401
 
     # Never send the hash back to the browser
+    token = generate_token(user)
     return jsonify({
         "user_id":    user["user_id"],
         "username":   user["username"],
@@ -38,7 +40,8 @@ def login():
         "role":       user["role"],
         "station_id": user["station_id"],
         "station":    user["station"],
-        "message":    "Login successful"
+        "message":    "Login successful",
+        "token":      token
     })
 
 

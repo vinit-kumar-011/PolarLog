@@ -12,6 +12,8 @@ from routes.personnel import personnel_bp
 from routes.shipments import shipments_bp
 from routes.auth import auth_bp
 
+from auth_utils import check_auth
+
 app = Flask(__name__)
 CORS(app)
 
@@ -24,6 +26,8 @@ app.register_blueprint(cargo_bp)
 app.register_blueprint(personnel_bp)
 app.register_blueprint(shipments_bp)
 app.register_blueprint(auth_bp)
+
+app.before_request(check_auth)
 
 
 @app.route("/")
