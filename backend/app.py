@@ -11,6 +11,7 @@ from routes.cargo import cargo_bp
 from routes.personnel import personnel_bp
 from routes.shipments import shipments_bp
 from routes.auth import auth_bp
+from routes.admin import admin_bp
 
 from auth_utils import check_auth
 
@@ -26,6 +27,7 @@ app.register_blueprint(cargo_bp)
 app.register_blueprint(personnel_bp)
 app.register_blueprint(shipments_bp)
 app.register_blueprint(auth_bp)
+app.register_blueprint(admin_bp)
 
 app.before_request(check_auth)
 

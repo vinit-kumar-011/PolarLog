@@ -34,6 +34,9 @@ def decode_token(token):
 EXEMPT_ENDPOINTS = {
     "home",
     "auth.login",
+    "auth.register",
+    "auth.forgot_password",
+    "auth.reset_password",
 }
 
 
