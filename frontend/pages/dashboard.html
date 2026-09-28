@@ -246,6 +246,31 @@
 
           <div class="pl-nav-group">
             <div class="pl-nav-item-wrap">
+  <a
+    href="admin-approvals.html"
+    class="pl-nav-item"
+    data-page="admin-approvals.html"
+  >
+    <span class="pl-nav-left">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+        <circle cx="9" cy="7" r="4" />
+        <polyline points="16 11 18 13 22 9" />
+      </svg>
+      Approvals
+    </span>
+  </a>
+</div>
+            <div class="pl-nav-item-wrap">
               <a
                 href="stations.html"
                 class="pl-nav-item"
@@ -1401,6 +1426,18 @@
     <script src="../js/sync-manager.js"></script>
     <script src="../js/pwa-register.js"></script>
     <script src="../js/assistant.js"></script>
+  <script>
+  // Approvals is admin-only - hide the link from everyone else
+  (function () {
+    if (localStorage.getItem("role") !== "admin") {
+      var link = document.querySelector('[data-page="admin-approvals.html"]');
+      if (link) {
+        var wrap = link.closest(".pl-nav-item-wrap");
+        (wrap || link).style.display = "none";
+      }
+    }
+  })();
+</script>
   </body>
 
   </html>

@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pending Approvals — PolarLog</title>
+    <style>
+      body {
+        margin: 0;
+        background: #0b1220;
+        color: #e2e8f0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      .ap-wrap {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 32px 16px 64px;
+      }
+      .ap-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 4px;
+      }
+      .ap-head h1 { margin: 0; font-size: 22px; }
+      .ap-back { color: #7dd3fc; text-decoration: none; font-size: 13px; }
+      .ap-sub {
+        margin: 0 0 24px;
+        font-size: 13px;
+        color: #94a3b8;
+      }
+      .ap-card {
+        background: #111a2e;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 14px;
+      }
+      .ap-name {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 2px;
+      }
+      .ap-user {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 14px;
+      }
+      .ap-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px 20px;
+        margin-bottom: 16px;
+      }
+      .ap-field-label {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #64748b;
+        margin-bottom: 2px;
+      }
+      .ap-field-value { font-size: 13px; }
+      .ap-asked {
+        display: inline-block;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: rgba(56, 189, 248, 0.12);
+        color: #7dd3fc;
+        font-size: 12px;
+      }
+      .ap-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+        padding-top: 14px;
+        border-top: 1px solid rgba(148, 163, 184, 0.12);
+      }
+      .ap-actions select {
+        padding: 8px 10px;
+        border-radius: 7px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: #0b1220;
+        color: #e2e8f0;
+        font-size: 13px;
+        font-family: inherit;
+      }
+      .ap-approve, .ap-reject {
+        padding: 8px 16px;
+        border: 0;
+        border-radius: 7px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        font-family: inherit;
+      }
+      .ap-approve { background: #22c55e; color: #04121f; }
+      .ap-reject  { background: transparent; color: #fca5a5;
+                    border: 1px solid rgba(239, 68, 68, 0.4); }
+      .ap-approve:disabled, .ap-reject:disabled { opacity: 0.5; cursor: not-allowed; }
+      .ap-state {
+        padding: 28px;
+        text-align: center;
+        color: #94a3b8;
+        font-size: 14px;
+        background: #111a2e;
+        border: 1px dashed rgba(148, 163, 184, 0.2);
+        border-radius: 12px;
+      }
+      .ap-toast {
+        position: fixed;
+        left: 50%;
+        bottom: 28px;
+        transform: translateX(-50%);
+        padding: 11px 20px;
+        border-radius: 8px;
+        font-size: 13px;
+        display: none;
+        z-index: 50;
+      }
+      .ap-toast.show { display: block; }
+      .ap-toast.ok  { background: #16532c; color: #86efac; }
+      .ap-toast.err { background: #5b1d1d; color: #fca5a5; }
+    </style>
+  </head>
+  <body>
+    <div class="ap-wrap">
+      <div class="ap-head">
+        <h1>Pending approvals</h1>
+        <a class="ap-back" href="dashboard.html">&larr; Back to dashboard</a>
+      </div>
+      <p class="ap-sub">
+        People who have requested access. Choose the role they should
+        actually get — it need not be the one they asked for.
+      </p>
+
+      <div id="list">
+        <div class="ap-state">Loading…</div>
+      </div>
+    </div>
+
+    <div class="ap-toast" id="toast"></div>
+
+    <script src="../js/config.js"></script>
+    <script>
+      (function () {
+        var listEl = document.getElementById("list");
+        var toastEl = document.getElementById("toast");
+
+        // --- gate: admins only, checked before anything renders ---
+        var role = localStorage.getItem("role");
+        var token = localStorage.getItem("token");
+
+        if (!token) {
+          window.location.href = "login.html";
+          return;
+        }
+        if (role !== "admin") {
+          listEl.innerHTML =
+            '<div class="ap-state">This page is for administrators only.</div>';
+          return;
+        }
+
+        function toast(text, isError) {
+          toastEl.textContent = text;
+          toastEl.className = "ap-toast show " + (isError ? "err" : "ok");
+          setTimeout(function () {
+            toastEl.className = "ap-toast";
+          }, 3000);
+        }
+
+        function esc(s) {
+          return String(s == null ? "" : s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
+
+        function authHeaders() {
+          return {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          };
+        }
+
+        function load() {
+          fetch(API_BASE + "/api/admin/pending-users", {
+            headers: authHeaders(),
+          })
+            .then(function (r) {
+              if (r.status === 401) {
+                window.location.href = "login.html";
+                return null;
+              }
+              if (r.status === 403) {
+                listEl.innerHTML =
+                  '<div class="ap-state">You do not have permission to view this.</div>';
+                return null;
+              }
+              return r.json();
+            })
+            .then(function (body) {
+              if (body === null) return;
+              render(body.users || body || []);
+            })
+            .catch(function () {
+              listEl.innerHTML =
+                '<div class="ap-state">Could not reach the server. Is Flask running?</div>';
+            });
+        }
+
+        function render(users) {
+          if (!users.length) {
+            listEl.innerHTML =
+              '<div class="ap-state">Nothing waiting. Everyone is processed.</div>';
+            return;
+          }
+
+          listEl.innerHTML = users
+            .map(function (u) {
+              return (
+                '<div class="ap-card" data-id="' + u.user_id + '">' +
+                  '<div class="ap-name">' + esc(u.full_name || u.username) + "</div>" +
+                  '<div class="ap-user">@' + esc(u.username) +
+                    " &middot; user #" + u.user_id + "</div>" +
+                  '<div class="ap-grid">' +
+                    field("Email", esc(u.email)) +
+                    field("Phone", esc(u.phone) || "&mdash;") +
+                    field("Station", esc(u.station) || "&mdash;") +
+                    field("Asked for",
+                      '<span class="ap-asked">' +
+                      esc(u.requested_role || "viewer") + "</span>") +
+                  "</div>" +
+                  '<div class="ap-actions">' +
+                    '<select class="ap-role">' +
+                      '<option value="viewer">viewer</option>' +
+                      '<option value="station_officer">station_officer</option>' +
+                      '<option value="coordinator">coordinator</option>' +
+                      '<option value="admin">admin</option>' +
+                    "</select>" +
+                    '<button class="ap-approve">Approve</button>' +
+                    '<button class="ap-reject">Reject</button>' +
+                  "</div>" +
+                "</div>"
+              );
+            })
+            .join("");
+
+          // Pre-select what they asked for, so one click is the common case
+          users.forEach(function (u) {
+            var card = listEl.querySelector('[data-id="' + u.user_id + '"]');
+            var sel = card.querySelector(".ap-role");
+            if (u.requested_role) {
+              for (var i = 0; i < sel.options.length; i++) {
+                if (sel.options[i].value === u.requested_role) {
+                  sel.selectedIndex = i;
+                }
+              }
+            }
+          });
+
+          wire();
+        }
+
+        function field(label, value) {
+          return (
+            "<div>" +
+            '<div class="ap-field-label">' + label + "</div>" +
+            '<div class="ap-field-value">' + value + "</div>" +
+            "</div>"
+          );
+        }
+
+        function wire() {
+          listEl.querySelectorAll(".ap-approve").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              var card = btn.closest(".ap-card");
+              var id = card.getAttribute("data-id");
+              var chosen = card.querySelector(".ap-role").value;
+              act("approve", id, card, { role: chosen },
+                  "Approved as " + chosen);
+            });
+          });
+
+          listEl.querySelectorAll(".ap-reject").forEach(function (btn) {
+            btn.addEventListener("click", function () {
+              var card = btn.closest(".ap-card");
+              var id = card.getAttribute("data-id");
+              if (!confirm("Reject this request? They won't be able to sign in.")) {
+                return;
+              }
+              act("reject", id, card, {}, "Rejected");
+            });
+          });
+        }
+
+        function act(what, id, card, payload, okText) {
+          var buttons = card.querySelectorAll("button");
+          buttons.forEach(function (b) { b.disabled = true; });
+
+          fetch(API_BASE + "/api/admin/" + what + "/" + id, {
+            method: "PUT",
+            headers: authHeaders(),
+            body: JSON.stringify(payload),
+          })
+            .then(function (r) {
+              return r.json().then(function (body) {
+                return { status: r.status, body: body };
+              });
+            })
+            .then(function (res) {
+              if (res.status >= 400) {
+                toast(res.body.error || "That didn't work.", true);
+                buttons.forEach(function (b) { b.disabled = false; });
+                return;
+              }
+              toast(okText, false);
+              card.remove();
+              if (!listEl.querySelector(".ap-card")) {
+                listEl.innerHTML =
+                  '<div class="ap-state">Nothing waiting. Everyone is processed.</div>';
+              }
+            })
+            .catch(function () {
+              toast("Could not reach the server.", true);
+              buttons.forEach(function (b) { b.disabled = false; });
+            });
+        }
+
+        load();
+      })();
+    </script>
+  </body>
+</html>

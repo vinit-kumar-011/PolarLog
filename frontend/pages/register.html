@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Request Access — PolarLog</title>
+    <link rel="stylesheet" href="../css/login.css" />
+    <style>
+      /* Self-contained styling so this page cannot be broken by
+         class names that may or may not exist in login.css */
+      .reg-wrap {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px 16px;
+        background: #0b1220;
+      }
+      .reg-card {
+        width: 100%;
+        max-width: 460px;
+        background: #111a2e;
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 14px;
+        padding: 32px;
+        color: #e2e8f0;
+        font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+      .reg-card h1 {
+        margin: 0 0 6px;
+        font-size: 22px;
+      }
+      .reg-sub {
+        margin: 0 0 24px;
+        font-size: 13px;
+        color: #94a3b8;
+        line-height: 1.5;
+      }
+      .reg-card label {
+        display: block;
+        margin: 14px 0 6px;
+        font-size: 13px;
+        color: #cbd5e1;
+      }
+      .reg-card input,
+      .reg-card select {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid rgba(148, 163, 184, 0.25);
+        background: #0b1220;
+        color: #e2e8f0;
+        font-size: 14px;
+        font-family: inherit;
+      }
+      .reg-card input:focus,
+      .reg-card select:focus {
+        outline: none;
+        border-color: #38bdf8;
+      }
+      .reg-hint {
+        font-size: 11px;
+        color: #64748b;
+        margin-top: 4px;
+      }
+      .reg-btn {
+        width: 100%;
+        margin-top: 22px;
+        padding: 12px;
+        border: 0;
+        border-radius: 8px;
+        background: #0ea5e9;
+        color: #04121f;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .reg-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .reg-msg {
+        margin-top: 16px;
+        padding: 11px 13px;
+        border-radius: 8px;
+        font-size: 13px;
+        line-height: 1.5;
+        display: none;
+      }
+      .reg-msg.show { display: block; }
+      .reg-msg.err  { background: rgba(239, 68, 68, 0.12); color: #fca5a5; }
+      .reg-msg.ok   { background: rgba(34, 197, 94, 0.12); color: #86efac; }
+      .reg-back {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        font-size: 13px;
+        color: #7dd3fc;
+        text-decoration: none;
+      }
+      .reg-note {
+        margin-top: 20px;
+        padding: 11px 13px;
+        border-radius: 8px;
+        background: rgba(56, 189, 248, 0.08);
+        border-left: 3px solid #38bdf8;
+        font-size: 12px;
+        color: #94a3b8;
+        line-height: 1.5;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="reg-wrap">
+      <div class="reg-card">
+        <h1>Request access</h1>
+        <p class="reg-sub">
+          Fill this in and an administrator will review your request.
+          You'll be able to sign in once it's approved.
+        </p>
+
+        <label for="fullName">Full name</label>
+        <input type="text" id="fullName" placeholder="Ayusman Sahoo" />
+
+        <label for="username">Username</label>
+        <input type="text" id="username" placeholder="a.sahoo" />
+        <div class="reg-hint">This is what you'll type to sign in.</div>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="you@example.com" />
+        <div class="reg-hint">Used for password resets. Must be real.</div>
+
+        <label for="phone">Phone</label>
+        <input type="tel" id="phone" placeholder="9876543210" />
+
+        <label for="station">Station</label>
+        <select id="station">
+          <option value="">— Select —</option>
+          <option value="1">Bharati (Antarctica)</option>
+          <option value="2">Maitri (Antarctica)</option>
+          <option value="3">Himadri (Arctic)</option>
+          <option value="4">Himansh (Himalayan)</option>
+        </select>
+
+        <label for="requestedRole">Role you're requesting</label>
+        <select id="requestedRole">
+          <option value="viewer">Viewer — read-only access</option>
+          <option value="station_officer">Station Officer — manage one station</option>
+          <option value="coordinator">Coordinator — oversee all stations</option>
+        </select>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="At least 8 characters" />
+
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" placeholder="Type it again" />
+
+        <button class="reg-btn" id="submitBtn">Submit request</button>
+
+        <div class="reg-msg" id="msgBox"></div>
+
+        <div class="reg-note">
+          <strong>Note:</strong> the role you choose is a <em>request</em>.
+          The administrator decides what you're actually granted.
+        </div>
+
+        <a class="reg-back" href="login.html">&larr; Back to sign in</a>
+      </div>
+    </div>
+
+    <script src="../js/config.js"></script>
+    <script>
+      (function () {
+        var msgBox = document.getElementById("msgBox");
+        var btn = document.getElementById("submitBtn");
+
+        function say(text, isError) {
+          msgBox.textContent = text;
+          msgBox.className = "reg-msg show " + (isError ? "err" : "ok");
+        }
+
+        function val(id) {
+          return document.getElementById(id).value.trim();
+        }
+
+        btn.addEventListener("click", function () {
+          var fullName = val("fullName");
+          var username = val("username");
+          var email = val("email");
+          var phone = val("phone");
+          var station = val("station");
+          var requestedRole = val("requestedRole");
+          var password = document.getElementById("password").value;
+          var confirmPassword = document.getElementById("confirmPassword").value;
+
+          // --- checks, in the order a person would notice them ---
+          if (!fullName || !username || !email || !password) {
+            return say("Name, username, email and password are all required.", true);
+          }
+          if (username.length < 3) {
+            return say("Username must be at least 3 characters.", true);
+          }
+          if (email.indexOf("@") === -1) {
+            return say("That doesn't look like an email address.", true);
+          }
+          if (password.length < 8) {
+            return say("Password must be at least 8 characters.", true);
+          }
+          if (password !== confirmPassword) {
+            return say("The two passwords don't match.", true);
+          }
+
+          btn.disabled = true;
+          btn.textContent = "Submitting…";
+
+          fetch(API_BASE + "/api/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              full_name: fullName,
+              username: username,
+              email: email,
+              phone: phone,
+              station_id: station ? parseInt(station, 10) : null,
+              requested_role: requestedRole,
+              password: password,
+            }),
+          })
+            .then(function (r) {
+              return r.json().then(function (body) {
+                return { status: r.status, body: body };
+              });
+            })
+            .then(function (res) {
+              if (res.status >= 400) {
+                return say(res.body.error || "Something went wrong.", true);
+              }
+              say(res.body.message + " Redirecting to sign in…", false);
+              setTimeout(function () {
+                window.location.href = "login.html";
+              }, 3000);
+            })
+            .catch(function () {
+              say("Could not reach the server. Is Flask running?", true);
+            })
+            .finally(function () {
+              btn.disabled = false;
+              btn.textContent = "Submit request";
+            });
+        });
+      })();
+    </script>
+  </body>
+</html>
