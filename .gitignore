@@ -9,3 +9,4 @@ config.py
 # Editor / OS
 .vscode/
 .DS_Store
+backend/ai/.embedding_cache.json
