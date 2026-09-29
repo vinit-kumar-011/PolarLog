@@ -7,8 +7,10 @@ load_dotenv()
 # `python app.py` still works out of the box on a fresh checkout.
 DB_HOST = os.environ.get("POLARLOG_DB_HOST", "localhost")
 DB_USER = os.environ.get("POLARLOG_DB_USER", "root")
-DB_PASSWORD = os.environ.get("POLARLOG_DB_PASSWORD", "Vinit@2006")
+DB_PASSWORD = os.environ.get("POLARLOG_DB_PASSWORD", "set-me-in-dotenv")
 DB_NAME = os.environ.get("POLARLOG_DB_NAME", "polarlog")
+DB_PORT = int(os.environ.get("POLARLOG_DB_PORT", "3306"))
+DB_SSL = os.environ.get("POLARLOG_DB_SSL", "false").lower() == "true"
 
 # ---------- auth ----------
 # Used to sign/verify session tokens (JWT). In production this MUST come

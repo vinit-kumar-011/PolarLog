@@ -1,0 +1,2 @@
+# Certificates must keep their original line endings
+*.pem -text
