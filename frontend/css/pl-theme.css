@@ -1,0 +1,149 @@
+/* ============================================================
+   PolarLog - typographic and shape overrides
+   Loaded LAST on every page, after each page's own stylesheet.
+   Nothing else needs editing.
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:wght@500;600;700&display=swap');
+
+:root {
+  --pl-font-display: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --pl-font-body: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+  --pl-font-data: "IBM Plex Mono", ui-monospace, "Cascadia Mono", monospace;
+}
+
+/* ---------- 1. Interface type ---------- */
+
+body,
+button,
+input,
+select,
+textarea,
+table {
+  font-family: var(--pl-font-body);
+}
+
+/* ---------- 2. Display type ---------- */
+
+h1, h2, h3, h4, h5, h6,
+.page-title,
+.panel-title,
+.pl-logo-text .name {
+  font-family: var(--pl-font-display) !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+/* Page titles want a little more presence */
+.page-title {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* The product name is a wordmark - let it breathe */
+.pl-logo-text .name {
+  letter-spacing: 0.04em !important;
+  font-weight: 600;
+}
+
+/* ---------- 3. Figures ---------- */
+/* Tabular numerals keep digits the same width, so columns of
+   numbers line up vertically. Without this, a 1 is narrower than
+   a 9 and the column edges wobble.                             */
+
+td,
+.donut-total,
+.stat-value,
+.kpi-value {
+  font-variant-numeric: tabular-nums;
+}
+
+.donut-total {
+  font-family: var(--pl-font-data) !important;
+  letter-spacing: -0.02em;
+}
+
+/* ---------- 4. Square edges ---------- */
+/* Sharp corners read as deliberate. Rounded-everything is what
+   you get when nobody chose.                                   */
+
+.btn,
+.btn-primary,
+.icon-btn,
+.qa-btn,
+.link-btn,
+.view-all-btn,
+.filter-select,
+.month-select,
+button,
+input,
+select,
+textarea {
+  border-radius: 0 !important;
+}
+
+/* The search box wraps its input, so round the wrapper too */
+.search-box {
+  border-radius: 0 !important;
+}
+
+/* ---------- 5. Type scale ---------- */
+/* Slightly tighter, slightly more contrast between levels. */
+
+.page-title {
+  font-size: 1.9rem;
+  line-height: 1.15;
+}
+
+.page-sub {
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+  opacity: 0.75;
+}
+
+.panel-title {
+  font-size: 1.05rem;
+}
+
+/* Table headers: small, spaced, uppercase - a typographic
+   convention that signals "this is a label, not content". */
+th {
+  font-family: var(--pl-font-body) !important;
+  font-size: 0.72rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.07em !important;
+  text-transform: uppercase;
+}
+/* ---------- 6. Square everything ---------- */
+
+.panel,
+.stats-row > *,
+.table-wrap,
+.filters,
+.modal,
+.notif-panel,
+.pl-profile-menu {
+  border-radius: 0 !important;
+}
+/* ---------- 7. No icon badges ---------- */
+/* Three names, same thing: a tinted square holding an SVG,
+   sitting above a label that already says what the number is.
+   Decoration standing in for design.
+   Hidden here rather than deleted from the JS, so it is one
+   rule to reverse rather than edits across several files.
+   Deliberately NOT touched: alert-icon (severity is carried by
+   its colour), weather-icon, and any icon-btn (those have no
+   text label at all - hiding them gives you invisible buttons). */
+
+.stat-icon,
+.kpi-icon,
+.card-icon {
+  display: none !important;
+}
+
+/* Losing the icon frees up space. Give the label and the number
+   a little room so the card doesn't look top-heavy.           */
+.stat-card,
+.kpi-card {
+  padding-top: 1.1rem;
+}
