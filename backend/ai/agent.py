@@ -50,11 +50,18 @@ You are read-only. You cannot create, change or delete anything. If asked to, \\
 explain that the person should use the relevant page in PolarLog."""
 
 
-def _run_tool(name, arguments):
+def _run_tool(name, arguments, force_station=None):
     """Execute one tool call. Never raises - errors come back as text."""
     fn = tool_module.AVAILABLE.get(name)
     if fn is None:
         return {"error": f"No such tool: {name}"}
+
+    # A station-scoped user can only ever see their own station.
+    # Enforced HERE, in code - not in the prompt, which a model may ignore.
+    # get_stations has no station parameter, so it is left alone.
+    if force_station and name != "get_stations":
+        arguments = dict(arguments)
+        arguments["station"] = force_station
 
     try:
         return fn(**arguments)
@@ -72,6 +79,11 @@ def ask(question, user=None):
     """
     context = knowledge.as_context(question)
     sources = [h["source"] for h in knowledge.search(question)]
+        # Who is allowed to see what. Admins see everything; everyone else
+    # is locked to their own station.
+    force_station = None
+    if user and user.get("role") != "admin" and user.get("station"):
+        force_station = user["station"]
 
     system = SYSTEM_PROMPT
     if context:
@@ -84,6 +96,14 @@ def ask(question, user=None):
         system += (
             f"\\n\\nYou are speaking to {user.get('username')}, "
             f"whose role is {user.get('role')}."
+        )
+
+    if force_station:
+        system += (
+            f"\\n\\nThis user can only see data for {force_station}. "
+            f"Any tool you call returns {force_station} data only, whatever "
+            f"station you ask for. If they ask about another station, tell "
+            f"them plainly that their account is scoped to {force_station}."
         )
 
     messages = [
@@ -140,7 +160,7 @@ def ask(question, user=None):
             print(f"[agent] Tool: {name}({args})")
             tools_used.append(name)
 
-            result = _run_tool(name, args)
+            result = _run_tool(name, args, force_station=force_station)
 
             messages.append({
                 "role": "tool",
