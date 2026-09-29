@@ -35,3 +35,9 @@ GROQ_MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
 
 JINA_API_KEY = os.environ.get("JINA_API_KEY", "")
 JINA_MODEL = os.environ.get("JINA_MODEL", "jina-embeddings-v3")
+
+# ---------- weather ----------
+# WeatherAPI identifies you by key, not by IP address - which is why
+# it works from Render's shared outbound IPs and Open-Meteo doesn't.
+#   Free key, no card: https://www.weatherapi.com
+WEATHERAPI_KEY = os.environ.get("WEATHERAPI_KEY", "")

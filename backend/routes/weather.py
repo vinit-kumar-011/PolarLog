@@ -1,13 +1,24 @@
 """
 Weather for the station panels.
 
-Provider: Open-Meteo (https://open-meteo.com)
-  - No API key, no signup, no billing account
-  - Free for non-commercial use, ~10,000 calls/day
-  - Data from national weather services (DWD, NOAA, MeteoFrance, ...)
+Two providers, tried in order:
 
-The response shape is unchanged from the WeatherAPI version - the same
-"current" and "location" objects - so no frontend code needed editing.
+  1. WeatherAPI  - needs a key, but identifies you BY THAT KEY
+  2. Open-Meteo  - no key, but identifies you BY IP ADDRESS
+
+The order matters. Open-Meteo alone worked in development and failed
+in production with HTTP 429: Render's free tier shares outbound IP
+addresses between many apps, so the collective traffic from that
+address exceeded a limit that had nothing to do with us. A key-based
+provider is immune to that, because the key is ours wherever the
+request comes from.
+
+Open-Meteo stays as a fallback - it still works from a laptop, and it
+needs no signup, so a teammate who hasn't set WEATHERAPI_KEY still
+gets working weather locally.
+
+The response shape is unchanged - the same "current" and "location"
+objects - so no frontend code needs editing.
 """
 
 import time
@@ -15,6 +26,7 @@ import time
 from flask import Blueprint, jsonify
 import requests
 
+import config
 from db import get_connection
 
 weather_bp = Blueprint("weather", __name__)
@@ -28,6 +40,7 @@ STATIONS = {
     "himansh": {"name": "Himansh", "latitude": 32.400, "longitude": 77.617},
 }
 
+WEATHERAPI_URL = "https://api.weatherapi.com/v1/current.json"
 OPEN_METEO_URL = "https://api.open-meteo.com/v1/forecast"
 
 # Cache per station, so four panels on one page don't mean four
@@ -36,6 +49,7 @@ _CACHE = {}
 _CACHE_TTL_SECONDS = 15 * 60
 
 # WMO weather interpretation codes -> readable text.
+# Only needed for the Open-Meteo fallback; WeatherAPI sends text.
 # https://open-meteo.com/en/docs
 WMO_CODES = {
     0: "Clear sky",
@@ -97,13 +111,60 @@ def _lookup_station_in_db(station_name):
     }
 
 
-def _fetch(latitude, longitude):
-    """Current conditions from Open-Meteo, or None on any failure."""
-    cache_key = (round(latitude, 2), round(longitude, 2))
-    cached = _CACHE.get(cache_key)
-    if cached and (time.time() - cached["ts"]) < _CACHE_TTL_SECONDS:
-        return cached["data"]
+def _fetch_weatherapi(latitude, longitude):
+    """Current conditions from WeatherAPI, or None on any failure."""
+    if not config.WEATHERAPI_KEY:
+        return None
 
+    try:
+        response = requests.get(
+            WEATHERAPI_URL,
+            params={
+                "key": config.WEATHERAPI_KEY,
+                "q": f"{latitude},{longitude}",
+                "aqi": "no",
+            },
+            timeout=10,
+        )
+    except requests.RequestException as e:
+        print(f"[weather] WeatherAPI network problem: {e}")
+        return None
+
+    if response.status_code != 200:
+        print(f"[weather] WeatherAPI returned {response.status_code}")
+        return None
+
+    try:
+        current = response.json().get("current")
+    except ValueError:
+        print("[weather] WeatherAPI sent an unreadable response")
+        return None
+
+    if not isinstance(current, dict):
+        return None
+
+    condition = current.get("condition") or {}
+
+    # WeatherAPI's field names are already what the frontend expects,
+    # but they are copied across explicitly rather than passed through
+    # whole - so a change at their end can't quietly reshape our API.
+    return {
+        "temp_c": current.get("temp_c"),
+        "feelslike_c": current.get("feelslike_c"),
+        "humidity": current.get("humidity"),
+        "wind_kph": current.get("wind_kph"),
+        "condition": {
+            "text": condition.get("text", "Unknown"),
+            "code": condition.get("code"),
+            "icon": condition.get("icon", ""),
+        },
+        "last_updated": current.get("last_updated"),
+    }
+
+
+def _fetch_open_meteo(latitude, longitude):
+    """Fallback provider. No key needed, but rate-limited by IP -
+    which is why it cannot be the only option in production."""
     try:
         response = requests.get(
             OPEN_METEO_URL,
@@ -120,17 +181,17 @@ def _fetch(latitude, longitude):
             timeout=10,
         )
     except requests.RequestException as e:
-        print(f"[weather] Network problem: {e}")
+        print(f"[weather] Open-Meteo network problem: {e}")
         return None
 
     if response.status_code != 200:
-        print(f"[weather] Provider returned {response.status_code}")
+        print(f"[weather] Open-Meteo returned {response.status_code}")
         return None
 
     try:
         current = response.json().get("current")
     except ValueError:
-        print("[weather] Unreadable response")
+        print("[weather] Open-Meteo sent an unreadable response")
         return None
 
     if not isinstance(current, dict):
@@ -138,9 +199,7 @@ def _fetch(latitude, longitude):
 
     code = current.get("weather_code")
 
-    # Shaped to match what the frontend already expects from the
-    # WeatherAPI version - temp_c, humidity, wind_kph, condition.text.
-    data = {
+    return {
         "temp_c": current.get("temperature_2m"),
         "feelslike_c": current.get("apparent_temperature"),
         "humidity": current.get("relative_humidity_2m"),
@@ -153,7 +212,23 @@ def _fetch(latitude, longitude):
         "last_updated": current.get("time"),
     }
 
-    _CACHE[cache_key] = {"ts": time.time(), "data": data}
+
+def _fetch(latitude, longitude):
+    """Cached current conditions. WeatherAPI first, Open-Meteo second."""
+    cache_key = (round(latitude, 2), round(longitude, 2))
+    cached = _CACHE.get(cache_key)
+    if cached and (time.time() - cached["ts"]) < _CACHE_TTL_SECONDS:
+        return cached["data"]
+
+    data = _fetch_weatherapi(latitude, longitude)
+
+    if data is None:
+        print("[weather] Falling back to Open-Meteo")
+        data = _fetch_open_meteo(latitude, longitude)
+
+    if data is not None:
+        _CACHE[cache_key] = {"ts": time.time(), "data": data}
+
     return data
 
 
@@ -170,7 +245,7 @@ def get_weather(station_name):
     current = _fetch(station["latitude"], station["longitude"])
 
     if current is None:
-        # No fabricated numbers - if we can't reach the provider,
+        # No fabricated numbers - if we can't reach either provider,
         # say so rather than returning a broken 200.
         return jsonify({"error": "Weather service unavailable"}), 502
 
