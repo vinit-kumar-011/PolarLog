@@ -74,4 +74,8 @@ def home():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    # Local development only. On Render, gunicorn imports `app` directly
+    # and this block never runs.
+    import os
+    debug = os.environ.get("FLASK_DEBUG", "true").lower() == "true"
+    app.run(debug=debug, port=5000)
