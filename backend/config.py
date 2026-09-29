@@ -25,3 +25,11 @@ SMTP_HOST = os.environ.get("SMTP_HOST", "")
 SMTP_PORT = int(os.environ.get("SMTP_PORT", "465") or 465)
 SMTP_USER = os.environ.get("SMTP_USER", "")
 SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
+
+# ---------- AI assistant ----------
+# Real values live in backend/.env, which is never committed.
+GROQ_API_KEY = os.environ.get("GROQ_API_KEY", "")
+GROQ_MODEL = os.environ.get("GROQ_MODEL", "openai/gpt-oss-120b")
+
+JINA_API_KEY = os.environ.get("JINA_API_KEY", "")
+JINA_MODEL = os.environ.get("JINA_MODEL", "jina-embeddings-v3")

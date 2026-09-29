@@ -1,27 +1,63 @@
 """
 Weather service abstraction for PolarLog.
 
-Isolated behind this module so the provider can be swapped later
-(the intended provider is Google's Weather API) without touching the
-weather.py route or any frontend code. The API key lives only in the
-GOOGLE_WEATHER_API_KEY environment variable on the backend - it is
-never sent to the browser.
+Provider: Open-Meteo (https://open-meteo.com)
+  - No API key, no signup, no billing account
+  - Free for non-commercial use, ~10,000 calls/day
+  - Data from national weather services (DWD, NOAA, MeteoFrance, ...)
+
+The public shape of this module is deliberately unchanged from the
+Google implementation: get_current_conditions(lat, lon) returns the
+same dictionary, or None. Nothing upstream needed editing.
 """
-import os
+
 import time
 import requests
 
 _CACHE = {}
 _CACHE_TTL_SECONDS = 15 * 60  # avoid hammering the provider every page load
 
-GOOGLE_WEATHER_ENDPOINT = "https://weather.googleapis.com/v1/currentConditions:lookup"
+ENDPOINT = "https://api.open-meteo.com/v1/forecast"
+
+# WMO weather interpretation codes.
+# https://open-meteo.com/en/docs  ->  "Weather variable documentation"
+WMO_CODES = {
+    0: "Clear sky",
+    1: "Mainly clear",
+    2: "Partly cloudy",
+    3: "Overcast",
+    45: "Fog",
+    48: "Depositing rime fog",
+    51: "Light drizzle",
+    53: "Moderate drizzle",
+    55: "Dense drizzle",
+    56: "Light freezing drizzle",
+    57: "Dense freezing drizzle",
+    61: "Slight rain",
+    63: "Moderate rain",
+    65: "Heavy rain",
+    66: "Light freezing rain",
+    67: "Heavy freezing rain",
+    71: "Slight snowfall",
+    73: "Moderate snowfall",
+    75: "Heavy snowfall",
+    77: "Snow grains",
+    80: "Slight rain showers",
+    81: "Moderate rain showers",
+    82: "Violent rain showers",
+    85: "Slight snow showers",
+    86: "Heavy snow showers",
+    95: "Thunderstorm",
+    96: "Thunderstorm with slight hail",
+    99: "Thunderstorm with heavy hail",
+}
 
 
 def get_current_conditions(latitude, longitude):
-    """Returns a dict of whatever fields the provider gives us, or
-    None if weather can't be fetched right now (missing key, network
-    failure, no coordinates, etc). Callers must treat None as "no
-    data" and show placeholders - never fabricate values here.
+    """Returns a dict of current conditions, or None if weather can't be
+    fetched right now (network failure, no coordinates, bad response).
+    Callers must treat None as "no data" and show placeholders - never
+    fabricate values here.
     """
     if latitude is None or longitude is None:
         return None
@@ -31,43 +67,44 @@ def get_current_conditions(latitude, longitude):
     if cached and (time.time() - cached["ts"]) < _CACHE_TTL_SECONDS:
         return cached["data"]
 
-    api_key = os.environ.get("GOOGLE_WEATHER_API_KEY")
-    if not api_key:
-        return None
-
     try:
         resp = requests.get(
-            GOOGLE_WEATHER_ENDPOINT,
+            ENDPOINT,
             params={
-                "key": api_key,
-                "location.latitude": latitude,
-                "location.longitude": longitude,
+                "latitude": latitude,
+                "longitude": longitude,
+                "current": (
+                    "temperature_2m,relative_humidity_2m,"
+                    "wind_speed_10m,weather_code"
+                ),
+                "wind_speed_unit": "kmh",
+                "timezone": "UTC",
             },
             timeout=5,
         )
         if resp.status_code != 200:
+            print(f"[weather] Provider returned {resp.status_code}")
             return None
         payload = resp.json()
-    except (requests.RequestException, ValueError):
+    except (requests.RequestException, ValueError) as e:
+        print(f"[weather] Could not fetch: {e}")
         return None
 
-    # Normalize into a small, stable shape the frontend can rely on
-    # regardless of which provider is behind this function.
+    current = payload.get("current")
+    if not isinstance(current, dict):
+        return None
+
+    code = current.get("weather_code")
+
+    # Same shape the Google implementation returned, so nothing
+    # upstream has to change.
     data = {
-        "temperature_c": _dig(payload, "temperature", "degrees"),
-        "condition": _dig(payload, "weatherCondition", "description", "text"),
-        "wind_kph": _dig(payload, "wind", "speed", "value"),
-        "humidity_pct": _dig(payload, "relativeHumidity"),
-        "updated_at": _dig(payload, "currentTime"),
+        "temperature_c": current.get("temperature_2m"),
+        "condition": WMO_CODES.get(code, "Unknown"),
+        "wind_kph": current.get("wind_speed_10m"),
+        "humidity_pct": current.get("relative_humidity_2m"),
+        "updated_at": current.get("time"),
     }
 
     _CACHE[cache_key] = {"ts": time.time(), "data": data}
     return data
-
-
-def _dig(obj, *path):
-    for key in path:
-        if not isinstance(obj, dict) or key not in obj:
-            return None
-        obj = obj[key]
-    return obj

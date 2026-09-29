@@ -587,32 +587,103 @@ PolarLog/
 
 # 🚀 Getting Started
 
-### 1. Clone the repository
+### Prerequisites
+
+- Python 3.10+
+- MySQL 8
+- VS Code with the Live Server extension
+
+### 1. Clone and switch branch
 
 ```bash
-git clone https://github.com/<your-username>/PolarLog.git
+git clone https://github.com/vinit-kumar-011/PolarLog.git
 cd PolarLog
+git checkout combined
 ```
 
-### 2. Set up the backend
+### 2. Set up the database
+
+In MySQL Workbench, run these **in order**:
+
+| # | File | Purpose |
+|---|---|---|
+| 1 | `database/schema.sql` | Creates the tables |
+| 2 | `database/seed.sql` | Demo stations, inventory, personnel |
+| 3 | `database/set_real_password_hashes.sql` | Working demo logins |
+| 4 | `database/add_user_settings.sql` | Settings page storage |
+| 5 | `database/add_auth_system.sql` | Registration, roles, password reset |
+
+Files 4 and 5 are safe to re-run — they check before changing anything.
+
+### 3. Set up the backend
 
 ```bash
-pip install -r requirements.txt
+cd backend
+python -m venv venv
+.\venv\Scripts\activate
+pip install -r ..\requirements.txt
 ```
 
-### 3. Configure the database
+Then create your configuration:
 
-Create the MySQL database and configure the required connection settings.
+```bash
+copy .env.example .env
+```
 
-### 4. Start the Flask server
+Open `backend/.env` and fill in the values. **Every comment in that file
+says where to get the thing it's asking for.** All services are free and
+none require a credit card.
+
+Start the server:
 
 ```bash
 python app.py
 ```
 
-### 5. Open PolarLog
+You should see:
 
-Open the local development URL in your browser.
+```
+[knowledge] Indexed 10 chunks from 3 documents - semantic search ready
+ * Running on http://127.0.0.1:5000
+```
+
+### 4. Start the frontend
+
+Right-click `frontend/pages/login.html` → **Open with Live Server**.
+
+It serves on port 5500. The backend must be running on 5000 at the same time.
+
+### 5. Demo accounts
+
+| Username | Password | Role |
+|---|---|---|
+| `admin` | `admin2026` | Administrator |
+| `coord` | `coord2026` | Coordinator |
+| `bhr_office` | `bharati2026` | Station Officer — Bharati |
+| `mtr_office` | `maitri2026` | Station Officer — Maitri |
+| `hmd_office` | `himadri2026` | Station Officer — Himadri |
+| `hmn_office` | `himansh2026` | Station Officer — Himansh |
+
+---
+
+## ⚠️ Things that will confuse you once
+
+**Password reset codes print to the terminal, they aren't emailed.**
+Look in the Flask window for `[OTP] Code for ...`. SMTP isn't configured yet.
+
+**Page not updating after an edit?** The service worker is serving a cached
+copy. F12 → Application → Storage → **Clear site data**, then Ctrl + Shift + R.
+
+**The AI assistant needs both keys.** Without `GROQ_API_KEY` the chat bubble
+returns 503. Without `JINA_API_KEY` it still works but falls back to keyword
+search — you'll see `FALLBACK to keyword search` at startup.
+
+**Station officers only see their own station.** Deliberate, and enforced in
+the backend. Log in as `admin` to see everything.
+
+**Every API request needs `Authorization: Bearer <token>`.**
+`app.before_request(check_auth)` enforces it; exceptions are listed in
+`auth_utils.EXEMPT_ENDPOINTS`.
 
 ---
 

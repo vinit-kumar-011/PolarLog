@@ -15,6 +15,7 @@ from routes.auth import auth_bp
 from routes.assistant import assistant_bp
 from routes.settings import settings_bp
 from routes.admin import admin_bp
+from routes.assistant_ai import assistant_ai_bp
 
 app = Flask(__name__)
 CORS(app)
@@ -31,9 +32,13 @@ app.register_blueprint(auth_bp)
 app.register_blueprint(assistant_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(admin_bp)
+app.register_blueprint(assistant_ai_bp)
 
 # Every request (except login and the health-check "/") must carry a
 # valid session token - see auth_utils.check_auth / EXEMPT_ENDPOINTS.
+# Build the RAG index once, at startup
+from ai import knowledge
+knowledge.load()
 app.before_request(check_auth)
 
 
@@ -59,7 +64,7 @@ def health():
     return {
         "api": True,
         "database": db_ok,
-        "weather_configured": bool(os.environ.get("WEATHERAPI_KEY")),
+        "weather_configured": True,  # Open-Meteo needs no key
     }
 
 

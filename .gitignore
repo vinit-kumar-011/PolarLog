@@ -16,3 +16,5 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+backend/.env
+backend/config.mine.py.bak
