@@ -1,0 +1,1 @@
+web: python backend/init_db.py; gunicorn --chdir backend app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120

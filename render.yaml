@@ -1,0 +1,19 @@
+# Render Blueprint - free web service. The database is external (Aiven free MySQL),
+# its connection string goes in POLARLOG_DB_URL.
+services:
+  - type: web
+    name: polarlog
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python backend/init_db.py; gunicorn --chdir backend app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
+    healthCheckPath: /healthz
+    envVars:
+      - key: POLARLOG_SECRET_KEY
+        generateValue: true
+      - key: POLARLOG_DB_URL
+        sync: false
+      - key: POLARLOG_ADMIN_PASSWORD
+        sync: false
+      - key: WEATHERAPI_KEY
+        sync: false
