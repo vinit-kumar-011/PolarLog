@@ -6,7 +6,7 @@ services:
     runtime: python
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: python backend/init_db.py; gunicorn --chdir backend app:app --bind 0.0.0.0:$PORT --workers 1 --threads 4 --timeout 120
+    startCommand: python backend/init_db.py; gunicorn -c backend/gunicorn.conf.py app:app
     healthCheckPath: /healthz
     envVars:
       - key: POLARLOG_SECRET_KEY
