@@ -6,7 +6,7 @@
    (offline-first sync) work.
 ========================================================= */
 
-const CACHE_NAME = "polarlog-shell-v10";
+const CACHE_NAME = "polarlog-shell-v11";
 
 // Everything needed to render the app shell offline.
 // Paths are relative to this file's location (/pages/sw.js).
@@ -97,11 +97,24 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// ---------- fetch: cache-first for the shell, network-only for the API ----------
+// ---------- fetch: network-first for the shell, untouched for the API ----------
+//
+// CHANGED FROM CACHE-FIRST, and this is why:
+//
+// Cache-first means a browser that has seen a file once keeps serving
+// its saved copy forever, however many times the real file changes.
+// That is excellent offline and terrible for shipping a fix - a phone
+// that had visited before kept running an old config.js that pointed
+// at localhost, and the only cure was clearing site data by hand.
+//
+// Network-first asks the server first and falls back to the cache only
+// when the network fails. Offline still works; updates still arrive.
+// The trade is a little slower on a good connection, which is the
+// right way round.
 self.addEventListener("fetch", (event) => {
   const url = new URL(event.request.url);
 
-  // Never intercept API calls — always hit the live backend so data
+  // Never intercept API calls - always hit the live backend so data
   // stays current. If offline, let it fail; each page's own
   // try/catch already shows an "OFFLINE" pill and a toast.
   if (url.pathname.startsWith("/api")) {
@@ -114,26 +127,24 @@ self.addEventListener("fetch", (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-
-      return fetch(event.request)
-        .then((response) => {
-          // Cache a copy of newly-seen shell assets for next time.
-          const copy = response.clone();
-          caches
-            .open(CACHE_NAME)
-            .then((cache) => cache.put(event.request, copy));
-          return response;
-        })
-        .catch(() => {
-          // Offline and not cached: for a page navigation, fall back
-          // to the dashboard shell rather than showing a browser error.
+    fetch(event.request, { cache: "no-cache" })
+      .then((response) => {
+        // Keep a copy so the page still works offline next time.
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+        return response;
+      })
+      .catch(() =>
+        // Network unreachable - fall back to whatever we saved before.
+        caches.match(event.request).then((cached) => {
+          if (cached) return cached;
+          // Offline and never cached: for a page navigation, show the
+          // dashboard shell rather than a browser error page.
           if (event.request.mode === "navigate") {
             return caches.match("dashboard.html");
           }
           return undefined;
-        });
-    }),
+        }),
+      ),
   );
 });
