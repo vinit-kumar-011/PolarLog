@@ -1,5 +1,17 @@
 // The one place the API address lives.
-const API_BASE = "http://localhost:5000";
+// Where the backend lives depends on where this page is served from.
+//
+//   Opened from Live Server (127.0.0.1 / localhost) -> local Flask
+//   Opened from anywhere else                       -> the deployed API
+//
+// Same file works in both places. No edit before deploying, no edit
+// after - and no hour lost wondering why local changes do nothing.
+
+const LOCAL_HOSTS = ["127.0.0.1", "localhost", ""];
+
+const API_BASE = LOCAL_HOSTS.includes(window.location.hostname)
+  ? "http://localhost:5000"
+  : "https://polarlog-c77f.onrender.com";
 
 /* =========================================================
    Session token helpers.

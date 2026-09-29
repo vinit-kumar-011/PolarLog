@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 from flask_cors import CORS
 
@@ -18,7 +19,18 @@ from routes.admin import admin_bp
 from routes.assistant_ai import assistant_ai_bp
 
 app = Flask(__name__)
-CORS(app)
+# Which websites may call this API.
+#
+# Development needs Live Server; production needs the deployed
+# frontend. The list comes from an environment variable so the
+# deployed URL is not baked into the code - and so a teammate
+# who clones this gets a working local setup by default.
+_allowed = os.environ.get(
+    "ALLOWED_ORIGINS",
+    "http://127.0.0.1:5500,http://localhost:5500",
+).split(",")
+
+CORS(app, origins=[o.strip() for o in _allowed], supports_credentials=True)
 
 app.register_blueprint(inventory_bp)
 app.register_blueprint(alerts_bp)
