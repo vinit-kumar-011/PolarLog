@@ -328,3 +328,20 @@ a:has(> .login-brand-text) > div:first-child > svg {
     font-size: 0.68rem !important;
   }
 }
+/* ---------- 12. Square the cards ---------- */
+/* Sharp buttons against rounded cards reads as unfinished.
+   Everything that is a panel or a card gets the same edge. */
+
+.stat-card,
+.kpi-card,
+.card,
+.panel,
+.stats-row > *,
+.table-wrap,
+.filters,
+.modal,
+.notif-panel,
+.login-card,
+.pl-profile-menu {
+  border-radius: 0 !important;
+}
