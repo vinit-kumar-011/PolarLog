@@ -98,7 +98,6 @@ textarea {
 .page-sub {
   font-size: 0.85rem;
   letter-spacing: 0.01em;
-  opacity: 0.75;
 }
 
 .panel-title {
@@ -146,4 +145,186 @@ th {
 .stat-card,
 .kpi-card {
   padding-top: 1.1rem;
+}
+/* ---------- 8. Aurora Peak logo ---------- */
+/* The old mark is written into all twelve pages. Rather than
+   editing twelve files, hide it and paint the new one on the
+   container behind it. One place to change it in future.
+
+   Paths are relative to THIS FILE, not to the page - so
+   ../assets/ works from every page in every folder.          */
+
+.pl-logo-mark > svg,
+.pl-logo-mark > img {
+  display: none !important;
+}
+
+.pl-logo-mark {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px;
+  background-image: url("../assets/logo-mark-dark.svg");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Light theme gets the light plate and the darker gradient */
+.light .pl-logo-mark {
+  background-image: url("../assets/logo-mark-light.svg");
+}
+/* ============================================================
+   9. ONE PALETTE
+
+   Eleven stylesheets each define their own --text-faint,
+   --text-muted, --bg and so on, with different values. Because
+   this file loads LAST, whatever it sets here wins everywhere.
+
+   Two goals:
+     - dark mode: lift the greys so secondary text is readable
+     - light mode: take the glare off pure white
+   ============================================================ */
+
+/* ---------- DARK ---------- */
+
+:root,
+html:not(.light),
+body:not(.light) {
+  /* Secondary text was too close to the background to read.
+     These are lifted enough to be comfortable without competing
+     with the primary text.                                    */
+  --text-dim: #a3b1c9;
+  --text-faint: #94a3bd;
+  --text-muted: #a3b1c9;
+  --text-secondary: #c3cfe0;
+  --ice-dim: #b3c3dc;
+  --pl-text-dim: #a3b1c9;
+  --pl-text-faint: #94a3bd;
+}
+
+/* ---------- LIGHT ---------- */
+
+html.light,
+body.light,
+.light {
+  /* Pure white over a full screen is genuinely tiring. Dropping
+     the page to a soft blue-grey and the cards to just off-white
+     keeps the contrast while losing the glare.                */
+  --bg: #e9eef6;
+  --bg-main: #e9eef6;
+  --bg-deep: #e9eef6;
+  --card: #fbfcfe;
+  --panel: #fbfcfe;
+  --bg-panel: #fbfcfe;
+  --bg-surface: #fbfcfe;
+  --bg-sidebar: #f4f7fb;
+  --pl-bg-sidebar: rgba(244, 247, 251, 0.85);
+
+  /* Light-mode secondary text was the opposite problem - too
+     pale against white. Darkened.                             */
+  --text-dim: #4a5568;
+  --text-faint: #5b6478;
+  --text-muted: #566078;
+  --pl-text-dim: #4a5568;
+  --pl-text-faint: #5b6478;
+}
+/* ---------- 10. Login page lockup ---------- */
+/* Position the whole brand block in the top-left corner, swap
+   the old icon for the Aurora Peak mark, and style the text
+   beside it. The text stays as HTML so the tagline survives. */
+
+a:has(> .login-brand-text) {
+  position: absolute !important;
+  top: 30px;
+  left: 38px;
+  margin: 0 !important;
+  z-index: 5;
+
+  display: flex !important;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+}
+
+/* ---- the mark ---- */
+/* The icon div is the first thing inside the link. It has no
+   class of its own, so it's targeted by position.            */
+
+a:has(> .login-brand-text) > div:first-child {
+  width: 52px !important;
+  height: 52px !important;
+  flex: 0 0 52px;
+
+  background-image: url("../assets/logo-big.svg");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: transparent !important;
+
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Hide the old snowflake drawing that lives inside that div */
+a:has(> .login-brand-text) > div:first-child > svg {
+  display: none !important;
+}
+
+/* ---- the wordmark ---- */
+
+.login-brand-text .name {
+  font-family: var(--pl-font-body) !important;
+  font-size: 2.1rem !important;
+  font-weight: 600 !important;
+  line-height: 1.05 !important;
+  letter-spacing: -0.01em !important;
+  text-transform: none !important;   /* was forced to capitals */
+  color: #FFFFFF !important;
+}
+
+/* The half of the word we wrapped in a span */
+.login-brand-text .brand-log {
+  color: #38BDF8 !important;
+}
+
+/* ---- the tagline ---- */
+
+/* ---- the tagline ---- */
+/* Serif italic under a sans wordmark - the pairing that makes
+   a lockup look set rather than typed.                        */
+
+.login-brand-text .tag {
+  font-family: var(--pl-font-display) !important;
+  font-style: italic;
+  font-size: 0.92rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.01em !important;
+  color: #B4C2D8 !important;
+  margin-top: 3px;
+}
+
+/* ---- phones ---- */
+
+@media (max-width: 640px) {
+  a:has(> .login-brand-text) {
+    top: 18px;
+    left: 18px;
+    gap: 10px;
+  }
+  a:has(> .login-brand-text) > div:first-child {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px;
+  }
+  .login-brand-text .name {
+    font-size: 1.5rem !important;
+  }
+  .login-brand-text .tag {
+    font-size: 0.68rem !important;
+  }
 }

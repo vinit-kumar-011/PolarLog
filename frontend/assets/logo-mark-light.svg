@@ -1,0 +1,14 @@
+<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="36" height="36" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1.5"/>
+  <path d="M18 7L29 27H7L18 7Z" fill="url(#g)" mask="url(#notch)"/>
+  <defs>
+    <linearGradient id="g" x1="18" y1="7" x2="18" y2="27" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0EA5E9"/>
+      <stop offset="1" stop-color="#0369A1"/>
+    </linearGradient>
+    <mask id="notch">
+      <rect width="36" height="36" fill="#FFFFFF"/>
+      <line x1="12" y1="19" x2="24" y2="19" stroke="#000000" stroke-width="2.5" stroke-linecap="round"/>
+    </mask>
+  </defs>
+</svg>
