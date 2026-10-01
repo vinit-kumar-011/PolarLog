@@ -33,6 +33,7 @@ def decode_token(token):
 # (Flask "endpoint" names, i.e. <blueprint_name>.<view_function_name>.)
 EXEMPT_ENDPOINTS = {
     "home",
+    "keepalive",
     "auth.login",
     "auth.register",
     "auth.forgot_password",

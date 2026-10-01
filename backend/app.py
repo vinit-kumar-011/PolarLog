@@ -1,5 +1,6 @@
 import os
-from flask import Flask
+from flask import Flask, jsonify
+from db import get_connection
 from flask_cors import CORS
 
 from auth_utils import check_auth
@@ -83,6 +84,40 @@ def health():
 @app.route("/")
 def home():
     return {"message": "PolarLog API is running"}
+
+@app.route("/api/keepalive")
+def keepalive():
+    """Touched every few minutes by a scheduled job.
+
+    Exists because both free tiers sleep, and they sleep for
+    different reasons:
+
+      - Render spins the service down after 15 minutes with no
+        requests. Arriving here is enough to prevent that.
+      - Aiven powers the database off after days with no
+        connections. Merely reaching Flask would NOT prevent
+        that, which is why this opens a real connection and runs
+        a query rather than just returning a message.
+
+    SELECT 1 is the cheapest possible query - it reads no table
+    and returns a single constant. The point is the connection,
+    not the result.
+    """
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT 1")
+        cursor.fetchone()
+        cursor.close()
+        conn.close()
+        return jsonify({"status": "ok", "database": "reachable"})
+    except Exception as e:
+        # Still a 200. A monitoring service that sees failures will
+        # email you about them, and a database that is waking up
+        # from a cold start can legitimately refuse the first
+        # connection. The body says what happened.
+        print(f"[keepalive] Database unreachable: {e}")
+        return jsonify({"status": "degraded", "database": "unreachable"})
 
 
 if __name__ == "__main__":
