@@ -11,13 +11,16 @@ def send_otp_email(to_email, otp, full_name=""):
     Deliberately does NOT raise - a failure to send shouldn't crash the
     request or reveal to the caller whether the address existed.
     """
-    # TODO(before production): TEMPORARY console-only OTP delivery - NO EMAIL IS
-    # SENT. Delete the next two lines (the print and the early return) once
-    # SMTP_HOST / SMTP_PORT / SMTP_USER / SMTP_PASSWORD are set in backend/.env
-    # (for Gmail: an App Password), otherwise password reset only works for
-    # whoever can read the server console.
-    print(f"\n[OTP] Code for {to_email}: {otp}\n")
-    return True
+        # No SMTP configured - fall back to printing the code to the console.
+    #
+    # This is how it worked everywhere before email was set up, and it is
+    # what a teammate who clones this repo without mail credentials still
+    # gets. The alternative - removing this path entirely - would mean
+    # password reset silently failing for them with nothing in the log to
+    # say why.
+    if not config.SMTP_HOST or not config.SMTP_PASSWORD:
+        print(f"\n[OTP] Code for {to_email}: {otp}  (no SMTP configured)\n")
+        return True
 
     greeting = f"Hello {full_name}," if full_name else "Hello,"
 
