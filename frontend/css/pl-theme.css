@@ -345,3 +345,62 @@ a:has(> .login-brand-text) > div:first-child > svg {
 .pl-profile-menu {
   border-radius: 0 !important;
 }
+/* ============================================================
+   13. LANDING PAGE
+   Its own stylesheet and its own class names, so none of the
+   earlier rules reach it.
+   ============================================================ */
+
+/* ---- the Aurora Peak mark replaces the snowflake ---- */
+/* font-size: 0 hides the snowflake character without touching
+   the markup. The mark is painted on the container behind it. */
+
+.brand .snow {
+  font-size: 0 !important;
+  display: inline-block;
+  width: 38px;
+  height: 38px;
+  background-image: url("../assets/logo-mark-dark.svg");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* ---- stop the header cutting through the hero heading ---- */
+
+.hero-section .hero {
+  padding-top: 96px;
+}
+
+/* ---- square edges, matching the app ---- */
+
+.stat,
+.stats-bar,
+.fcard,
+.card,
+.station-panel,
+.browser-frame,
+.modal,
+.enter-btn,
+.signin,
+.ptab,
+.preview-cta {
+  border-radius: 0 !important;
+}
+
+/* ---- typography, matching the app ---- */
+
+.brand b,
+.title,
+.info h2,
+.preview-head h2,
+.fcard h3,
+.station-panel h4 {
+  font-family: var(--pl-font-display) !important;
+}
+
+.num,
+.mini-stat .n,
+.coords {
+  font-variant-numeric: tabular-nums;
+}

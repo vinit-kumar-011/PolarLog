@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PolarLog — Integrated Polar Expedition Logistics</title>
-    <link rel="stylesheet" href="..\css\landing.css" />
+    <link rel="stylesheet" href="../css/landing.css" />
     <link rel="stylesheet" href="../css/pl-theme.css" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#03111f" />
@@ -105,6 +105,14 @@
               <circle class="pulse" r="5" />
               <circle class="core" r="5" />
             </g>
+                        <g
+              class="station-dot"
+              data-key="himansh"
+              transform="translate(200,215)"
+            >
+              <circle class="pulse" r="5" />
+              <circle class="core" r="5" />
+            </g>
           </svg>
 
           <div
@@ -121,7 +129,7 @@
               BHARATI
             </div>
             <div class="coords">
-              <span class="dot"></span>70° 44' S, 11° 44' E
+              <span class="dot"></span>69° 24' S, 76° 11' E
             </div>
           </div>
 
@@ -139,7 +147,7 @@
               MAITRI
             </div>
             <div class="coords">
-              <span class="dot"></span>70° 45' S, 11° 44' E
+              <span class="dot"></span>70° 46' S, 11° 44' E
             </div>
           </div>
 
@@ -157,7 +165,24 @@
               HIMADRI
             </div>
             <div class="coords amber">
-              <span class="dot"></span>69° 24' S, 76° 12' E
+              <span class="dot"></span>78° 55' N, 11° 55' E
+            </div>
+          </div>
+                    <div
+            class="station-label"
+            style="left: 18%; top: 44%"
+            data-key="himansh"
+          >
+            <div class="name-row">
+              <span class="flagchip"
+                ><div style="background: #f4931e"></div>
+                <div style="background: #fff"></div>
+                <div style="background: #0e8a3e"></div
+              ></span>
+              HIMANSH
+            </div>
+            <div class="coords">
+              <span class="dot"></span>32° 24' N, 77° 37' E
             </div>
           </div>
 
@@ -197,6 +222,18 @@
             </p>
             <span class="status amber">3 alerts pending</span>
           </div>
+                    <div
+            class="station-panel"
+            id="himanshPanel"
+            style="left: 14%; top: 54%"
+          >
+            <h4>Himansh Station</h4>
+            <p>
+              Chandra Basin, Himachal Pradesh. High-altitude glaciological
+              observatory — road access, no sea resupply window.
+            </p>
+            <span class="status">Operational</span>
+          </div>
         </div>
       </div>
     </section>
@@ -217,7 +254,7 @@
             </svg>
           </div>
           <div>
-            <div class="num" data-count="3">0</div>
+            <div class="num" data-count="4">0</div>
             <div class="lbl">ACTIVE STATIONS</div>
             <div class="sub green">All stations operational</div>
           </div>
@@ -236,7 +273,7 @@
             </svg>
           </div>
           <div>
-            <div class="num" data-count="127">0</div>
+            <div class="num" data-count="7">0</div>
             <div class="lbl">ACTIVE CARGO</div>
             <div class="sub blue">In transit &amp; pending</div>
           </div>
@@ -257,7 +294,7 @@
             </svg>
           </div>
           <div>
-            <div class="num" data-count="26">0</div>
+            <div class="num" data-count="3">0</div>
             <div class="lbl">SHIPMENTS</div>
             <div class="sub blue">Across all routes</div>
           </div>
@@ -278,7 +315,7 @@
             </svg>
           </div>
           <div>
-            <div class="num" data-count="142">0</div>
+            <div class="num" data-count="8">0</div>
             <div class="lbl">PERSONNEL</div>
             <div class="sub blue">Deployed across stations</div>
           </div>
@@ -298,7 +335,7 @@
             </svg>
           </div>
           <div>
-            <div class="num" data-count="18">0</div>
+            <div class="num" data-count="3">0</div>
             <div class="lbl">ALERTS</div>
             <div class="sub red">Requires attention</div>
           </div>
@@ -339,7 +376,7 @@
         </div>
         <div
           class="fcard"
-          data-info="Live stock levels for fuel, rations, and spares at Bharati, Maitri and Himadri, with low-stock and resupply-gap alerts."
+          data-info="Live stock levels for fuel, rations, and spares at Bharati, Maitri, Himadri and Himansh, with low-stock and resupply-gap alerts."
         >
           <div class="icn">
             <svg
@@ -403,7 +440,7 @@
         </div>
         <div
           class="fcard"
-          data-info="Manage rosters, roles, and rotations for every expedition member deployed across the three stations."
+          data-info="Manage rosters, roles, and rotations for every expedition member deployed across all four stations."
         >
           <div class="icn">
             <svg
@@ -563,26 +600,26 @@
                 >
                   <path d="M6 8a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6" />
                 </svg>
-                Alerts <span class="badge-count">18</span>
+                Alerts <span class="badge-count">3</span>
               </div>
             </div>
 
             <div class="dash-main">
               <div class="dash-topstats">
                 <div class="mini-stat">
-                  <div class="n">127</div>
+                  <div class="n">7</div>
                   <div class="l">ACTIVE CARGO</div>
                 </div>
                 <div class="mini-stat">
-                  <div class="n">26</div>
+                  <div class="n">3</div>
                   <div class="l">SHIPMENTS</div>
                 </div>
                 <div class="mini-stat">
-                  <div class="n">142</div>
+                  <div class="n">8</div>
                   <div class="l">PERSONNEL</div>
                 </div>
                 <div class="mini-stat">
-                  <div class="n" style="color: var(--red)">18</div>
+                  <div class="n" style="color: var(--red)">3</div>
                   <div class="l">ALERTS</div>
                 </div>
               </div>
@@ -640,7 +677,12 @@
 
       <section class="info" id="about">
         <h2>About PolarLog</h2>
-        <p class="lead">
+                <p class="lead">
+          India runs permanent research stations in Antarctica, the Arctic and
+          the Himalayas. PolarLog replaces fragmented spreadsheets and manual
+          logs across NCPOR, shipping contractors, and Navy/Coast Guard with one
+          shared operating picture.
+        </p>
           India runs three permanent polar research stations — two in Antarctica
           and one in the Arctic. PolarLog replaces fragmented spreadsheets and
           manual logs across NCPOR, shipping contractors, and Navy/Coast Guard
@@ -675,27 +717,37 @@
 
       <section class="info" id="stations">
         <h2>Stations</h2>
-        <p class="lead">
+                <p class="lead">
+          Four stations, one shared ledger — three polar, one Himalayan. Click a
+          marker on the map above to see live status for each.
+        </p>
           Three stations, one shared ledger. Click a marker on the map above to
           see live status for each.
         </p>
         <div class="about-grid">
-          <div class="card">
-            <b>Bharati — 70°44'S, 11°44'E</b
+                    <div class="card">
+            <b>Bharati — 69°24'S, 76°11'E</b
             ><span
               >Larsemann Hills, East Antarctica. Geoscience and remote
               sensing.</span
             >
           </div>
           <div class="card">
-            <b>Maitri — 70°45'S, 11°44'E</b
+            <b>Maitri — 70°46'S, 11°44'E</b
             ><span>Schirmacher Oasis. Primary cargo and resupply hub.</span>
           </div>
           <div class="card">
-            <b>Himadri — 69°24'S, 76°12'E</b
+            <b>Himadri — 78°55'N, 11°55'E</b
             ><span
-              >Ny-Ålesund, Arctic. Separate resupply cycle, 3 alerts
-              pending.</span
+              >Ny-Ålesund, Svalbard, Arctic. Separate resupply cycle from the
+              Antarctic stations.</span
+            >
+          </div>
+          <div class="card">
+            <b>Himansh — 32°24'N, 77°37'E</b
+            ><span
+              >Chandra Basin, Himalayas. Glaciological observatory with road
+              access rather than a sea window.</span
             >
           </div>
         </div>
